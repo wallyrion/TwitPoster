@@ -9,7 +9,6 @@ public sealed class TwitPosterContext : DbContext
 
     public TwitPosterContext (DbContextOptions<TwitPosterContext> options) : base(options)
     {
-        Database.EnsureCreated();
     }
     
     protected override void OnModelCreating(ModelBuilder modelBuilder)
