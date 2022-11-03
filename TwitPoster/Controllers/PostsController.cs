@@ -1,24 +1,39 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using TwitPoster.ViewModels;
 
 namespace TwitPoster.Controllers;
 
-[ApiController]
 [Route("[controller]")]
+[ApiController]
 public class PostsController : ControllerBase
 {
-    [HttpGet]
-    public IEnumerable<Post> Get()
+    private readonly TwitPosterContext _context;
+
+    public PostsController(TwitPosterContext context)
     {
-        return new List<Post>
+        _context = context;
+    }
+
+    [HttpGet]
+    public async Task<IEnumerable<Post>> Get()
+    {
+        return await _context.Posts.ToListAsync();
+    }
+    
+    [HttpPost]
+    public async Task<Post> Create(CreatePostRequest request)
+    {
+        var post = new Post
         {
-            new()
-            {
-                Author = "First", Body = "Hey", CreatedAt = DateTime.UtcNow, Id = 1
-            },
-            new()
-            {
-                Author = "Second", Body = "Hey", CreatedAt = DateTime.UtcNow.AddHours(-2), Id = 2
-            }
+            AuthorId = 1,
+            Body = request.Body,
+            CreatedAt = DateTime.UtcNow
         };
+        
+        _context.Posts.Add(post);
+        await _context.SaveChangesAsync();
+
+        return post;
     }
 }
