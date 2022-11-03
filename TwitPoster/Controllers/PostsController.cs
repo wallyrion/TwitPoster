@@ -1,5 +1,8 @@
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.JsonWebTokens;
 using TwitPoster.ViewModels;
 
 namespace TwitPoster.Controllers;
@@ -22,11 +25,12 @@ public class PostsController : ControllerBase
     }
     
     [HttpPost]
+    [Authorize]
     public async Task<Post> Create(CreatePostRequest request)
     {
         var post = new Post
         {
-            AuthorId = 1,
+            AuthorId = this.GetUserId(),
             Body = request.Body,
             CreatedAt = DateTime.UtcNow
         };

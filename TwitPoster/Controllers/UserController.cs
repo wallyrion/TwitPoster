@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using TwitPoster.Authentication;
 using TwitPoster.ViewModels;
 
 namespace TwitPoster.Controllers;
@@ -10,6 +11,7 @@ public class UserController : ControllerBase
 {
     private readonly TwitPosterContext _context;
     private readonly ILogger<UserController> _logger;
+    private readonly JwtTokenGenerator _tokenGenerator = new();
 
     public UserController(TwitPosterContext context, ILogger<UserController> logger)
     {
@@ -18,7 +20,7 @@ public class UserController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult<User>> Create(CreateUserRequest request)
+    public async Task<ActionResult> Create(CreateUserRequest request)
     {
         try
         {
@@ -35,12 +37,15 @@ public class UserController : ControllerBase
                 Email = request.Email,
                 BirthDate = request.BirthDate,
                 FirstName = request.FirstName,
-                LastName = request.LastName
+                LastName = request.LastName,
+                Password = request.Password
             };
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
 
-            return user;
+            var accessToken = _tokenGenerator.GenerateToken(user);
+
+            return Ok(new {accessToken, user});
         }
         catch (Exception e)
         {

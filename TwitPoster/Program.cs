@@ -2,7 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Serilog;
 using TwitPoster;
 using TwitPoster.Extensions;
-
+    
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Host.UseSerilog((_, lc) => lc
@@ -13,10 +13,12 @@ builder.Services.AddControllers();
 builder.Services.AddFluentValidators();
 
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerWithAuthorization();
 
 builder.Services.AddDbContext<TwitPosterContext>(
     options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")!));
+
+builder.Services.AddJwtBearerAuthentication();
 
 var app = builder.Build();
 
@@ -30,7 +32,7 @@ if (app.Environment.IsDevelopment())
 app.UseSerilogRequestLogging();
 
 app.UseHttpsRedirection();
-
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
