@@ -1,11 +1,15 @@
 using Microsoft.EntityFrameworkCore;
 using Serilog;
+using Serilog.Events;
 using TwitPoster;
 using TwitPoster.Extensions;
     
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Host.UseSerilog((_, lc) => lc
+    .MinimumLevel.Debug()
+    .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
+    .Enrich.FromLogContext()
     .WriteTo.Console()
     .WriteTo.Seq("http://localhost:5341"));
 
@@ -19,6 +23,8 @@ builder.Services.AddDbContext<TwitPosterContext>(
     options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")!));
 
 builder.Services.AddJwtBearerAuthentication();
+
+builder.Services.AddProblemDetails();
 
 var app = builder.Build();
 
@@ -36,5 +42,14 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+// app.UseExceptionHandler();
+// app.UseStatusCodePages();
+
+if (app.Environment.IsDevelopment())
+{
+    //app.UseDeveloperExceptionPage();
+}
+
 
 app.Run();

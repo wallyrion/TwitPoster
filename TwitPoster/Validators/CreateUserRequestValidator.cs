@@ -3,7 +3,7 @@ using TwitPoster.ViewModels;
 
 namespace TwitPoster.Validators;
 
-public class CreateUserRequestValidator : AbstractValidator<CreateUserRequest>
+public class CreateUserRequestValidator : AbstractValidator<RegistrationRequest>
 {
     public CreateUserRequestValidator()
     {

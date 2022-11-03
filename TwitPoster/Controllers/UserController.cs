@@ -19,38 +19,48 @@ public class UserController : ControllerBase
         _logger = logger;
     }
 
-    [HttpPost]
-    public async Task<ActionResult> Create(CreateUserRequest request)
+    [HttpPost("register")]
+    public async Task<ActionResult> Register(RegistrationRequest request)
     {
-        try
+        var existingUser = await _context.Users.FirstOrDefaultAsync(u => u.Email == request.Email);
+        
+        if(existingUser != null)
         {
-            var existedUser = await _context.Users.FirstOrDefaultAsync(e => e.Email == request.Email);
-
-            if (existedUser != null)
-            {
-                return BadRequest("Can not create user with existed email");
-            }
-            
-            var user = new User
-            {
-                CreatedAt = DateTime.UtcNow,
-                Email = request.Email,
-                BirthDate = request.BirthDate,
-                FirstName = request.FirstName,
-                LastName = request.LastName,
-                Password = request.Password
-            };
-            _context.Users.Add(user);
-            await _context.SaveChangesAsync();
-
-            var accessToken = _tokenGenerator.GenerateToken(user);
-
-            return Ok(new {accessToken, user});
+            return BadRequest("User already exists");
         }
-        catch (Exception e)
+        
+        var user = new User
         {
-            _logger.LogError(e, "Error while creating user with Email {Email}", request.Email);
-            return Problem(statusCode: StatusCodes.Status500InternalServerError, title: "An error occurred while processing your request.");
+            CreatedAt = DateTime.UtcNow,
+            Email = request.Email,
+            BirthDate = request.BirthDate,
+            FirstName = request.FirstName,
+            LastName = request.LastName,
+            Password = request.Password
+        };
+        _context.Users.Add(user);
+        await _context.SaveChangesAsync();
+
+        var accessToken = _tokenGenerator.GenerateToken(user);
+        return Ok(new RegistrationResponse(user.Id, accessToken));
+    }
+    
+    [HttpPost("login")]
+    public async Task<ActionResult> Login(LoginRequest request)
+    {
+        var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == request.Email);
+
+        if (user == null)
+        {
+            return BadRequest();
         }
+        
+        if (user.Password != request.Password)
+        {
+            return BadRequest();
+        }
+        
+        var accessToken = _tokenGenerator.GenerateToken(user);
+        return Ok(new RegistrationResponse(user.Id, accessToken));
     }
 }
