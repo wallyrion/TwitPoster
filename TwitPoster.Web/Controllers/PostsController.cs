@@ -1,9 +1,12 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using TwitPoster.ViewModels;
+using TwitPoster.DAL;
+using TwitPoster.Domain.Models;
+using TwitPoster.Web.Extensions;
+using TwitPoster.Web.ViewModels;
 
-namespace TwitPoster.Controllers;
+namespace TwitPoster.Web.Controllers;
 
 [Route("[controller]")]
 [ApiController]

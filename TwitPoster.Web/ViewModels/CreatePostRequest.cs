@@ -1,5 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace TwitPoster.ViewModels;
+namespace TwitPoster.Web.ViewModels;
 
 public record CreatePostRequest([Required] string Body, string Author);

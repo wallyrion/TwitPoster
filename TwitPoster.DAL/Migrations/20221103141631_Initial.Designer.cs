@@ -5,15 +5,16 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using TwitPoster;
+using TwitPoster.DAL;
+using TwitPoster.Web;
 
 #nullable disable
 
-namespace TwitPoster.Migrations
+namespace TwitPoster.Web.Migrations
 {
     [DbContext(typeof(TwitPosterContext))]
-    [Migration("20221103155526_UserAddPassword")]
-    partial class UserAddPassword
+    [Migration("20221103141631_Initial")]
+    partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -24,7 +25,7 @@ namespace TwitPoster.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
 
-            modelBuilder.Entity("TwitPoster.Post", b =>
+            modelBuilder.Entity("TwitPoster.Web.Post", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -49,7 +50,7 @@ namespace TwitPoster.Migrations
                     b.ToTable("Posts");
                 });
 
-            modelBuilder.Entity("TwitPoster.User", b =>
+            modelBuilder.Entity("TwitPoster.Web.User", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -75,10 +76,6 @@ namespace TwitPoster.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Password")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.HasKey("Id");
 
                     b.HasIndex("Email")
@@ -87,9 +84,9 @@ namespace TwitPoster.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("TwitPoster.Post", b =>
+            modelBuilder.Entity("TwitPoster.Web.Post", b =>
                 {
-                    b.HasOne("TwitPoster.User", "Author")
+                    b.HasOne("TwitPoster.Web.User", "Author")
                         .WithMany()
                         .HasForeignKey("AuthorId")
                         .OnDelete(DeleteBehavior.Cascade)

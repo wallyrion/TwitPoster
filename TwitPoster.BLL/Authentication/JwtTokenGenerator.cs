@@ -2,8 +2,9 @@
 using System.Security.Claims;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
+using TwitPoster.Domain.Models;
 
-namespace TwitPoster.Authentication;
+namespace TwitPoster.Web.Authentication;
 
 public class JwtTokenGenerator
 {

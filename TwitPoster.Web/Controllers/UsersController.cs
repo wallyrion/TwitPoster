@@ -1,19 +1,21 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using TwitPoster.Authentication;
-using TwitPoster.ViewModels;
+using TwitPoster.DAL;
+using TwitPoster.Domain.Models;
+using TwitPoster.Web.Authentication;
+using TwitPoster.Web.ViewModels;
 
-namespace TwitPoster.Controllers;
+namespace TwitPoster.Web.Controllers;
 
 [Route("[controller]")]
 [ApiController]
-public class UserController : ControllerBase
+public class UsersController : ControllerBase
 {
     private readonly TwitPosterContext _context;
-    private readonly ILogger<UserController> _logger;
+    private readonly ILogger<UsersController> _logger;
     private readonly JwtTokenGenerator _tokenGenerator = new();
 
-    public UserController(TwitPosterContext context, ILogger<UserController> logger)
+    public UsersController(TwitPosterContext context, ILogger<UsersController> logger)
     {
         _context = context;
         _logger = logger;

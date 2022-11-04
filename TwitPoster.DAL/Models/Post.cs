@@ -1,6 +1,4 @@
-﻿using System.Text.Json.Serialization;
-
-namespace TwitPoster;
+﻿namespace TwitPoster.Domain.Models;
 
 public class Post
 {

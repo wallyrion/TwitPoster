@@ -1,6 +1,10 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TwitPoster", "TwitPoster\TwitPoster.csproj", "{7AB9B738-95C1-4B3D-8F18-C16A945F42D4}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TwitPoster.Web", "TwitPoster.Web\TwitPoster.Web.csproj", "{7AB9B738-95C1-4B3D-8F18-C16A945F42D4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TwitPoster.DAL", "TwitPoster.DAL\TwitPoster.DAL.csproj", "{6BB443F2-0574-490B-A583-5DBFE9102095}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TwitPoster.BLL", "TwitPoster.BLL\TwitPoster.BLL.csproj", "{77661461-19E0-4B35-9942-9A9A4CD389D6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -12,5 +16,13 @@ Global
 		{7AB9B738-95C1-4B3D-8F18-C16A945F42D4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7AB9B738-95C1-4B3D-8F18-C16A945F42D4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7AB9B738-95C1-4B3D-8F18-C16A945F42D4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6BB443F2-0574-490B-A583-5DBFE9102095}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6BB443F2-0574-490B-A583-5DBFE9102095}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6BB443F2-0574-490B-A583-5DBFE9102095}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6BB443F2-0574-490B-A583-5DBFE9102095}.Release|Any CPU.Build.0 = Release|Any CPU
+		{77661461-19E0-4B35-9942-9A9A4CD389D6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{77661461-19E0-4B35-9942-9A9A4CD389D6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{77661461-19E0-4B35-9942-9A9A4CD389D6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{77661461-19E0-4B35-9942-9A9A4CD389D6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

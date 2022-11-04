@@ -4,11 +4,11 @@ using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using TwitPoster.Authentication;
-using TwitPoster.Validators;
-using TwitPoster.ViewModels;
+using TwitPoster.Web.Authentication;
+using TwitPoster.Web.Validators;
+using TwitPoster.Web.ViewModels;
 
-namespace TwitPoster.Extensions;
+namespace TwitPoster.Web.Extensions;
 
 public static class ServiceCollectionExtensions
 {

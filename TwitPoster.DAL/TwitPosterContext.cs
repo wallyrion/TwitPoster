@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using TwitPoster.Domain.Models;
 
-namespace TwitPoster;
+namespace TwitPoster.DAL;
 
 public sealed class TwitPosterContext : DbContext
 {

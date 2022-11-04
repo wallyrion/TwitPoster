@@ -3,17 +3,20 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using TwitPoster;
+using TwitPoster.DAL;
+using TwitPoster.Web;
 
 #nullable disable
 
-namespace TwitPoster.Migrations
+namespace TwitPoster.Web.Migrations
 {
     [DbContext(typeof(TwitPosterContext))]
-    partial class TwitPosterContextModelSnapshot : ModelSnapshot
+    [Migration("20221103155526_UserAddPassword")]
+    partial class UserAddPassword
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -22,7 +25,7 @@ namespace TwitPoster.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
 
-            modelBuilder.Entity("TwitPoster.Post", b =>
+            modelBuilder.Entity("TwitPoster.Web.Post", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -47,7 +50,7 @@ namespace TwitPoster.Migrations
                     b.ToTable("Posts");
                 });
 
-            modelBuilder.Entity("TwitPoster.User", b =>
+            modelBuilder.Entity("TwitPoster.Web.User", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -85,9 +88,9 @@ namespace TwitPoster.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("TwitPoster.Post", b =>
+            modelBuilder.Entity("TwitPoster.Web.Post", b =>
                 {
-                    b.HasOne("TwitPoster.User", "Author")
+                    b.HasOne("TwitPoster.Web.User", "Author")
                         .WithMany()
                         .HasForeignKey("AuthorId")
                         .OnDelete(DeleteBehavior.Cascade)

@@ -1,4 +1,4 @@
-﻿namespace TwitPoster;
+﻿namespace TwitPoster.Domain.Models;
 
 public class User
 {

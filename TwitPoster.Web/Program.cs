@@ -1,9 +1,10 @@
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 using Serilog.Events;
-using TwitPoster;
-using TwitPoster.Extensions;
-    
+using TwitPoster.DAL;
+using TwitPoster.Web;
+using TwitPoster.Web.Extensions;
+
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Host.UseSerilog((_, lc) => lc

@@ -1,7 +1,7 @@
 ﻿using FluentValidation;
-using TwitPoster.ViewModels;
+using TwitPoster.Web.ViewModels;
 
-namespace TwitPoster.Validators;
+namespace TwitPoster.Web.Validators;
 
 public class CreateUserRequestValidator : AbstractValidator<RegistrationRequest>
 {

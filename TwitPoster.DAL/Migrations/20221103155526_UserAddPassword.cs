@@ -2,7 +2,7 @@
 
 #nullable disable
 
-namespace TwitPoster.Migrations
+namespace TwitPoster.Web.Migrations
 {
     public partial class UserAddPassword : Migration
     {

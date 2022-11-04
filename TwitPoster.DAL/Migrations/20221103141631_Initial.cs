@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace TwitPoster.Migrations
+namespace TwitPoster.Web.Migrations
 {
     public partial class Initial : Migration
     {
