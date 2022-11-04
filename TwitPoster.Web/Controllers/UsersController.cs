@@ -4,6 +4,7 @@ using TwitPoster.BLL.Authentication;
 using TwitPoster.BLL.Services;
 using TwitPoster.DAL;
 using TwitPoster.DAL.Models;
+using TwitPoster.Web.Extensions;
 using TwitPoster.Web.ViewModels;
 
 namespace TwitPoster.Web.Controllers;
@@ -27,27 +28,9 @@ public class UsersController : ControllerBase
     [HttpPost("register")]
     public async Task<ActionResult> Register(RegistrationRequest request)
     {
-        var existingUser = await _context.Users.FirstOrDefaultAsync(u => u.Email == request.Email);
-        
-        if(existingUser != null)
-        {
-            throw new Exception("Unhandled exception: user already exists");
-        }                           
-        
-        var user = new User
-        {
-            CreatedAt = DateTime.UtcNow,
-            Email = request.Email,
-            BirthDate = request.BirthDate,
-            FirstName = request.FirstName,
-            LastName = request.LastName,
-            Password = request.Password
-        };
-        _context.Users.Add(user);
-        await _context.SaveChangesAsync();
+        var registerResponse = await _userService.Register(request.FirstName, request.LastName, request.BirthDate, request.Email, request.Password);
 
-        var accessToken = _tokenGenerator.GenerateToken(user);
-        return Ok(new RegistrationResponse(user.Id, accessToken));
+        return this.ToOk(registerResponse, result => new RegistrationResponse(result.UserId, result.AccessToken));
     }
     
     [HttpPost("login")]
