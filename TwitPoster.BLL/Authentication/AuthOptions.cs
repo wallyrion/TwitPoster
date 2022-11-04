@@ -1,4 +1,4 @@
-﻿namespace TwitPoster.Web.Authentication;
+﻿namespace TwitPoster.BLL.Authentication;
 
 public static class AuthOptions
 {

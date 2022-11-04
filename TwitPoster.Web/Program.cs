@@ -1,9 +1,12 @@
+using System.Diagnostics;
+using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 using Serilog.Events;
 using TwitPoster.DAL;
 using TwitPoster.Web;
 using TwitPoster.Web.Extensions;
+using TwitPoster.Web.Middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -36,6 +39,17 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseMiddleware<RequestDurationMiddleware>();
+
+app.Use(async (context, next) =>
+{
+    if (new Random().Next(2) == 1)
+    {
+        await Task.Delay(new Random().Next(300, 500));
+    };
+    await next(context);
+});
+
 app.UseSerilogRequestLogging();
 
 app.UseHttpsRedirection();
@@ -44,13 +58,12 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-// app.UseExceptionHandler();
-// app.UseStatusCodePages();
+app.UseExceptionHandler();
+app.UseStatusCodePages();
 
 if (app.Environment.IsDevelopment())
 {
-    //app.UseDeveloperExceptionPage();
+    app.UseDeveloperExceptionPage();
 }
-
 
 app.Run();

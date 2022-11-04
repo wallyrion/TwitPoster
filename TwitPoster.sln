@@ -6,6 +6,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TwitPoster.DAL", "TwitPoste
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TwitPoster.BLL", "TwitPoster.BLL\TwitPoster.BLL.csproj", "{77661461-19E0-4B35-9942-9A9A4CD389D6}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TwitPoster.Web.Tests", "TwitPoster.Web.Tests\TwitPoster.Web.Tests.csproj", "{55E39A8B-14F7-49CB-88BE-D88B59E294A0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -24,5 +26,9 @@ Global
 		{77661461-19E0-4B35-9942-9A9A4CD389D6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{77661461-19E0-4B35-9942-9A9A4CD389D6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{77661461-19E0-4B35-9942-9A9A4CD389D6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{55E39A8B-14F7-49CB-88BE-D88B59E294A0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{55E39A8B-14F7-49CB-88BE-D88B59E294A0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{55E39A8B-14F7-49CB-88BE-D88B59E294A0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{55E39A8B-14F7-49CB-88BE-D88B59E294A0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

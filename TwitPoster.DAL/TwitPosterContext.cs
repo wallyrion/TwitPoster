@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using TwitPoster.Domain.Models;
+using TwitPoster.DAL.Models;
 
 namespace TwitPoster.DAL;
 

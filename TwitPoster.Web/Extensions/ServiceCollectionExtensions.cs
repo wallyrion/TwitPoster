@@ -4,7 +4,7 @@ using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using TwitPoster.Web.Authentication;
+using TwitPoster.BLL.Authentication;
 using TwitPoster.Web.Validators;
 using TwitPoster.Web.ViewModels;
 

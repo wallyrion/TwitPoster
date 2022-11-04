@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using TwitPoster.DAL;
-using TwitPoster.Domain.Models;
+using TwitPoster.DAL.Models;
 using TwitPoster.Web.Extensions;
 using TwitPoster.Web.ViewModels;
 
@@ -13,10 +13,12 @@ namespace TwitPoster.Web.Controllers;
 public class PostsController : ControllerBase
 {
     private readonly TwitPosterContext _context;
-
-    public PostsController(TwitPosterContext context)
+    private readonly ILogger<PostsController> _logger;
+    
+    public PostsController(TwitPosterContext context, ILogger<PostsController> logger)
     {
         _context = context;
+        _logger = logger;
     }
 
     [HttpGet]
@@ -39,6 +41,8 @@ public class PostsController : ControllerBase
         _context.Posts.Add(post);
         await _context.SaveChangesAsync();
 
+        _logger.LogInformation("Created post by Author {AuthorId}", post.AuthorId);
+        
         return post;
     }
 }

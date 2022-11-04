@@ -1,4 +1,4 @@
-﻿namespace TwitPoster.Domain.Models;
+﻿namespace TwitPoster.DAL.Models;
 
 public class Post
 {

@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using TwitPoster.BLL.Authentication;
 using TwitPoster.DAL;
-using TwitPoster.Domain.Models;
-using TwitPoster.Web.Authentication;
+using TwitPoster.DAL.Models;
 using TwitPoster.Web.ViewModels;
 
 namespace TwitPoster.Web.Controllers;
@@ -28,8 +28,8 @@ public class UsersController : ControllerBase
         
         if(existingUser != null)
         {
-            return BadRequest("User already exists");
-        }
+            throw new Exception("Unhandled exception: user already exists");
+        }                           
         
         var user = new User
         {
