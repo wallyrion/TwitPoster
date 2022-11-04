@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using TwitPoster.BLL.Authentication;
+using TwitPoster.BLL.Services;
 using TwitPoster.DAL;
 using TwitPoster.DAL.Models;
 using TwitPoster.Web.ViewModels;
@@ -14,11 +15,13 @@ public class UsersController : ControllerBase
     private readonly TwitPosterContext _context;
     private readonly ILogger<UsersController> _logger;
     private readonly JwtTokenGenerator _tokenGenerator = new();
-
-    public UsersController(TwitPosterContext context, ILogger<UsersController> logger)
+    private readonly UserService _userService;
+    
+    public UsersController(TwitPosterContext context, ILogger<UsersController> logger, UserService userService)
     {
         _context = context;
         _logger = logger;
+        _userService = userService;
     }
 
     [HttpPost("register")]
@@ -50,19 +53,7 @@ public class UsersController : ControllerBase
     [HttpPost("login")]
     public async Task<ActionResult> Login(LoginRequest request)
     {
-        var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == request.Email);
-
-        if (user == null)
-        {
-            return BadRequest();
-        }
-        
-        if (user.Password != request.Password)
-        {
-            return BadRequest();
-        }
-        
-        var accessToken = _tokenGenerator.GenerateToken(user);
-        return Ok(new RegistrationResponse(user.Id, accessToken));
+        var loginResponse = await _userService.Login(request.Email, request.Password);
+        return Ok(new RegistrationResponse(loginResponse.UserId, loginResponse.AccessToken));
     }
 }

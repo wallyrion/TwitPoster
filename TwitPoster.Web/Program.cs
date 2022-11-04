@@ -1,10 +1,8 @@
-using System.Diagnostics;
-using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 using Serilog.Events;
+using TwitPoster.BLL.Services;
 using TwitPoster.DAL;
-using TwitPoster.Web;
 using TwitPoster.Web.Extensions;
 using TwitPoster.Web.Middlewares;
 
@@ -26,12 +24,13 @@ builder.Services.AddSwaggerWithAuthorization();
 builder.Services.AddDbContext<TwitPosterContext>(
     options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")!));
 
+builder.Services.AddScoped<UserService>();
+
 builder.Services.AddJwtBearerAuthentication();
 
 builder.Services.AddProblemDetails();
 
 var app = builder.Build();
-
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -59,11 +58,14 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.UseExceptionHandler();
+
 app.UseStatusCodePages();
 
 if (app.Environment.IsDevelopment())
 {
     app.UseDeveloperExceptionPage();
 }
+app.UseMiddleware<BusinessValidationMiddleware>();
 
 app.Run();
+
