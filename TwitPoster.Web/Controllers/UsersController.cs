@@ -1,9 +1,9 @@
+using System.Net.Mime;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+using Swashbuckle.AspNetCore.Filters;
 using TwitPoster.BLL.Interfaces;
-using TwitPoster.BLL.Services;
-using TwitPoster.DAL.Models;
 using TwitPoster.Web.Extensions;
+using TwitPoster.Web.SwaggerExamples.User;
 using TwitPoster.Web.ViewModels;
 
 namespace TwitPoster.Web.Controllers;
@@ -19,8 +19,8 @@ public class UsersController : ControllerBase
         _usersService = usersService;
     }
 
-    [HttpPost("register")]
-    public async Task<ActionResult> Register(RegistrationRequest request)
+    [HttpPost("registration")]
+    public async Task<ActionResult<RegistrationResponse>> Register(RegistrationRequest request)
     {
         var registerResponse = await _usersService.Register(request.FirstName, request.LastName, request.BirthDate, request.Email, request.Password);
 

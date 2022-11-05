@@ -15,11 +15,13 @@ builder.Host.UseSerilog((ctx, lc) => lc
 builder.Services.AddControllers();
 
 builder.Services
-    .AddFluentValidators()
+
+    .AddSwaggerWithAuthorization()
     .AddEndpointsApiExplorer()
+
+    .AddFluentValidators()
     .AddProblemDetails()
     .AddJwtBearerAuthentication()
-    .AddSwaggerWithAuthorization()
     
     .AddDbContext<TwitPosterContext>(options => options
         .UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")!))

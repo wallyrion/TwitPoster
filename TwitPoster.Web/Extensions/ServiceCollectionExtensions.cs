@@ -1,9 +1,11 @@
-﻿using System.Text;
+﻿using System.Reflection;
+using System.Text;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Swashbuckle.AspNetCore.Filters;
 using TwitPoster.BLL.Authentication;
 using TwitPoster.Web.Validators;
 using TwitPoster.Web.ViewModels;
@@ -49,7 +51,10 @@ public static class ServiceCollectionExtensions
                     new string[] { }
                 }
             });
+            c.ExampleFilters();
         });
+        
+        services.AddSwaggerExamplesFromAssemblyOf<Program>();
         return services;
     }
     public static IServiceCollection AddJwtBearerAuthentication(this IServiceCollection services)
