@@ -1,10 +1,15 @@
+using Mapster;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using TwitPoster.BLL.Interfaces;
 using TwitPoster.DAL;
 using TwitPoster.DAL.Models;
 using TwitPoster.Web.Extensions;
+using TwitPoster.Web.Mappers;
+using TwitPoster.Web.Middlewares;
 using TwitPoster.Web.ViewModels;
+using TwitPoster.Web.ViewModels.Post;
 
 namespace TwitPoster.Web.Controllers;
 
@@ -14,35 +19,32 @@ public class PostsController : ControllerBase
 {
     private readonly TwitPosterContext _context;
     private readonly ILogger<PostsController> _logger;
+    private readonly IPostService _postService;
+    private readonly ICurrentUser _currentUser;
     
-    public PostsController(TwitPosterContext context, ILogger<PostsController> logger)
+    public PostsController(TwitPosterContext context, ILogger<PostsController> logger, IPostService postService, ICurrentUser currentUser)
     {
         _context = context;
         _logger = logger;
+        _postService = postService;
+        _currentUser = currentUser;
     }
 
     [HttpGet]
-    public async Task<IEnumerable<Post>> Get()
+    public async Task<IEnumerable<PostViewModel>> Get()
     {
-        return await _context.Posts.Include(p => p.Author).ToListAsync();
+        var posts = await _postService.GetPosts();
+        return posts.Select(p => p.ToViewModel());
     }
     
     [HttpPost]
-    [Authorize]
-    public async Task<Post> Create(CreatePostRequest request)
+    [Authorize(Roles = "User")]
+    public async Task<PostViewModel> Create(CreatePostRequest request)
     {
-        var post = new Post
-        {
-            AuthorId = this.GetUserId(),
-            Body = request.Body,
-            CreatedAt = DateTime.UtcNow
-        };
-        
-        _context.Posts.Add(post);
-        await _context.SaveChangesAsync();
+        var postDto = await _postService.CreatePost(request.Body);
 
-        _logger.LogInformation("Created post by Author {AuthorId}", post.AuthorId);
+        _logger.LogInformation("Created post by Author {AuthorName}", postDto.AuthorFirstName + postDto.AuthorLastName);
         
-        return post;
+        return postDto.ToViewModel();
     }
 }

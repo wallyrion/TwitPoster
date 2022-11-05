@@ -22,10 +22,13 @@ builder.Services
     .AddFluentValidators()
     .AddProblemDetails()
     .AddJwtBearerAuthentication()
-    
+
     .AddDbContext<TwitPosterContext>(options => options
         .UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")!))
-    .AddScoped<IUsersService, UsersService>();
+    .AddScoped<IUsersService, UsersService>()
+    .AddScoped<IPostService, PostService>()
+    .AddScoped<ICurrentUser, CurrentUser>()
+    ;
 
 var app = builder.Build();
 
@@ -47,7 +50,8 @@ app
 
 app.InDevelopment(b =>
         b.UseDeveloperExceptionPage())
-    .UseMiddleware<BusinessValidationMiddleware>();
+    .UseMiddleware<BusinessValidationMiddleware>()
+    .UseMiddleware<SetupUserClaimsMiddleware>();
 
 app.Run();
 

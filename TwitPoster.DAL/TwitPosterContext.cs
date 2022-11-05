@@ -17,5 +17,13 @@ public sealed class TwitPosterContext : DbContext
         modelBuilder.Entity<User>()
             .HasIndex(u => u.Email)
             .IsUnique();
+
+
+        modelBuilder.Entity<User>()
+            .OwnsOne(e => e.UserAccount);
+
+        modelBuilder.Entity<UserAccount>()
+            .Property(e => e.Role)
+            .HasConversion<string>();
     }
 }
