@@ -1,7 +1,5 @@
 using AutoFixture;
 using FluentAssertions;
-using LanguageExt;
-using LanguageExt.SomeHelp;
 using Microsoft.EntityFrameworkCore;
 using TwitPoster.BLL.Exceptions;
 using TwitPoster.BLL.Services;

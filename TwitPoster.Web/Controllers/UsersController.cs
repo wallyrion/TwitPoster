@@ -1,9 +1,6 @@
-using System.Net.Mime;
 using Microsoft.AspNetCore.Mvc;
-using Swashbuckle.AspNetCore.Filters;
 using TwitPoster.BLL.Interfaces;
 using TwitPoster.Web.Extensions;
-using TwitPoster.Web.SwaggerExamples.User;
 using TwitPoster.Web.ViewModels;
 
 namespace TwitPoster.Web.Controllers;
