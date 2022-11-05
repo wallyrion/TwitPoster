@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Bogus;
 using Swashbuckle.AspNetCore.Filters;
 using TwitPoster.Web.ViewModels;
 // ReSharper disable UnusedType.Global
@@ -16,6 +16,23 @@ public class RegistrationRequestExamples : IMultipleExamplesProvider<Registratio
             "Example 2",
             new RegistrationRequest("Oleksii", "Korniienko", new DateTime(1996, 12, 12), "oleksii.korniienko@hey.com",
                 "Qwerty123"));
+    }
+}
+
+public class RegistrationRequestExamplesWithBogus : IMultipleExamplesProvider<RegistrationRequest>
+{
+    public IEnumerable<SwaggerExample<RegistrationRequest>> GetExamples()
+    {
+        return Enumerable.Range(0, 10)
+            .Select(number => SwaggerExample.Create($"Example {number}", GetExampleWithBogus()))
+            .ToList();
+    }
+
+    private static RegistrationRequest GetExampleWithBogus()
+    {
+        var faker = new Faker();
+            
+        return new RegistrationRequest(faker.Person.FirstName, faker.Person.LastName, faker.Person.DateOfBirth, faker.Person.Email, faker.Internet.Password());
     }
 }
 
