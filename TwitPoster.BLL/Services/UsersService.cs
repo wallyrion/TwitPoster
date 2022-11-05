@@ -59,4 +59,21 @@ public class UsersService : IUsersService
         var accessToken = _tokenGenerator.GenerateToken(user);
         return (user.Id, accessToken);
     }
+
+    public async Task Ban(int userId)
+    {
+        var user = await _context.Users.Include(u => u.UserAccount).FirstOrDefaultAsync(u => u.Id == userId);
+        if (user == null)
+        {
+            throw new TwitPosterValidationException("User not found");
+        }
+
+        if (user.UserAccount.Role > UserRole.User)
+        {
+            throw new TwitPosterValidationException("Not enough rights to ban this user");
+        }
+
+        user.IsBanned = true;
+        await _context.SaveChangesAsync();
+    }
 }

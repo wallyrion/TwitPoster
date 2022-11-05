@@ -1,5 +1,7 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TwitPoster.BLL.Interfaces;
+using TwitPoster.DAL.Models;
 using TwitPoster.Web.Extensions;
 using TwitPoster.Web.ViewModels;
 
@@ -29,5 +31,12 @@ public class UsersController : ControllerBase
     {
         var loginResponse = await _usersService.Login(request.Email, request.Password);
         return Ok(new RegistrationResponse(loginResponse.UserId, loginResponse.AccessToken));
+    }
+    
+    [HttpPut("ban/{userId:int}")]
+    [Authorize(Roles = UserRoles.Admin)]
+    public async Task Ban (int userId)
+    {
+        await _usersService.Ban(userId);
     }
 }
