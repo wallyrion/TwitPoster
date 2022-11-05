@@ -7,7 +7,7 @@ public class CreateUserRequestValidator : AbstractValidator<RegistrationRequest>
 {
     public CreateUserRequestValidator()
     {
-        RuleFor(e => e.Email).NotEmpty().EmailAddress();
+        RuleFor(e => e.Email).NotEmpty().EmailAddress().MaximumLength(1000);
         RuleFor(e => e.BirthDate).NotEmpty().LessThan(DateTime.UtcNow.Date);
         RuleFor(e => e.FirstName).NotEmpty().MaximumLength(300);
         RuleFor(e => e.LastName).NotEmpty().MaximumLength(300);

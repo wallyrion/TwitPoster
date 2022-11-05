@@ -21,8 +21,7 @@ public class JwtTokenGenerator
             new Claim(JwtRegisteredClaimNames.GivenName, user.FirstName),
             new Claim(JwtRegisteredClaimNames.FamilyName, user.LastName),
             new Claim(JwtRegisteredClaimNames.Email, user.Email),
-            new Claim(ClaimsIdentity.DefaultRoleClaimType, "User"),
-            new Claim(ClaimsIdentity.DefaultRoleClaimType, "Admin"),
+            new Claim(ClaimsIdentity.DefaultRoleClaimType, user.UserAccount.Role.ToString()),
             new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
         };
 

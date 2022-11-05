@@ -32,7 +32,7 @@ public class UsersServiceTests
         await _context.SaveChangesAsync();
         
         // Act
-        var result = await _sut.Login(expectedUser.Email, expectedUser.Password);
+        var result = await _sut.Login(expectedUser.Email, expectedUser.UserAccount.Password);
 
         // Assert
         result.AccessToken.Should().NotBeEmpty();

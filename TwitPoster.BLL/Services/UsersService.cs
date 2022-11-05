@@ -20,9 +20,9 @@ public class UsersService : IUsersService
 
     public async Task<(int UserId, string AccessToken)> Login(string email, string password)
     {
-        var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
+        var user = await _context.Users.Include(u => u.UserAccount).FirstOrDefaultAsync(u => u.Email == email);
 
-        if (user == null || user.Password != password)
+        if (user == null || user.UserAccount.Password != password)
         {
             throw new TwitPosterValidationException("Your password or email is incorrect");
         }
@@ -47,7 +47,11 @@ public class UsersService : IUsersService
             BirthDate = birthDate,
             FirstName = firstName,
             LastName = lastName, 
-            Password = password
+            UserAccount = new UserAccount
+            {
+                Password = password,
+                Role = UserRole.User
+            }
         };
         _context.Users.Add(user);
         await _context.SaveChangesAsync();

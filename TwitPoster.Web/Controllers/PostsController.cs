@@ -38,7 +38,7 @@ public class PostsController : ControllerBase
     }
     
     [HttpPost]
-    [Authorize(Roles = "User")]
+    [Authorize]
     public async Task<PostViewModel> Create(CreatePostRequest request)
     {
         var postDto = await _postService.CreatePost(request.Body);
