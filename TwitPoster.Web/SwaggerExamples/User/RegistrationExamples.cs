@@ -9,20 +9,6 @@ public class RegistrationRequestExamples : IMultipleExamplesProvider<Registratio
 {
     public IEnumerable<SwaggerExample<RegistrationRequest>> GetExamples()
     {
-        yield return SwaggerExample.Create(
-            "Example 1",
-            new RegistrationRequest("John", "Doe", DateTime.Parse("1990-01-12"), "john.doe@google.com", "Qwerty123"));
-        yield return SwaggerExample.Create(
-            "Example 2",
-            new RegistrationRequest("Oleksii", "Korniienko", new DateTime(1996, 12, 12), "oleksii.korniienko@hey.com",
-                "Qwerty123"));
-    }
-}
-
-public class RegistrationRequestExamplesWithBogus : IMultipleExamplesProvider<RegistrationRequest>
-{
-    public IEnumerable<SwaggerExample<RegistrationRequest>> GetExamples()
-    {
         return Enumerable.Range(0, 10)
             .Select(number => SwaggerExample.Create($"Example {number}", GetExampleWithBogus()))
             .ToList();

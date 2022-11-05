@@ -2,4 +2,4 @@
 
 namespace TwitPoster.Web.ViewModels;
 
-public record CreatePostRequest([Required] string Body, string Author);
+public record CreatePostRequest([Required] string Body);
