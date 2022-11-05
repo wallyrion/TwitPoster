@@ -10,6 +10,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TwitPoster.Web.Tests", "Twi
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TwitPoster.BLL.Tests", "TwitPoster.BLL.Tests\TwitPoster.BLL.Tests.csproj", "{C09CCE9E-1EE1-44D8-B2A6-020DDE3FE21D}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{EE37553A-DE5B-441C-8490-0DFD3767E108}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -36,5 +38,9 @@ Global
 		{C09CCE9E-1EE1-44D8-B2A6-020DDE3FE21D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C09CCE9E-1EE1-44D8-B2A6-020DDE3FE21D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C09CCE9E-1EE1-44D8-B2A6-020DDE3FE21D}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{55E39A8B-14F7-49CB-88BE-D88B59E294A0} = {EE37553A-DE5B-441C-8490-0DFD3767E108}
+		{C09CCE9E-1EE1-44D8-B2A6-020DDE3FE21D} = {EE37553A-DE5B-441C-8490-0DFD3767E108}
 	EndGlobalSection
 EndGlobal

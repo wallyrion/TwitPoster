@@ -13,56 +13,39 @@ builder.Host.UseSerilog((ctx, lc) => lc
     .Enrich.FromLogContext());
 
 builder.Services.AddControllers();
-builder.Services.AddFluentValidators();
 
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerWithAuthorization();
-
-builder.Services.AddDbContext<TwitPosterContext>(
-    options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")!));
-
-builder.Services.AddScoped<IUsersService, UsersService>();
-
-builder.Services.AddJwtBearerAuthentication();
-
-builder.Services.AddProblemDetails();
+builder.Services
+    .AddFluentValidators()
+    .AddEndpointsApiExplorer()
+    .AddProblemDetails()
+    .AddJwtBearerAuthentication()
+    .AddSwaggerWithAuthorization()
+    
+    .AddDbContext<TwitPosterContext>(options => options
+        .UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")!))
+    .AddScoped<IUsersService, UsersService>();
 
 var app = builder.Build();
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
-
-app.UseMiddleware<RequestDurationMiddleware>();
-
-app.Use(async (context, next) =>
-{
-    if (new Random().Next(2) == 1)
-    {
-        await Task.Delay(new Random().Next(300, 500));
-    };
-    await next(context);
-});
-
-app.UseSerilogRequestLogging();
-
-app.UseHttpsRedirection();
-app.UseAuthentication();
-app.UseAuthorization();
 
 app.MapControllers();
 
-app.UseExceptionHandler();
+app
+    .InDevelopment(b =>
+        b.UseSwagger().UseSwaggerUI())
+    
+    .UseMiddleware<RequestDurationMiddleware>()
+    .Use(CustomMiddlewares.ExtendRequestDurationMiddleware)
+    
+    .UseSerilogRequestLogging()
+    .UseHttpsRedirection()
+    .UseAuthentication()
+    .UseAuthorization()
+    .UseExceptionHandler()
+    .UseStatusCodePages();
 
-app.UseStatusCodePages();
-
-if (app.Environment.IsDevelopment())
-{
-    app.UseDeveloperExceptionPage();
-}
-app.UseMiddleware<BusinessValidationMiddleware>();
+app.InDevelopment(b =>
+        b.UseDeveloperExceptionPage())
+    .UseMiddleware<BusinessValidationMiddleware>();
 
 app.Run();
 
