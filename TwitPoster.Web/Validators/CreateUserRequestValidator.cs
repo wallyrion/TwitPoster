@@ -11,5 +11,9 @@ public class CreateUserRequestValidator : AbstractValidator<RegistrationRequest>
         RuleFor(e => e.BirthDate).NotEmpty().LessThan(DateTime.UtcNow.Date);
         RuleFor(e => e.FirstName).NotEmpty().MaximumLength(300);
         RuleFor(e => e.LastName).NotEmpty().MaximumLength(300);
+
+        RuleFor(e => e.Password).NotEmpty()
+            .MinimumLength(8).MaximumLength(50)
+            .Matches(@"^(?=.*[a-zA-Z])(?=.*\d).+$");
     }
 }

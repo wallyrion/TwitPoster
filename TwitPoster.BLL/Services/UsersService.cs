@@ -2,17 +2,18 @@
 using Microsoft.EntityFrameworkCore;
 using TwitPoster.BLL.Authentication;
 using TwitPoster.BLL.Exceptions;
+using TwitPoster.BLL.Interfaces;
 using TwitPoster.DAL;
 using TwitPoster.DAL.Models;
 
 namespace TwitPoster.BLL.Services;
 
-public class UserService
+public class UsersService : IUsersService
 {
     private readonly JwtTokenGenerator _tokenGenerator = new();
     private readonly TwitPosterContext _context;
 
-    public UserService(TwitPosterContext context)
+    public UsersService(TwitPosterContext context)
     {
         _context = context;
     }
@@ -45,7 +46,7 @@ public class UserService
             Email = email,
             BirthDate = birthDate,
             FirstName = firstName,
-            LastName = lastName,
+            LastName = lastName, 
             Password = password
         };
         _context.Users.Add(user);

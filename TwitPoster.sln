@@ -8,6 +8,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TwitPoster.BLL", "TwitPoste
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TwitPoster.Web.Tests", "TwitPoster.Web.Tests\TwitPoster.Web.Tests.csproj", "{55E39A8B-14F7-49CB-88BE-D88B59E294A0}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TwitPoster.BLL.Tests", "TwitPoster.BLL.Tests\TwitPoster.BLL.Tests.csproj", "{C09CCE9E-1EE1-44D8-B2A6-020DDE3FE21D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -30,5 +32,9 @@ Global
 		{55E39A8B-14F7-49CB-88BE-D88B59E294A0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{55E39A8B-14F7-49CB-88BE-D88B59E294A0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{55E39A8B-14F7-49CB-88BE-D88B59E294A0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C09CCE9E-1EE1-44D8-B2A6-020DDE3FE21D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C09CCE9E-1EE1-44D8-B2A6-020DDE3FE21D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C09CCE9E-1EE1-44D8-B2A6-020DDE3FE21D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C09CCE9E-1EE1-44D8-B2A6-020DDE3FE21D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
