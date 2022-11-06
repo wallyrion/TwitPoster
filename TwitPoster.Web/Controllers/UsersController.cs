@@ -39,4 +39,32 @@ public class UsersController : ControllerBase
     {
         await _usersService.Ban(userId);
     }
+    
+    [HttpPut("subscribe/{userId:int}")]
+    [Authorize]
+    public async Task Subscribe(int userId)
+    {
+        await _usersService.Subscribe(userId);
+    }
+    
+    [Authorize]
+    [HttpPut("unsubscribe/{userId:int}")]
+    public async Task Unsubscribe(int userId)
+    {
+        await _usersService.Unsubscribe(userId);
+    }
+    
+    [Authorize]
+    [HttpGet("subscriptions")]
+    public async Task<List<UserSubscription>> GetSubscriptions()
+    {
+        return await _usersService.GetSubscriptions();
+    }
+    
+    [Authorize]
+    [HttpGet("subscribers")]
+    public async Task<List<UserSubscription>> GetSubscribers()
+    {
+        return await _usersService.GetSubscribers();
+    }
 }

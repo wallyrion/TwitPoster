@@ -4,13 +4,13 @@
 
 namespace TwitPoster.DAL.Migrations
 {
-    public partial class User_IsBanned : Migration
+    public partial class User_Is_Banned : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AddColumn<bool>(
                 name: "IsBanned",
-                table: "Users",
+                table: "UserAccount",
                 type: "bit",
                 nullable: false,
                 defaultValue: false);
@@ -20,7 +20,7 @@ namespace TwitPoster.DAL.Migrations
         {
             migrationBuilder.DropColumn(
                 name: "IsBanned",
-                table: "Users");
+                table: "UserAccount");
         }
     }
 }

@@ -7,6 +7,7 @@ public sealed class TwitPosterContext : DbContext
 {
     public DbSet<Post> Posts => Set<Post>();
     public DbSet<User> Users => Set<User>();
+    public DbSet<UserSubscription> UserSubscriptions => Set<UserSubscription>();
 
     public TwitPosterContext (DbContextOptions<TwitPosterContext> options) : base(options)
     {
@@ -26,6 +27,20 @@ public sealed class TwitPosterContext : DbContext
                 builder.Property(user => user.LastName).HasMaxLength(300);
             });
 
+        modelBuilder.Entity<UserSubscription>(builder =>
+        {
+            builder.HasOne(e => e.Subscriber).WithMany()
+                .HasForeignKey(e => e.SubscriberId)
+                .OnDelete(DeleteBehavior.Cascade);
+            
+            builder.HasOne(e => e.Subscription).WithMany()
+                .HasForeignKey(e => e.SubscriptionId)
+                .OnDelete(DeleteBehavior.NoAction);
+            
+            builder.HasKey(e => new {e.SubscriberId, e.SubscriptionId});
+        });
+            
+        
         modelBuilder.Entity<UserAccount>(builder =>
         {
             builder.Property(userAccount => userAccount.Role)

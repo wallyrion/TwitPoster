@@ -5,6 +5,7 @@ using TwitPoster.BLL.Exceptions;
 using TwitPoster.BLL.Interfaces;
 using TwitPoster.DAL;
 using TwitPoster.DAL.Models;
+using TwitPoster.Web.Middlewares;
 
 namespace TwitPoster.BLL.Services;
 
@@ -12,10 +13,12 @@ public class UsersService : IUsersService
 {
     private readonly JwtTokenGenerator _tokenGenerator = new();
     private readonly TwitPosterContext _context;
+    private readonly ICurrentUser _currentUser;
 
-    public UsersService(TwitPosterContext context)
+    public UsersService(TwitPosterContext context, ICurrentUser currentUser)
     {
         _context = context;
+        _currentUser = currentUser;
     }
 
     public async Task<(int UserId, string AccessToken)> Login(string email, string password)
@@ -73,7 +76,56 @@ public class UsersService : IUsersService
             throw new TwitPosterValidationException("Not enough rights to ban this user");
         }
 
-        user.IsBanned = true;
+
+        user.UserAccount.IsBanned = true;
         await _context.SaveChangesAsync();
+    }
+
+
+    public async Task Subscribe(int userId)
+    {
+        var userToFollow = await _context.Users.FindAsync(userId);
+        
+        if (userToFollow == null)
+        {
+            throw new TwitPosterValidationException("User not found");
+        }
+        
+        var isAlreadySubscribed = await _context.UserSubscriptions.AnyAsync(s => s.SubscriberId == _currentUser.Id && s.SubscriptionId == userId);
+        
+        if (isAlreadySubscribed)
+        {
+            return;
+        }
+
+        await _context.UserSubscriptions.AddAsync(new UserSubscription
+        {
+            SubscriberId = _currentUser.Id,
+            SubscriptionId = userId,
+            SubscribedAt = DateTime.UtcNow
+        });
+            
+        await _context.SaveChangesAsync();
+    }
+
+    public async Task Unsubscribe(int userId)
+    {
+        var subscriptionToUnsubscribe = await _context.UserSubscriptions.FirstOrDefaultAsync(s => s.SubscriberId == _currentUser.Id && s.SubscriptionId == userId);
+        
+        if (subscriptionToUnsubscribe != null)
+        {
+            _context.UserSubscriptions.Remove(subscriptionToUnsubscribe);
+            await _context.SaveChangesAsync();
+        }
+    }
+
+    public async Task<List<UserSubscription>> GetSubscriptions()
+    {
+        return await _context.UserSubscriptions.Include(u => u.Subscription).Where(s => s.SubscriberId == _currentUser.Id).ToListAsync();
+    }
+
+    public async Task<List<UserSubscription>> GetSubscribers()
+    {
+        return await _context.UserSubscriptions.Include(u => u.Subscription).Where(s => s.SubscriptionId == _currentUser.Id).ToListAsync();
     }
 }

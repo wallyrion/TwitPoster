@@ -3,17 +3,19 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TwitPoster.DAL;
 
 #nullable disable
 
-namespace TwitPoster.Web.Migrations
+namespace TwitPoster.DAL.Migrations
 {
     [DbContext(typeof(TwitPosterContext))]
-    partial class TwitPosterContextModelSnapshot : ModelSnapshot
+    [Migration("20221106074940_User_Is_Banned")]
+    partial class User_Is_Banned
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -116,24 +118,6 @@ namespace TwitPoster.Web.Migrations
                     b.ToTable("UserAccount");
                 });
 
-            modelBuilder.Entity("TwitPoster.DAL.Models.UserSubscription", b =>
-                {
-                    b.Property<int>("SubscriberId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("SubscriptionId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("SubscribedAt")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("SubscriberId", "SubscriptionId");
-
-                    b.HasIndex("SubscriptionId");
-
-                    b.ToTable("UserSubscriptions");
-                });
-
             modelBuilder.Entity("TwitPoster.DAL.Models.Post", b =>
                 {
                     b.HasOne("TwitPoster.DAL.Models.User", "Author")
@@ -152,25 +136,6 @@ namespace TwitPoster.Web.Migrations
                         .HasForeignKey("TwitPoster.DAL.Models.UserAccount", "UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("TwitPoster.DAL.Models.UserSubscription", b =>
-                {
-                    b.HasOne("TwitPoster.DAL.Models.User", "Subscriber")
-                        .WithMany()
-                        .HasForeignKey("SubscriberId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("TwitPoster.DAL.Models.User", "Subscription")
-                        .WithMany()
-                        .HasForeignKey("SubscriptionId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.Navigation("Subscriber");
-
-                    b.Navigation("Subscription");
                 });
 
             modelBuilder.Entity("TwitPoster.DAL.Models.User", b =>

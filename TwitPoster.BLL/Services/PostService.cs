@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using TwitPoster.BLL.DTOs;
+using TwitPoster.BLL.Exceptions;
 using TwitPoster.BLL.Interfaces;
 using TwitPoster.BLL.Mappers;
 using TwitPoster.DAL;
@@ -30,6 +31,16 @@ public class PostService : IPostService
 
     public async Task<PostDto> CreatePost(string body)
     {
+        var isBanned = await _context.Users
+            .Where(u => u.Id == _currentUser.Id)
+            .Select(u => u.UserAccount.IsBanned)
+            .FirstOrDefaultAsync();
+        
+        if (isBanned)
+        {
+            throw new TwitPosterValidationException ("You are banned");
+        }
+        
         var post = new Post
         {
             AuthorId = _currentUser.Id,

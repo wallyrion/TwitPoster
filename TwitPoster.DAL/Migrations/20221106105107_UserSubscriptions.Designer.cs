@@ -12,8 +12,8 @@ using TwitPoster.DAL;
 namespace TwitPoster.DAL.Migrations
 {
     [DbContext(typeof(TwitPosterContext))]
-    [Migration("20221105231547_User_IsBanned")]
-    partial class User_IsBanned
+    [Migration("20221106105107_UserSubscriptions")]
+    partial class UserSubscriptions
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -73,9 +73,6 @@ namespace TwitPoster.DAL.Migrations
                         .HasMaxLength(300)
                         .HasColumnType("nvarchar(300)");
 
-                    b.Property<bool>("IsBanned")
-                        .HasColumnType("bit");
-
                     b.Property<string>("LastName")
                         .IsRequired()
                         .HasMaxLength(300)
@@ -96,6 +93,9 @@ namespace TwitPoster.DAL.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<bool>("IsBanned")
+                        .HasColumnType("bit");
 
                     b.Property<string>("Password")
                         .IsRequired()
@@ -118,6 +118,24 @@ namespace TwitPoster.DAL.Migrations
                     b.ToTable("UserAccount");
                 });
 
+            modelBuilder.Entity("TwitPoster.DAL.Models.UserSubscription", b =>
+                {
+                    b.Property<int>("SubscriberId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SubscriptionId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("SubscribedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("SubscriberId", "SubscriptionId");
+
+                    b.HasIndex("SubscriptionId");
+
+                    b.ToTable("UserSubscriptions");
+                });
+
             modelBuilder.Entity("TwitPoster.DAL.Models.Post", b =>
                 {
                     b.HasOne("TwitPoster.DAL.Models.User", "Author")
@@ -136,6 +154,25 @@ namespace TwitPoster.DAL.Migrations
                         .HasForeignKey("TwitPoster.DAL.Models.UserAccount", "UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("TwitPoster.DAL.Models.UserSubscription", b =>
+                {
+                    b.HasOne("TwitPoster.DAL.Models.User", "Subscriber")
+                        .WithMany()
+                        .HasForeignKey("SubscriberId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("TwitPoster.DAL.Models.User", "Subscription")
+                        .WithMany()
+                        .HasForeignKey("SubscriptionId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("Subscriber");
+
+                    b.Navigation("Subscription");
                 });
 
             modelBuilder.Entity("TwitPoster.DAL.Models.User", b =>

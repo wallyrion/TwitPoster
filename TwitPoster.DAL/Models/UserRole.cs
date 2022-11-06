@@ -7,7 +7,7 @@ public enum UserRole
     Admin = 50,
     DatabaseOwner = 100,
 }
-
+ 
 public static class UserRoles
 {
     public const string User = "User";
