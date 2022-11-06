@@ -54,4 +54,37 @@ public class PostService : IPostService
         var createdPost = await _context.Posts.Include(p => p.Author).FirstOrDefaultAsync(p => p.Id == post.Id);
         return createdPost!.ToDto();
     }
+
+    public async Task<List<PostComment>> GetComments(int postId)
+    {
+        return await _context.PostComments
+            .Include(p => p.Author)
+            .Where(c => c.PostId == postId)
+            .ToListAsync();
+    }
+
+    public async Task<PostComment> CreateComment(int postId, string text)
+    {
+        var post = await _context.Posts.FindAsync(postId);
+        if (post == null)
+        {
+            throw new TwitPosterValidationException("Post not found");
+        }
+
+        var newComment = new PostComment
+        {
+            Text = text,
+            AuthorId = _currentUser.Id,
+            CreatedAt = DateTime.UtcNow,
+            PostId = postId
+        };
+        await _context.PostComments.AddAsync(newComment);
+        await _context.SaveChangesAsync();
+        
+        var savedComment = await _context.PostComments
+            .Include(c => c.Author)
+            .FirstOrDefaultAsync(c => c.Id == newComment.Id);
+
+        return savedComment!;
+    }
 }

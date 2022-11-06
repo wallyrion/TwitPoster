@@ -8,6 +8,7 @@ public sealed class TwitPosterContext : DbContext
     public DbSet<Post> Posts => Set<Post>();
     public DbSet<User> Users => Set<User>();
     public DbSet<UserSubscription> UserSubscriptions => Set<UserSubscription>();
+    public DbSet<PostComment> PostComments => Set<PostComment>();
 
     public TwitPosterContext (DbContextOptions<TwitPosterContext> options) : base(options)
     {
@@ -47,6 +48,19 @@ public sealed class TwitPosterContext : DbContext
                 .HasConversion<string>()
                 .HasMaxLength(100);
             builder.Property(userAccount => userAccount.Password).HasMaxLength(50);
+        });
+
+        modelBuilder.Entity<PostComment>(builder =>
+        {
+            builder.HasOne(e => e.Author)
+                .WithMany()
+                .OnDelete(DeleteBehavior.Restrict);
+            builder.HasOne(e => e.Post)
+                .WithMany()
+                .OnDelete(DeleteBehavior.Cascade);
+            
+            builder.Property(c => c.Text)
+                .HasMaxLength(1000);
         });
     }
 }
