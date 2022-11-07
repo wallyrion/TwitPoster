@@ -1,13 +1,8 @@
-using Mapster;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using TwitPoster.BLL.Interfaces;
-using TwitPoster.DAL;
 using TwitPoster.DAL.Models;
-using TwitPoster.Web.Extensions;
 using TwitPoster.Web.Mappers;
-using TwitPoster.Web.Middlewares;
 using TwitPoster.Web.ViewModels;
 using TwitPoster.Web.ViewModels.Post;
 
@@ -38,6 +33,12 @@ public class PostsController : ControllerBase
     {
         return await _postService.GetComments(postId);
     }
+    
+    // [HttpPut("{postId:int}/like")]
+    // public async Task<int> LikePost(int postId)
+    // {
+    //     //return await _postService.LikePost(postId);
+    // }
     
     [HttpPost("{postId:int}/comments")]
     [Authorize]
