@@ -23,6 +23,7 @@ public class PostService : IPostService
     public async Task<List<PostDto>> GetPosts()
     {
         var posts = await _context.Posts.Include(p => p.Author)
+            .Include(e => e.Likes)
             .Select(p => p.ToDto())
             .ToListAsync();
 
@@ -86,5 +87,31 @@ public class PostService : IPostService
             .FirstOrDefaultAsync(c => c.Id == newComment.Id);
 
         return savedComment!;
+    }
+
+    public async Task<int> LikePost(int postId)
+    {
+        var post = await _context.Posts.FindAsync(postId);
+        if (post == null)
+        {
+            throw new TwitPosterValidationException("Post not found");
+        }
+        
+        var like = await _context.PostLikes
+            .AnyAsync(l => l.PostId == postId && l.UserId == _currentUser.Id);
+
+        if (like)
+        {
+            return _context.PostLikes.Count(p => p.PostId == postId);
+        }
+        
+        var newLike = new PostLike
+        {
+            PostId = postId,
+            UserId = _currentUser.Id
+        };
+        await _context.PostLikes.AddAsync(newLike);
+        await _context.SaveChangesAsync();
+        return _context.PostLikes.Count(p => p.PostId == postId);
     }
 }

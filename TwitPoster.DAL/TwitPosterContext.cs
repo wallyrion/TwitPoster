@@ -9,6 +9,7 @@ public sealed class TwitPosterContext : DbContext
     public DbSet<User> Users => Set<User>();
     public DbSet<UserSubscription> UserSubscriptions => Set<UserSubscription>();
     public DbSet<PostComment> PostComments => Set<PostComment>();
+    public DbSet<PostLike> PostLikes => Set<PostLike>();
 
     public TwitPosterContext (DbContextOptions<TwitPosterContext> options) : base(options)
     {
@@ -61,6 +62,21 @@ public sealed class TwitPosterContext : DbContext
             
             builder.Property(c => c.Text)
                 .HasMaxLength(1000);
+        });
+        
+        modelBuilder.Entity<PostLike>(builder =>
+        {
+            builder.HasOne(e => e.User)
+                .WithMany()
+                .HasForeignKey(p => p.UserId)
+                .OnDelete(DeleteBehavior.Restrict);
+            
+            builder.HasOne(e => e.Post)
+                .WithMany(p => p.Likes)
+                .HasForeignKey(p => p.PostId)
+                .OnDelete(DeleteBehavior.Cascade);
+            
+            builder.HasKey(e => new {e.UserId, e.PostId}).IsClustered();
         });
     }
 }

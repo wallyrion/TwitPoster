@@ -34,11 +34,12 @@ public class PostsController : ControllerBase
         return await _postService.GetComments(postId);
     }
     
-    // [HttpPut("{postId:int}/like")]
-    // public async Task<int> LikePost(int postId)
-    // {
-    //     //return await _postService.LikePost(postId);
-    // }
+    [HttpPut("{postId:int}/like")]
+    [Authorize]
+    public async Task<int> LikePost(int postId)
+    {
+        return await _postService.LikePost(postId);
+    }
     
     [HttpPost("{postId:int}/comments")]
     [Authorize]
