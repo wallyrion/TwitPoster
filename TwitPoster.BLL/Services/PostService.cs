@@ -87,4 +87,30 @@ public class PostService : IPostService
 
         return savedComment!;
     }
+
+    public async Task<int> LikePost(int postId)
+    {
+        var post = await _context.Posts.FindAsync(postId);
+        if (post == null)
+        {
+            throw new TwitPosterValidationException("Post not found");
+        }
+
+        post.LikesCount++;
+        await _context.SaveChangesAsync();
+        return post.LikesCount;
+    }
+
+    public int LikePostNotAsync(int postId)
+    {
+        var post = _context.Posts.Find(postId);
+        if (post == null)
+        {
+            throw new TwitPosterValidationException("Post not found");
+        }
+
+        post.LikesCount++;
+        _context.SaveChanges();
+        return post.LikesCount;
+    }
 }

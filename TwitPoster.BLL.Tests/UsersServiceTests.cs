@@ -20,7 +20,7 @@ public class UsersServiceTests
             .UseInMemoryDatabase($"DB{Guid.NewGuid()}")
             .Options;
         _context = new TwitPosterContext(options);
-        _sut = new UsersService(_context, null);
+        _sut = new UsersService(_context, null!);
     }
     
     [Fact]
