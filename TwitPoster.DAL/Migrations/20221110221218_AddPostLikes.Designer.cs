@@ -12,7 +12,7 @@ using TwitPoster.DAL;
 namespace TwitPoster.DAL.Migrations
 {
     [DbContext(typeof(TwitPosterContext))]
-    [Migration("20221108220155_AddPostLikes")]
+    [Migration("20221110221218_AddPostLikes")]
     partial class AddPostLikes
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -41,9 +41,6 @@ namespace TwitPoster.DAL.Migrations
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
-
-                    b.Property<int>("LikesCount")
-                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -223,7 +220,7 @@ namespace TwitPoster.DAL.Migrations
             modelBuilder.Entity("TwitPoster.DAL.Models.PostLike", b =>
                 {
                     b.HasOne("TwitPoster.DAL.Models.Post", "Post")
-                        .WithMany("Likes")
+                        .WithMany("PostLikes")
                         .HasForeignKey("PostId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -269,7 +266,7 @@ namespace TwitPoster.DAL.Migrations
 
             modelBuilder.Entity("TwitPoster.DAL.Models.Post", b =>
                 {
-                    b.Navigation("Likes");
+                    b.Navigation("PostLikes");
                 });
 
             modelBuilder.Entity("TwitPoster.DAL.Models.User", b =>

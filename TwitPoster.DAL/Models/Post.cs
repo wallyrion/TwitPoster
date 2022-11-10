@@ -10,16 +10,7 @@ public class Post
 
     public User Author { get; set; } = null!;
     public int AuthorId { get; set; }
-    public int LikesCount { get; set; }
-    
-    public List<PostLike> Likes { get; set; } = null!;
-}
+    //public int LikesCount { get; set; }
 
-public class PostLike
-{
-    public Post Post { get; set; } = null!;
-    public int PostId { get; set; }
-
-    public User User { get; set; } = null!;
-    public int UserId { get; set; }
+    public List<PostLike> PostLikes { get; set; } = new();
 }

@@ -22,12 +22,54 @@ public class PostService : IPostService
 
     public async Task<List<PostDto>> GetPosts()
     {
-        var posts = await _context.Posts.Include(p => p.Author)
-            .Include(e => e.Likes)
+        var postsF = await _context.Posts
+            .Include(p => p.Author)
+            .Include(p => p.PostLikes)
+            .Select(p => new
+            {
+                p.Id,
+                Count = p.PostLikes.Count,
+                IsLiked = p.PostLikes.Any(pl => pl.UserId == _currentUser.Id),
+            })
+            .ToListAsync();
+        
+        var postsB = await _context.Posts
+            .Include(p => p.Author)
+            .Include(p => p.PostLikes)
+            .Select(p => new
+            {
+                p.Id,
+                Count = p.PostLikes.Count,
+                IsLiked = p.PostLikes.Any(pl => pl.UserId == _currentUser.Id),
+            })
+            .ToListAsync();
+        
+        
+        // var postsC = await _context.Posts
+        //     .Include(p => p.Author)
+        //     .Include(p => p.PostLikes)
+        //     .Select(p => new PostDto(p.Id, p.Body, p.CreatedAt, p.Author.FirstName, p.Author.LastName, p.AuthorId, p.PostLikes.Count))
+        //     .ToListAsync();
+
+        var postsD = await _context.Posts
+            .Include(p => p.Author)
+            .Select(p => p.ToDto(p.PostLikes.Count, p.PostLikes.Any(l => l.UserId == _currentUser.Id)))
+            .ToListAsync();
+
+        var postsDy = await _context.Posts
+            .Include(p => p.Author)
+            .Include(e => e.PostLikes)
             .Select(p => p.ToDto())
             .ToListAsync();
 
-        return posts;
+        
+        // var posts = await _context.Posts
+        //     .Include(p => p.Author)
+        //     .Include(p => p.PostLikes)
+        //     .Select(p => p.ToDto())
+        //     .ToListAsync();
+
+        return postsD;
     }
 
     public async Task<PostDto> CreatePost(string body)
@@ -97,12 +139,12 @@ public class PostService : IPostService
             throw new TwitPosterValidationException("Post not found");
         }
         
-        var like = await _context.PostLikes
-            .AnyAsync(l => l.PostId == postId && l.UserId == _currentUser.Id);
+        var isLiked = await _context.PostLikes
+            .AnyAsync(like => like.PostId == postId && like.UserId == _currentUser.Id);
 
-        if (like)
+        if (isLiked)
         {
-            return _context.PostLikes.Count(p => p.PostId == postId);
+            return _context.PostLikes.Count(like => like.PostId == postId);
         }
         
         var newLike = new PostLike
@@ -110,8 +152,10 @@ public class PostService : IPostService
             PostId = postId,
             UserId = _currentUser.Id
         };
-        await _context.PostLikes.AddAsync(newLike);
+        
+        _context.PostLikes.Add(newLike);
         await _context.SaveChangesAsync();
-        return _context.PostLikes.Count(p => p.PostId == postId);
+        
+        return _context.PostLikes.Count(like => like.PostId == postId);
     }
 }

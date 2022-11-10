@@ -8,6 +8,10 @@ namespace TwitPoster.DAL.Migrations
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropColumn(
+                name: "LikesCount",
+                table: "Posts");
+
             migrationBuilder.CreateTable(
                 name: "PostLikes",
                 columns: table => new
@@ -43,6 +47,13 @@ namespace TwitPoster.DAL.Migrations
         {
             migrationBuilder.DropTable(
                 name: "PostLikes");
+
+            migrationBuilder.AddColumn<int>(
+                name: "LikesCount",
+                table: "Posts",
+                type: "int",
+                nullable: false,
+                defaultValue: 0);
         }
     }
 }

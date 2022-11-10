@@ -72,7 +72,7 @@ public sealed class TwitPosterContext : DbContext
                 .OnDelete(DeleteBehavior.Restrict);
             
             builder.HasOne(e => e.Post)
-                .WithMany(p => p.Likes)
+                .WithMany(p => p.PostLikes)
                 .HasForeignKey(p => p.PostId)
                 .OnDelete(DeleteBehavior.Cascade);
             

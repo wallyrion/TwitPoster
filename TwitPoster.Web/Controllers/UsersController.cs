@@ -26,6 +26,7 @@ public class UsersController : ControllerBase
         return this.ToOk(registerResponse, result => new RegistrationResponse(result.UserId, result.AccessToken));
     }
     
+    
     [HttpPost("login")]
     public async Task<ActionResult> Login(LoginRequest request)
     {
