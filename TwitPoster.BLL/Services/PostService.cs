@@ -22,54 +22,13 @@ public class PostService : IPostService
 
     public async Task<List<PostDto>> GetPosts()
     {
-        var postsF = await _context.Posts
+        var posts = await _context.Posts
             .Include(p => p.Author)
             .Include(p => p.PostLikes)
-            .Select(p => new
-            {
-                p.Id,
-                Count = p.PostLikes.Count,
-                IsLiked = p.PostLikes.Any(pl => pl.UserId == _currentUser.Id),
-            })
-            .ToListAsync();
-        
-        var postsB = await _context.Posts
-            .Include(p => p.Author)
-            .Include(p => p.PostLikes)
-            .Select(p => new
-            {
-                p.Id,
-                Count = p.PostLikes.Count,
-                IsLiked = p.PostLikes.Any(pl => pl.UserId == _currentUser.Id),
-            })
-            .ToListAsync();
-        
-        
-        // var postsC = await _context.Posts
-        //     .Include(p => p.Author)
-        //     .Include(p => p.PostLikes)
-        //     .Select(p => new PostDto(p.Id, p.Body, p.CreatedAt, p.Author.FirstName, p.Author.LastName, p.AuthorId, p.PostLikes.Count))
-        //     .ToListAsync();
-
-        var postsD = await _context.Posts
-            .Include(p => p.Author)
-            .Select(p => p.ToDto(p.PostLikes.Count, p.PostLikes.Any(l => l.UserId == _currentUser.Id)))
+            .Select(p => p.ToDto(_currentUser.Id))
             .ToListAsync();
 
-        var postsDy = await _context.Posts
-            .Include(p => p.Author)
-            .Include(e => e.PostLikes)
-            .Select(p => p.ToDto())
-            .ToListAsync();
-
-        
-        // var posts = await _context.Posts
-        //     .Include(p => p.Author)
-        //     .Include(p => p.PostLikes)
-        //     .Select(p => p.ToDto())
-        //     .ToListAsync();
-
-        return postsD;
+        return posts;
     }
 
     public async Task<PostDto> CreatePost(string body)
@@ -95,15 +54,7 @@ public class PostService : IPostService
         await _context.SaveChangesAsync();
 
         var createdPost = await _context.Posts.Include(p => p.Author).FirstOrDefaultAsync(p => p.Id == post.Id);
-        return createdPost!.ToDto();
-    }
-
-    public async Task<List<PostComment>> GetComments(int postId)
-    {
-        return await _context.PostComments
-            .Include(p => p.Author)
-            .Where(c => c.PostId == postId)
-            .ToListAsync();
+        return createdPost!.ToDto(_currentUser.Id);
     }
 
     public async Task<PostComment> CreateComment(int postId, string text)
@@ -157,5 +108,37 @@ public class PostService : IPostService
         await _context.SaveChangesAsync();
         
         return _context.PostLikes.Count(like => like.PostId == postId);
+    }
+
+    public async Task<int> UnlikePost(int postId)
+    {
+        var post = await _context.Posts.FindAsync(postId);
+        if (post == null)
+        {
+            throw new TwitPosterValidationException("Post not found");
+        }
+        
+        var existingLike = await _context.PostLikes
+            .FirstOrDefaultAsync(like => like.PostId == postId && like.UserId == _currentUser.Id);
+
+        if (existingLike == null)
+        {
+            return _context.PostLikes.Count(like => like.PostId == postId);
+        }
+        
+        _context.PostLikes.Remove(existingLike);
+        await _context.SaveChangesAsync();
+        
+        return _context.PostLikes.Count(like => like.PostId == postId);
+    }
+
+    public async Task<IEnumerable<PostComment>> GetComments(int postId, int pageSize, int pageNumber)
+    {
+        return await _context.PostComments
+            .Include(p => p.Author)
+            .Where(c => c.PostId == postId)
+            .Skip(pageSize * (pageNumber - 1))
+            .Take(pageSize)
+            .ToListAsync();
     }
 }
