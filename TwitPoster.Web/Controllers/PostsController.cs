@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TwitPoster.BLL.Interfaces;
@@ -29,16 +30,27 @@ public class PostsController : ControllerBase
     }
     
     [HttpGet("{postId:int}/comments")]
-    public async Task<IEnumerable<PostComment>> GetComments(int postId)
+    public async Task<IEnumerable<PostComment>> GetComments(
+        int postId,
+        [Range(1, 1000)] int pageSize = 5,
+        [Range(1, int.MaxValue)] int pageNumber = 1)
     {
-        return await _postService.GetComments(postId);
+        return await _postService.GetComments(postId, pageSize, pageNumber);
     }
     
-    // [HttpPut("{postId:int}/like")]
-    // public async Task<int> LikePost(int postId)
-    // {
-    //     //return await _postService.LikePost(postId);
-    // }
+    [HttpPut("{postId:int}/like")]
+    [Authorize]
+    public async Task<int> LikePost(int postId)
+    {
+        return await _postService.LikePost(postId);
+    }
+    
+    [HttpPut("{postId:int}/unlike")]
+    [Authorize]
+    public async Task<int> UnlikePost(int postId)
+    {
+        return await _postService.UnlikePost(postId);
+    }
     
     [HttpPost("{postId:int}/comments")]
     [Authorize]

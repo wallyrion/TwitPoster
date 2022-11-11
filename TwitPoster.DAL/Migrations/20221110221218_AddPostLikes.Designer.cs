@@ -3,17 +3,19 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TwitPoster.DAL;
 
 #nullable disable
 
-namespace TwitPoster.Web.Migrations
+namespace TwitPoster.DAL.Migrations
 {
     [DbContext(typeof(TwitPosterContext))]
-    partial class TwitPosterContextModelSnapshot : ModelSnapshot
+    [Migration("20221110221218_AddPostLikes")]
+    partial class AddPostLikes
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -44,7 +46,7 @@ namespace TwitPoster.Web.Migrations
 
                     b.HasIndex("AuthorId");
 
-                    b.ToTable("Posts", (string)null);
+                    b.ToTable("Posts");
                 });
 
             modelBuilder.Entity("TwitPoster.DAL.Models.PostComment", b =>
@@ -78,7 +80,7 @@ namespace TwitPoster.Web.Migrations
 
                     b.HasIndex("PostId");
 
-                    b.ToTable("PostComments", (string)null);
+                    b.ToTable("PostComments");
                 });
 
             modelBuilder.Entity("TwitPoster.DAL.Models.PostLike", b =>
@@ -95,7 +97,7 @@ namespace TwitPoster.Web.Migrations
 
                     b.HasIndex("PostId");
 
-                    b.ToTable("PostLikes", (string)null);
+                    b.ToTable("PostLikes");
                 });
 
             modelBuilder.Entity("TwitPoster.DAL.Models.User", b =>
@@ -132,7 +134,7 @@ namespace TwitPoster.Web.Migrations
                     b.HasIndex("Email")
                         .IsUnique();
 
-                    b.ToTable("Users", (string)null);
+                    b.ToTable("Users");
                 });
 
             modelBuilder.Entity("TwitPoster.DAL.Models.UserAccount", b =>
@@ -164,7 +166,7 @@ namespace TwitPoster.Web.Migrations
                     b.HasIndex("UserId")
                         .IsUnique();
 
-                    b.ToTable("UserAccount", (string)null);
+                    b.ToTable("UserAccount");
                 });
 
             modelBuilder.Entity("TwitPoster.DAL.Models.UserSubscription", b =>
@@ -182,7 +184,7 @@ namespace TwitPoster.Web.Migrations
 
                     b.HasIndex("SubscriptionId");
 
-                    b.ToTable("UserSubscriptions", (string)null);
+                    b.ToTable("UserSubscriptions");
                 });
 
             modelBuilder.Entity("TwitPoster.DAL.Models.Post", b =>
