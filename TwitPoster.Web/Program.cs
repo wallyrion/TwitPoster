@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 using TwitPoster.BLL.Interfaces;
@@ -12,7 +13,9 @@ builder.Host.UseSerilog((ctx, lc) => lc
     .ReadFrom.Configuration(ctx.Configuration)
     .Enrich.FromLogContext());
 
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddJsonOptions(options => options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles)
+    ;
 
 builder.Services
 
@@ -32,7 +35,8 @@ builder.Services
 
 var app = builder.Build();
 
-app.MapControllers();
+app.MapControllers()
+    .RequireAuthorization();
 
 app
     .InDevelopment(b =>

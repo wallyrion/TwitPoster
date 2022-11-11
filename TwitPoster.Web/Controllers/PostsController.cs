@@ -23,6 +23,7 @@ public class PostsController : ControllerBase
     }
 
     [HttpGet]
+    [AllowAnonymous]
     public async Task<IEnumerable<PostViewModel>> Get()
     {
         var posts = await _postService.GetPosts();
@@ -30,6 +31,7 @@ public class PostsController : ControllerBase
     }
     
     [HttpGet("{postId:int}/comments")]
+    [AllowAnonymous]
     public async Task<IEnumerable<PostComment>> GetComments(
         int postId,
         [Range(1, 1000)] int pageSize = 5,
@@ -39,28 +41,24 @@ public class PostsController : ControllerBase
     }
     
     [HttpPut("{postId:int}/like")]
-    [Authorize]
     public async Task<int> LikePost(int postId)
     {
         return await _postService.LikePost(postId);
     }
     
     [HttpPut("{postId:int}/unlike")]
-    [Authorize]
     public async Task<int> UnlikePost(int postId)
     {
         return await _postService.UnlikePost(postId);
     }
     
     [HttpPost("{postId:int}/comments")]
-    [Authorize]
     public async Task<PostComment> CreateComment(int postId, CreateCommentRequest request)
     {
         return await _postService.CreateComment(postId, request.Text);
     }
     
     [HttpPost]
-    [Authorize]
     public async Task<PostViewModel> Create(CreatePostRequest request)
     {
         var postDto = await _postService.CreatePost(request.Body);

@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using TwitPoster.BLL.DTOs;
 using TwitPoster.BLL.Interfaces;
 using TwitPoster.DAL.Models;
 using TwitPoster.Web.Extensions;
@@ -18,7 +19,15 @@ public class UsersController : ControllerBase
         _usersService = usersService;
     }
 
+    [HttpGet("me")]
+    [Authorize]
+    public async Task<ActionResult<AccountDetailDto>> GetCurrentUser()
+    {
+        return await _usersService.GetCurrentAccountDetail();
+    }
+
     [HttpPost("registration")]
+    [AllowAnonymous]
     public async Task<ActionResult<RegistrationResponse>> Register(RegistrationRequest request)
     {
         var registerResponse = await _usersService.Register(request.FirstName, request.LastName, request.BirthDate, request.Email, request.Password);
@@ -26,8 +35,8 @@ public class UsersController : ControllerBase
         return this.ToOk(registerResponse, result => new RegistrationResponse(result.UserId, result.AccessToken));
     }
     
-    
     [HttpPost("login")]
+    [AllowAnonymous]
     public async Task<ActionResult> Login(LoginRequest request)
     {
         var loginResponse = await _usersService.Login(request.Email, request.Password);
@@ -42,27 +51,23 @@ public class UsersController : ControllerBase
     }
     
     [HttpPut("subscribe/{userId:int}")]
-    [Authorize]
     public async Task Subscribe(int userId)
     {
         await _usersService.Subscribe(userId);
     }
     
-    [Authorize]
     [HttpPut("unsubscribe/{userId:int}")]
     public async Task Unsubscribe(int userId)
     {
         await _usersService.Unsubscribe(userId);
     }
     
-    [Authorize]
     [HttpGet("subscriptions")]
     public async Task<List<UserSubscription>> GetSubscriptions()
     {
         return await _usersService.GetSubscriptions();
     }
     
-    [Authorize]
     [HttpGet("subscribers")]
     public async Task<List<UserSubscription>> GetSubscribers()
     {

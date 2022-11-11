@@ -1,4 +1,5 @@
 ﻿using LanguageExt.Common;
+using TwitPoster.BLL.DTOs;
 using TwitPoster.DAL.Models;
 
 namespace TwitPoster.BLL.Interfaces;
@@ -12,4 +13,5 @@ public interface IUsersService
     Task Unsubscribe(int userId);
     Task<List<UserSubscription>> GetSubscriptions();
     Task<List<UserSubscription>> GetSubscribers();
+    Task<AccountDetailDto> GetCurrentAccountDetail();
 }

@@ -1,8 +1,10 @@
 ﻿using LanguageExt.Common;
 using Microsoft.EntityFrameworkCore;
 using TwitPoster.BLL.Authentication;
+using TwitPoster.BLL.DTOs;
 using TwitPoster.BLL.Exceptions;
 using TwitPoster.BLL.Interfaces;
+using TwitPoster.BLL.Mappers;
 using TwitPoster.DAL;
 using TwitPoster.DAL.Models;
 using TwitPoster.Web.Middlewares;
@@ -81,7 +83,6 @@ public class UsersService : IUsersService
         await _context.SaveChangesAsync();
     }
 
-
     public async Task Subscribe(int userId)
     {
         var userToFollow = await _context.Users.FindAsync(userId);
@@ -127,5 +128,12 @@ public class UsersService : IUsersService
     public async Task<List<UserSubscription>> GetSubscribers()
     {
         return await _context.UserSubscriptions.Include(u => u.Subscription).Where(s => s.SubscriptionId == _currentUser.Id).ToListAsync();
+    }
+
+    public async Task<AccountDetailDto> GetCurrentAccountDetail()
+    {
+        var currentUser = await _context.Users.Include(u => u.UserAccount).FirstAsync(u => u.Id == _currentUser.Id);
+
+        return currentUser.ToAccountDetailDto();
     }
 }
