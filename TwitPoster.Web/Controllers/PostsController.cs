@@ -30,7 +30,10 @@ public class PostsController : ControllerBase
     }
     
     [HttpGet("{postId:int}/comments")]
-    public async Task<IEnumerable<PostComment>> GetComments(int postId, int pageSize = 5, int pageNumber = 1)
+    public async Task<IEnumerable<PostComment>> GetComments(
+        int postId,
+        [Range(1, 1000)] int pageSize = 5,
+        [Range(1, int.MaxValue)] int pageNumber = 1)
     {
         return await _postService.GetComments(postId, pageSize, pageNumber);
     }

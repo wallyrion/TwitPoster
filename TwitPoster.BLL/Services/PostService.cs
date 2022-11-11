@@ -25,6 +25,7 @@ public class PostService : IPostService
         var posts = await _context.Posts
             .Include(p => p.Author)
             .Include(p => p.PostLikes)
+            .Include(p => p.Comments)
             .Select(p => p.ToDto(_currentUser.Id))
             .ToListAsync();
 
@@ -137,6 +138,7 @@ public class PostService : IPostService
         return await _context.PostComments
             .Include(p => p.Author)
             .Where(c => c.PostId == postId)
+            .OrderByDescending(c => c.CreatedAt)
             .Skip(pageSize * (pageNumber - 1))
             .Take(pageSize)
             .ToListAsync();
