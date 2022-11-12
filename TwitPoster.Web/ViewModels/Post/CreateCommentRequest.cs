@@ -2,4 +2,4 @@
 
 namespace TwitPoster.Web.ViewModels.Post;
 
-public record CreateCommentRequest([MaxLength(1000)] string Text);
+public record CreateCommentRequest([MaxLength(20000)] string Text);

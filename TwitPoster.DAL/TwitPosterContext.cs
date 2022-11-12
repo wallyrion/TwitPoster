@@ -62,7 +62,7 @@ public sealed class TwitPosterContext : DbContext
                 .OnDelete(DeleteBehavior.Cascade);
             
             builder.Property(c => c.Text)
-                .HasMaxLength(1000);
+                .HasMaxLength(20000);
         });
         
         modelBuilder.Entity<PostLike>(builder =>

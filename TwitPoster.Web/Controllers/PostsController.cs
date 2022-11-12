@@ -68,6 +68,4 @@ public class PostsController : ControllerBase
         
         return postDto.ToViewModel();
     }
-    
-    
 }
