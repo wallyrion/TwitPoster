@@ -44,7 +44,7 @@ namespace TwitPoster.Web.Migrations
 
                     b.HasIndex("AuthorId");
 
-                    b.ToTable("Posts");
+                    b.ToTable("Posts", (string)null);
                 });
 
             modelBuilder.Entity("TwitPoster.DAL.Models.PostComment", b =>
@@ -78,7 +78,7 @@ namespace TwitPoster.Web.Migrations
 
                     b.HasIndex("PostId");
 
-                    b.ToTable("PostComments");
+                    b.ToTable("PostComments", (string)null);
                 });
 
             modelBuilder.Entity("TwitPoster.DAL.Models.PostLike", b =>
@@ -95,7 +95,7 @@ namespace TwitPoster.Web.Migrations
 
                     b.HasIndex("PostId");
 
-                    b.ToTable("PostLikes");
+                    b.ToTable("PostLikes", (string)null);
                 });
 
             modelBuilder.Entity("TwitPoster.DAL.Models.User", b =>
@@ -132,7 +132,7 @@ namespace TwitPoster.Web.Migrations
                     b.HasIndex("Email")
                         .IsUnique();
 
-                    b.ToTable("Users");
+                    b.ToTable("Users", (string)null);
 
                     b.HasData(
                         new
@@ -193,7 +193,7 @@ namespace TwitPoster.Web.Migrations
                     b.HasIndex("UserId")
                         .IsUnique();
 
-                    b.ToTable("UserAccount");
+                    b.ToTable("UserAccount", (string)null);
 
                     b.HasData(
                         new
@@ -237,7 +237,7 @@ namespace TwitPoster.Web.Migrations
 
                     b.HasIndex("SubscriptionId");
 
-                    b.ToTable("UserSubscriptions");
+                    b.ToTable("UserSubscriptions", (string)null);
                 });
 
             modelBuilder.Entity("TwitPoster.DAL.Models.Post", b =>
