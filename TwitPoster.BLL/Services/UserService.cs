@@ -1,5 +1,6 @@
 ﻿using LanguageExt.Common;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Conventions;
 using TwitPoster.BLL.Authentication;
 using TwitPoster.BLL.DTOs;
 using TwitPoster.BLL.Exceptions;
@@ -11,13 +12,13 @@ using TwitPoster.Web.Middlewares;
 
 namespace TwitPoster.BLL.Services;
 
-public class UsersService : IUsersService
+public class UserService : IUsersService
 {
     private readonly JwtTokenGenerator _tokenGenerator = new();
     private readonly TwitPosterContext _context;
     private readonly ICurrentUser _currentUser;
 
-    public UsersService(TwitPosterContext context, ICurrentUser currentUser)
+    public UserService(TwitPosterContext context, ICurrentUser currentUser)
     {
         _context = context;
         _currentUser = currentUser;

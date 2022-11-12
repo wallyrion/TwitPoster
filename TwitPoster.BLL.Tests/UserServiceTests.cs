@@ -8,19 +8,19 @@ using TwitPoster.DAL.Models;
 
 namespace TwitPoster.BLL.Tests;
 
-public class UsersServiceTests
+public class UserServiceTests
 {
     private readonly TwitPosterContext _context;
-    private readonly UsersService _sut;
+    private readonly UserService _sut;
     private readonly Fixture _fixture = new();
     
-    public UsersServiceTests()
+    public UserServiceTests()
     {
         var options = new DbContextOptionsBuilder<TwitPosterContext>()
             .UseInMemoryDatabase($"DB{Guid.NewGuid()}")
             .Options;
         _context = new TwitPosterContext(options);
-        _sut = new UsersService(_context, null!);
+        _sut = new UserService(_context, null!);
     }
     
     [Fact]

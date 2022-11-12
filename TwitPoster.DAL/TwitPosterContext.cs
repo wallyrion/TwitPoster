@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using TwitPoster.DAL.Models;
+using TwitPoster.DAL.Seeding;
 
 namespace TwitPoster.DAL;
 
@@ -79,5 +80,7 @@ public sealed class TwitPosterContext : DbContext
             
             builder.HasKey(e => new {e.UserId, e.PostId}).IsClustered();
         });
+
+        modelBuilder.SeedUsers();
     }
 }

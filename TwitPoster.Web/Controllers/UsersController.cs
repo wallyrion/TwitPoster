@@ -3,8 +3,6 @@ using Microsoft.AspNetCore.Mvc;
 using TwitPoster.BLL.DTOs;
 using TwitPoster.BLL.Interfaces;
 using TwitPoster.DAL.Models;
-using TwitPoster.Web.Extensions;
-using TwitPoster.Web.ViewModels;
 
 namespace TwitPoster.Web.Controllers;
 
@@ -20,29 +18,11 @@ public class UsersController : ControllerBase
     }
 
     [HttpGet("me")]
-    [Authorize]
     public async Task<ActionResult<AccountDetailDto>> GetCurrentUser()
     {
         return await _usersService.GetCurrentAccountDetail();
     }
 
-    [HttpPost("registration")]
-    [AllowAnonymous]
-    public async Task<ActionResult<RegistrationResponse>> Register(RegistrationRequest request)
-    {
-        var registerResponse = await _usersService.Register(request.FirstName, request.LastName, request.BirthDate, request.Email, request.Password);
-
-        return this.ToOk(registerResponse, result => new RegistrationResponse(result.UserId, result.AccessToken));
-    }
-    
-    [HttpPost("login")]
-    [AllowAnonymous]
-    public async Task<ActionResult> Login(LoginRequest request)
-    {
-        var loginResponse = await _usersService.Login(request.Email, request.Password);
-        return Ok(new RegistrationResponse(loginResponse.UserId, loginResponse.AccessToken));
-    }
-    
     [HttpPut("ban/{userId:int}")]
     [Authorize(Roles = UserRoles.Admin)]
     public async Task Ban (int userId)

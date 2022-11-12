@@ -9,13 +9,13 @@ using TwitPoster.Web.ViewModels;
 
 namespace TwitPoster.Web.Tests;
 
-public class UsersControllerTests
+public class AuthControllerTests
 {
     private readonly Mock<IUsersService> _userServiceMock = new();
-    private readonly UsersController _sut;
-    public UsersControllerTests()
+    private readonly AuthController _sut;
+    public AuthControllerTests()
     {
-        _sut = new UsersController(_userServiceMock.Object);
+        _sut = new AuthController(_userServiceMock.Object);
     }
     
     [Fact]
@@ -68,7 +68,7 @@ public class UsersControllerTests
         var usersServiceMock = new Mock<IUsersService>();
         var usersService = usersServiceMock.Object;
         
-        var sut = new UsersController(usersService);
+        var sut = new AuthController(usersService);
 
         var loginRequest = new LoginRequest("kornienko1296@gmail.com", "password");
         
