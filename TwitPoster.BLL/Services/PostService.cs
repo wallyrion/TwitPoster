@@ -133,7 +133,7 @@ public class PostService : IPostService
         return _context.PostLikes.Count(like => like.PostId == postId);
     }
 
-    public async Task<IEnumerable<PostComment>> GetComments(int postId, int pageSize, int pageNumber)
+    public async Task<IEnumerable<PostCommentDto>> GetComments(int postId, int pageSize, int pageNumber)
     {
         return await _context.PostComments
             .Include(p => p.Author)
@@ -141,6 +141,7 @@ public class PostService : IPostService
             .OrderByDescending(c => c.CreatedAt)
             .Skip(pageSize * (pageNumber - 1))
             .Take(pageSize)
+            .Select(c => c.ToDto())
             .ToListAsync();
     }
 }

@@ -56,8 +56,9 @@ public sealed class TwitPosterContext : DbContext
             builder.HasOne(e => e.Author)
                 .WithMany()
                 .OnDelete(DeleteBehavior.Restrict);
-            builder.HasOne(e => e.Post)
+            builder.HasOne<Post>()
                 .WithMany(e => e.Comments)
+                .HasForeignKey(e => e.PostId)
                 .OnDelete(DeleteBehavior.Cascade);
             
             builder.Property(c => c.Text)

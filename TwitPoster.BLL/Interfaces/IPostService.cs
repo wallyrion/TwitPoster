@@ -10,5 +10,5 @@ public interface IPostService
     Task<PostComment> CreateComment(int postId, string text);
     Task<int> LikePost(int postId);
     Task<int> UnlikePost(int postId);
-    Task<IEnumerable<PostComment>> GetComments(int postId, int pageSize, int pageNumber);
+    Task<IEnumerable<PostCommentDto>> GetComments(int postId, int pageSize, int pageNumber);
 }

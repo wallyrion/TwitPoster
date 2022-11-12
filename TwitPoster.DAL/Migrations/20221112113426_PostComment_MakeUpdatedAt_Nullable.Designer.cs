@@ -3,17 +3,19 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TwitPoster.DAL;
 
 #nullable disable
 
-namespace TwitPoster.Web.Migrations
+namespace TwitPoster.DAL.Migrations
 {
     [DbContext(typeof(TwitPosterContext))]
-    partial class TwitPosterContextModelSnapshot : ModelSnapshot
+    [Migration("20221112113426_PostComment_MakeUpdatedAt_Nullable")]
+    partial class PostComment_MakeUpdatedAt_Nullable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

@@ -1,6 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using TwitPoster.BLL.DTOs;
 using TwitPoster.BLL.Interfaces;
 using TwitPoster.DAL.Models;
 using TwitPoster.Web.Mappers;
@@ -32,7 +33,7 @@ public class PostsController : ControllerBase
     
     [HttpGet("{postId:int}/comments")]
     [AllowAnonymous]
-    public async Task<IEnumerable<PostComment>> GetComments(
+    public async Task<IEnumerable<PostCommentDto>> GetComments(
         int postId,
         [Range(1, 1000)] int pageSize = 5,
         [Range(1, int.MaxValue)] int pageNumber = 1)

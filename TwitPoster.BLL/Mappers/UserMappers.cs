@@ -16,5 +16,16 @@ public static class UserMappers
             CreatedAt = user.CreatedAt,
             Role = user.UserAccount.Role
         };
-    } 
+    }
+
+    public static AuthorDto ToAuthorDto(this User user)
+    {
+        return new AuthorDto
+        {
+            Id = user.Id,
+            FirstName = user.FirstName,
+            LastName = user.LastName,
+            Email = user.Email
+        };
+    }
 }

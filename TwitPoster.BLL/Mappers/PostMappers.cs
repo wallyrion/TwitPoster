@@ -25,4 +25,16 @@ public static class PostMappers
             source.Comments.Count
             );
     }
+
+    public static PostCommentDto ToDto(this PostComment source)
+    {
+        return new PostCommentDto
+        {
+            Author = source.Author.ToAuthorDto(),
+            Id = source.Id,
+            Text = source.Text,
+            CreatedAt = source.CreatedAt,
+            UpdatedAt = source.UpdatedAt
+        };
+    }
 }
