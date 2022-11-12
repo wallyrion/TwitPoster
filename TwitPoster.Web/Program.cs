@@ -13,9 +13,7 @@ builder.Host.UseSerilog((ctx, lc) => lc
     .ReadFrom.Configuration(ctx.Configuration)
     .Enrich.FromLogContext());
 
-builder.Services.AddControllers()
-    .AddJsonOptions(options => options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles)
-    ;
+builder.Services.AddControllers();
 
 builder.Services
 
