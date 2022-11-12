@@ -16,6 +16,8 @@ namespace TwitPoster.DAL.Migrations
                 nullable: true,
                 oldClrType: typeof(DateTime),
                 oldType: "datetime2");
+            
+            migrationBuilder.Sql("UPDATE PostComments SET UpdatedAt = null WHERE UpdatedAt = '0001-01-01 00:00:00.0000000'");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

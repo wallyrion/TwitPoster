@@ -12,7 +12,7 @@ using TwitPoster.DAL;
 namespace TwitPoster.DAL.Migrations
 {
     [DbContext(typeof(TwitPosterContext))]
-    [Migration("20221112113426_PostComment_MakeUpdatedAt_Nullable")]
+    [Migration("20221112114904_PostComment_MakeUpdatedAt_Nullable")]
     partial class PostComment_MakeUpdatedAt_Nullable
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
