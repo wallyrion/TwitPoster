@@ -1,4 +1,4 @@
-﻿namespace TwitPoster.Web.Middlewares;
+﻿namespace TwitPoster.BLL.Interfaces;
 
 public interface ICurrentUser
 {

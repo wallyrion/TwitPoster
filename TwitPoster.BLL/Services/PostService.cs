@@ -1,11 +1,12 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using LanguageExt;
+using Mapster;
+using Microsoft.EntityFrameworkCore;
 using TwitPoster.BLL.DTOs;
 using TwitPoster.BLL.Exceptions;
 using TwitPoster.BLL.Interfaces;
 using TwitPoster.BLL.Mappers;
 using TwitPoster.DAL;
 using TwitPoster.DAL.Models;
-using TwitPoster.Web.Middlewares;
 
 namespace TwitPoster.BLL.Services;
 
@@ -20,16 +21,24 @@ public class PostService : IPostService
         _currentUser = currentUser;
     }
 
-    public async Task<List<PostDto>> GetPosts()
+    
+    public async Task<List<PostDto>> GetPosts(int pageSize, int pageNumber)
     {
+        var mapConfig = TypeAdapterConfig.GlobalSettings.Clone();
+            mapConfig.ForType<Post, PostDto>()
+                .Map(dest => dest.IsLikedByCurrentUser, src => src.PostLikes.Any(x => x.UserId == _currentUser.Id));
+
         var posts = await _context.Posts
             .Include(p => p.Author)
             .Include(p => p.PostLikes)
             .Include(p => p.Comments)
-            .Select(p => p.ToDto(_currentUser.Id))
+            .OrderByDescending(p => p.CreatedAt)
+            .Skip(pageSize * (pageNumber - 1))
+            .Take(pageSize)
             .ToListAsync();
 
-        return posts;
+        var dtos = posts.Adapt<List<PostDto>>(mapConfig);
+        return dtos;
     }
 
     public async Task<PostDto> CreatePost(string body)
@@ -55,10 +64,10 @@ public class PostService : IPostService
         await _context.SaveChangesAsync();
 
         var createdPost = await _context.Posts.Include(p => p.Author).FirstOrDefaultAsync(p => p.Id == post.Id);
-        return createdPost!.ToDto(_currentUser.Id);
+        return createdPost!.Adapt<PostDto>();
     }
 
-    public async Task<PostComment> CreateComment(int postId, string text)
+    public async Task<PostCommentDto> CreateComment(int postId, string text)
     {
         var post = await _context.Posts.FindAsync(postId);
         if (post == null)
@@ -80,7 +89,7 @@ public class PostService : IPostService
             .Include(c => c.Author)
             .FirstOrDefaultAsync(c => c.Id == newComment.Id);
 
-        return savedComment!;
+        return savedComment!.Adapt<PostCommentDto>();
     }
 
     public async Task<int> LikePost(int postId)
@@ -141,7 +150,7 @@ public class PostService : IPostService
             .OrderByDescending(c => c.CreatedAt)
             .Skip(pageSize * (pageNumber - 1))
             .Take(pageSize)
-            .Select(c => c.ToDto())
+            .Select(c => c.Adapt<PostCommentDto>())
             .ToListAsync();
     }
 }

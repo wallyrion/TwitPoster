@@ -10,4 +10,6 @@ public record PostDto(
     int LikesCount,
     bool IsLikedByCurrentUser,
     int CommentsCount
-    );
+    )
+{
+}

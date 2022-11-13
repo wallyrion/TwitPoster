@@ -4,6 +4,7 @@ using Serilog;
 using TwitPoster.BLL.Interfaces;
 using TwitPoster.BLL.Services;
 using TwitPoster.DAL;
+using TwitPoster.Web;
 using TwitPoster.Web.Extensions;
 using TwitPoster.Web.Middlewares;
 
@@ -23,7 +24,8 @@ builder.Services
     .AddFluentValidators()
     .AddProblemDetails()
     .AddJwtBearerAuthentication()
-
+    .AddMappings()
+    
     .AddDbContext<TwitPosterContext>(options => options
         .UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")!))
     .AddScoped<IUsersService, UserService>()

@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using Mapster;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TwitPoster.BLL.DTOs;
@@ -25,20 +26,23 @@ public class PostsController : ControllerBase
 
     [HttpGet]
     [AllowAnonymous]
-    public async Task<IEnumerable<PostViewModel>> Get()
+    public async Task<IEnumerable<PostViewModel>> Get(
+        [Range(1, 1000)] int pageSize = 25,
+        [Range(1, int.MaxValue)] int pageNumber = 1)
     {
-        var posts = await _postService.GetPosts();
-        return posts.Select(p => p.ToViewModel());
+        var posts = await _postService.GetPosts(pageSize, pageNumber);
+        return posts.Adapt<IEnumerable<PostViewModel>>();
     }
     
     [HttpGet("{postId:int}/comments")]
     [AllowAnonymous]
-    public async Task<IEnumerable<PostCommentDto>> GetComments(
+    public async Task<IEnumerable<PostCommentViewModel>> GetComments(
         int postId,
         [Range(1, 1000)] int pageSize = 5,
         [Range(1, int.MaxValue)] int pageNumber = 1)
     {
-        return await _postService.GetComments(postId, pageSize, pageNumber);
+        var comments = await _postService.GetComments(postId, pageSize, pageNumber);
+        return comments.Adapt<IEnumerable<PostCommentViewModel>>();
     }
     
     [HttpPut("{postId:int}/like")]
@@ -54,9 +58,10 @@ public class PostsController : ControllerBase
     }
     
     [HttpPost("{postId:int}/comments")]
-    public async Task<PostComment> CreateComment(int postId, CreateCommentRequest request)
+    public async Task<PostCommentViewModel> CreateComment(int postId, CreateCommentRequest request)
     {
-        return await _postService.CreateComment(postId, request.Text);
+        var newComment = await _postService.CreateComment(postId, request.Text);
+        return newComment.Adapt<PostCommentViewModel>();
     }
     
     [HttpPost]
@@ -66,6 +71,6 @@ public class PostsController : ControllerBase
 
         _logger.LogInformation("Created post by Author {AuthorName}", postDto.AuthorFirstName + postDto.AuthorLastName);
         
-        return postDto.ToViewModel();
+        return postDto.Adapt<PostViewModel>();
     }
 }

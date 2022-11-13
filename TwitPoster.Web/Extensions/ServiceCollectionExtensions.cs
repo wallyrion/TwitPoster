@@ -6,8 +6,10 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Filters;
 using TwitPoster.BLL.Authentication;
+using TwitPoster.BLL.Mappers;
 using TwitPoster.Web.Validators;
 using TwitPoster.Web.ViewModels;
+using UserMapperConfig = TwitPoster.Web.Mappers.UserMapperConfig;
 
 namespace TwitPoster.Web.Extensions;
 
@@ -70,6 +72,16 @@ public static class ServiceCollectionExtensions
                 IssuerSigningKey = new SymmetricSecurityKey(
                     Encoding.UTF8.GetBytes(AuthOptions.Key))
             });
+        return services;
+    }
+    
+    public static IServiceCollection AddMappings(this IServiceCollection services)
+    {
+        UserMapperConfig.RegisterMappings();
+        BLL.Mappers.UserMapperConfig.RegisterMappings();
+        
+        PostMapperConfig.RegisterMappings();
+        
         return services;
     }
 }

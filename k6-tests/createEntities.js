@@ -4,12 +4,12 @@ import { randomItem } from 'https://jslib.k6.io/k6-utils/1.2.0/index.js';
 import { randomIntBetween } from 'https://jslib.k6.io/k6-utils/1.2.0/index.js';
 
 const numberOfUsersToSetup = 10000;
-const likesToSetupBetween = [100, 10000];
+const likesToSetupBetween = [500, 1000];
 const commentsToSetupBetween = [100, 1000];
 
 export const options = {
-  vus: 100, // number of virtual users that will send requests
-  duration: '5m', // how long will they be sending requests
+  vus: 50, // number of virtual users that will send requests
+  duration: '2m', // how long will they be sending requests
 };
 
 function setupUser() {

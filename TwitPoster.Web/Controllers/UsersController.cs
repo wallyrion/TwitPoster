@@ -1,8 +1,10 @@
+using Mapster;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TwitPoster.BLL.DTOs;
 using TwitPoster.BLL.Interfaces;
 using TwitPoster.DAL.Models;
+using TwitPoster.Web.ViewModels;
 
 namespace TwitPoster.Web.Controllers;
 
@@ -43,14 +45,16 @@ public class UsersController : ControllerBase
     }
     
     [HttpGet("subscriptions")]
-    public async Task<List<UserSubscription>> GetSubscriptions()
+    public async Task<List<UserSubscriptionViewModel>> GetSubscriptions()
     {
-        return await _usersService.GetSubscriptions();
+        var subscriptions = await _usersService.GetSubscriptions();
+        return subscriptions.Adapt<List<UserSubscriptionViewModel>>();
     }
     
     [HttpGet("subscribers")]
-    public async Task<List<UserSubscription>> GetSubscribers()
+    public async Task<List<UserSubscriptionViewModel>> GetSubscribers()
     {
-        return await _usersService.GetSubscribers();
+        var subscriptions = await _usersService.GetSubscribers();
+        return subscriptions.Adapt<List<UserSubscriptionViewModel>>();
     }
 }

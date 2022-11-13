@@ -1,4 +1,6 @@
-﻿namespace TwitPoster.Web.Middlewares;
+﻿using TwitPoster.BLL.Interfaces;
+
+namespace TwitPoster.Web;
 
 internal class CurrentUser : ICurrentUser
 {

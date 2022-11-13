@@ -1,4 +1,5 @@
 ﻿using LanguageExt.Common;
+using Mapster;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Conventions;
 using TwitPoster.BLL.Authentication;
@@ -8,7 +9,6 @@ using TwitPoster.BLL.Interfaces;
 using TwitPoster.BLL.Mappers;
 using TwitPoster.DAL;
 using TwitPoster.DAL.Models;
-using TwitPoster.Web.Middlewares;
 
 namespace TwitPoster.BLL.Services;
 
@@ -121,14 +121,24 @@ public class UserService : IUsersService
         }
     }
 
-    public async Task<List<UserSubscription>> GetSubscriptions()
+    public async Task<List<UserSubscriptionDto>> GetSubscriptions()
     {
-        return await _context.UserSubscriptions.Include(u => u.Subscription).Where(s => s.SubscriberId == _currentUser.Id).ToListAsync();
+        var entities = await _context.UserSubscriptions
+            .Include(u => u.Subscription)
+            .Where(s => s.SubscriberId == _currentUser.Id)
+            .ToListAsync();
+        
+        return entities.Adapt<List<UserSubscriptionDto>>();
     }
 
-    public async Task<List<UserSubscription>> GetSubscribers()
+    public async Task<List<UserSubscriptionDto>> GetSubscribers()
     {
-        return await _context.UserSubscriptions.Include(u => u.Subscription).Where(s => s.SubscriptionId == _currentUser.Id).ToListAsync();
+        var subscribers = await _context
+            .UserSubscriptions.Include(u => u.Subscriber)
+            .Where(s => s.SubscriptionId == _currentUser.Id)
+            .ToListAsync();
+        
+        return subscribers.Adapt<List<UserSubscriptionDto>>();
     }
 
     public async Task<AccountDetailDto> GetCurrentAccountDetail()
