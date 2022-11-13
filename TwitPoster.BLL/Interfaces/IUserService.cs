@@ -11,7 +11,7 @@ public interface IUsersService
     Task Ban(int userId);
     Task Subscribe(int userId);
     Task Unsubscribe(int userId);
-    Task<List<UserSubscription>> GetSubscriptions();
-    Task<List<UserSubscription>> GetSubscribers();
+    Task<List<UserSubscriptionDto>> GetSubscriptions();
+    Task<List<UserSubscriptionDto>> GetSubscribers();
     Task<AccountDetailDto> GetCurrentAccountDetail();
 }
