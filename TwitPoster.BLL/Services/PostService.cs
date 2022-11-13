@@ -3,8 +3,8 @@ using Mapster;
 using Microsoft.EntityFrameworkCore;
 using TwitPoster.BLL.DTOs;
 using TwitPoster.BLL.Exceptions;
+using TwitPoster.BLL.Extensions;
 using TwitPoster.BLL.Interfaces;
-using TwitPoster.BLL.Mappers;
 using TwitPoster.DAL;
 using TwitPoster.DAL.Models;
 
@@ -24,10 +24,9 @@ public class PostService : IPostService
     
     public async Task<List<PostDto>> GetPosts(int pageSize, int pageNumber)
     {
-        var mapConfig = TypeAdapterConfig.GlobalSettings.Clone();
-            mapConfig.ForType<Post, PostDto>()
-                .Map(dest => dest.IsLikedByCurrentUser, src => src.PostLikes.Any(x => x.UserId == _currentUser.Id));
-
+        TypeAdapterHelper.Override<Post, PostDto>(out var mapConfig)
+            .Map(dest => dest.IsLikedByCurrentUser, src => src.PostLikes.Any(x => x.UserId == _currentUser.Id));
+        
         var posts = await _context.Posts
             .OrderByDescending(p => p.CreatedAt)
             .Skip(pageSize * (pageNumber - 1))

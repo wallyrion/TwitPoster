@@ -1,6 +1,9 @@
-﻿using System.Text;
+﻿using System.Reflection;
+using System.Text;
 using FluentValidation;
 using FluentValidation.AspNetCore;
+using Mapster;
+using MapsterMapper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -78,9 +81,13 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection AddMappings(this IServiceCollection services)
     {
         UserMapperConfig.RegisterMappings();
-        BLL.Mappers.UserMapperConfig.RegisterMappings();
-        
         PostMapperConfig.RegisterMappings();
+        
+        // var config = TypeAdapterConfig.GlobalSettings;
+        // config.Scan(Assembly.GetExecutingAssembly());
+        //
+        // services.AddSingleton(config);
+        // services.AddSingleton<IMapper, ServiceMapper>();
         
         return services;
     }
