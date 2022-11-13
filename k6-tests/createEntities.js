@@ -5,13 +5,17 @@ import { randomIntBetween } from 'https://jslib.k6.io/k6-utils/1.2.0/index.js';
 
 const baseUrl = 'https://localhost:7267'
 const numberOfUsersToSetup = 10000;
-const likesToSetupBetween = [500, 1000];
-const commentsToSetupBetween = [100, 1000];
+const likesToSetupBetween = [5, 500];
+const commentsToSetupBetween = [1, 100];
+
+const inerations = 1000;
+const numberOfCuncurrentUsers = 100;
 
 export const options = {
-  vus: 50, // number of virtual users that will send requests
+  vus: numberOfCuncurrentUsers, // number of virtual users that will send requests
   //duration: '3m', // how long will they be sending requests
-  iterations: 100,
+  iterations: inerations,
+  duration: '30m'
 };
 
 function setupUser() {

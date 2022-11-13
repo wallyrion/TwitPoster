@@ -1,5 +1,4 @@
-﻿using LanguageExt;
-using Mapster;
+﻿using Mapster;
 using Microsoft.EntityFrameworkCore;
 using TwitPoster.BLL.DTOs;
 using TwitPoster.BLL.Exceptions;
@@ -20,7 +19,6 @@ public class PostService : IPostService
         _context = context;
         _currentUser = currentUser;
     }
-
     
     public async Task<List<PostDto>> GetPosts(int pageSize, int pageNumber)
     {
@@ -148,5 +146,25 @@ public class PostService : IPostService
             .Take(pageSize)
             .ProjectToType<PostCommentDto>()
             .ToListAsync();
+    }
+
+    public List<PostDto> GetPostsSync(int pageSize, int pageNumber)
+    {
+        TypeAdapterHelper.Override<Post, PostDto>(out var mapConfig)
+            .Map(dest => dest.IsLikedByCurrentUser, src => src.PostLikes.Any(x => x.UserId == _currentUser.Id));
+        
+        var posts = _context.Posts
+            .OrderByDescending(p => p.CreatedAt)
+            .Skip(pageSize * (pageNumber - 1))
+            .Take(pageSize)
+            .ProjectToType<PostDto>(mapConfig)
+            .ToList();
+
+        return posts;
+    }
+
+    public async Task<int> GetPostsCount()
+    {
+        return await _context.Posts.CountAsync();
     }
 }

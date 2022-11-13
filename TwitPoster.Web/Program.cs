@@ -31,6 +31,7 @@ builder.Services
     .AddScoped<IUsersService, UserService>()
     .AddScoped<IPostService, PostService>()
     .AddScoped<ICurrentUser, CurrentUser>()
+    .AddOutputCache()
     ;
 
 var app = builder.Build();
@@ -42,6 +43,7 @@ app
     .InDevelopment(b =>
         b.UseSwagger().UseSwaggerUI())
     
+    .UseOutputCache()
     .UseMiddleware<RequestDurationMiddleware>()
     .Use(CustomMiddlewares.ExtendRequestDurationMiddleware)
     
@@ -58,4 +60,3 @@ app.InDevelopment(b =>
     .UseMiddleware<SetupUserClaimsMiddleware>();
 
 app.Run();
-
