@@ -123,22 +123,32 @@ public class UserService : IUsersService
 
     public async Task<List<UserSubscriptionDto>> GetSubscriptions()
     {
-        var entities = await _context.UserSubscriptions
+        var mapConfig = TypeAdapterConfig.GlobalSettings.Clone();
+        mapConfig.ForType<UserSubscription, UserSubscriptionDto>()
+            .Map(dest => dest.User, src => src.Subscription);
+
+        var subscriptions = await _context.UserSubscriptions
             .Include(u => u.Subscription)
             .Where(s => s.SubscriberId == _currentUser.Id)
+            .ProjectToType<UserSubscriptionDto>(mapConfig)
             .ToListAsync();
-        
-        return entities.Adapt<List<UserSubscriptionDto>>();
+
+        return subscriptions;
     }
 
     public async Task<List<UserSubscriptionDto>> GetSubscribers()
     {
+        var mapConfig = TypeAdapterConfig.GlobalSettings.Clone();
+        mapConfig.ForType<UserSubscription, UserSubscriptionDto>()
+            .Map(dest => dest.User, src => src.Subscription);
+        
         var subscribers = await _context
             .UserSubscriptions.Include(u => u.Subscriber)
             .Where(s => s.SubscriptionId == _currentUser.Id)
+            .ProjectToType<UserSubscriptionDto>(mapConfig)
             .ToListAsync();
-        
-        return subscribers.Adapt<List<UserSubscriptionDto>>();
+
+        return subscribers;
     }
 
     public async Task<AccountDetailDto> GetCurrentAccountDetail()

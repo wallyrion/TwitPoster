@@ -3,13 +3,15 @@ import { randomString } from 'https://jslib.k6.io/k6-utils/1.2.0/index.js';
 import { randomItem } from 'https://jslib.k6.io/k6-utils/1.2.0/index.js';
 import { randomIntBetween } from 'https://jslib.k6.io/k6-utils/1.2.0/index.js';
 
+const baseUrl = 'https://localhost:7267'
 const numberOfUsersToSetup = 10000;
 const likesToSetupBetween = [500, 1000];
 const commentsToSetupBetween = [100, 1000];
 
 export const options = {
   vus: 50, // number of virtual users that will send requests
-  duration: '2m', // how long will they be sending requests
+  //duration: '3m', // how long will they be sending requests
+  iterations: 100,
 };
 
 function setupUser() {
@@ -24,7 +26,7 @@ function setupUser() {
     password: "Qwerty123!"
   }
 
-  const result = http.post('https://localhost:7267/auth/registration', JSON.stringify(user), {
+  const result = http.post(`${baseUrl}/auth/registration`, JSON.stringify(user), {
     headers: {
       'content-type': 'application/json'
     }
@@ -61,7 +63,7 @@ export default function (users) {
 
   const randomUser = randomItem(users);
 
-  const createdPostResponse = http.post('https://localhost:7267/posts', JSON.stringify(post), {
+  const createdPostResponse = http.post(`${baseUrl}/posts`, JSON.stringify(post), {
     headers: {
       'content-type': 'application/json',
       'authorization': `Bearer ${randomUser.accessToken}`
@@ -72,10 +74,14 @@ export default function (users) {
   const commentsCount = randomIntBetween(commentsToSetupBetween[0], commentsToSetupBetween[1])
 
   const createdPost = JSON.parse(createdPostResponse.body);
+  console.log ('Setting up ' + likesCount + ' likes for post id = ' + createdPost.id)
+
+
   for (let i = 0; i < likesCount; i ++){
     createLikesForPost(createdPost.id, users)
   }
 
+  console.log ('Setting up ' + commentsCount + ' comments for post id = ' + createdPost.id)
   for (let i = 0; i < commentsCount; i ++){
     createCommentForPost(createdPost.id, users)
   }
@@ -84,7 +90,7 @@ export default function (users) {
 function createLikesForPost(postId, users){
   const randomUser = randomItem(users);
 
-  const createdPost = http.put(`https://localhost:7267/posts/${postId}/like`, null, {
+  const createdPost = http.put(`${baseUrl}/posts/${postId}/like`, null, {
     headers: {
       'content-type': 'application/json',
 
@@ -97,7 +103,7 @@ function createCommentForPost(postId, users){
   const randomUser = randomItem(users);
 
   const commentBody = { text: randomString(1000)}
-  const createdPost = http.post(`https://localhost:7267/posts/${postId}/comments`, JSON.stringify(commentBody), {
+  const createdPost = http.post(`${baseUrl}/posts/${postId}/comments`, JSON.stringify(commentBody), {
     headers: {
       'content-type': 'application/json',
 

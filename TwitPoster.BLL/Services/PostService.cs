@@ -29,16 +29,13 @@ public class PostService : IPostService
                 .Map(dest => dest.IsLikedByCurrentUser, src => src.PostLikes.Any(x => x.UserId == _currentUser.Id));
 
         var posts = await _context.Posts
-            .Include(p => p.Author)
-            .Include(p => p.PostLikes)
-            .Include(p => p.Comments)
             .OrderByDescending(p => p.CreatedAt)
             .Skip(pageSize * (pageNumber - 1))
             .Take(pageSize)
+            .ProjectToType<PostDto>(mapConfig)
             .ToListAsync();
 
-        var dtos = posts.Adapt<List<PostDto>>(mapConfig);
-        return dtos;
+        return posts;
     }
 
     public async Task<PostDto> CreatePost(string body)
@@ -150,7 +147,7 @@ public class PostService : IPostService
             .OrderByDescending(c => c.CreatedAt)
             .Skip(pageSize * (pageNumber - 1))
             .Take(pageSize)
-            .Select(c => c.Adapt<PostCommentDto>())
+            .ProjectToType<PostCommentDto>()
             .ToListAsync();
     }
 }
