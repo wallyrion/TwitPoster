@@ -80,15 +80,13 @@ public static class ServiceCollectionExtensions
     
     public static IServiceCollection AddMappings(this IServiceCollection services)
     {
-        UserMapperConfig.RegisterMappings();
-        PostMapperConfig.RegisterMappings();
+        var config = TypeAdapterConfig.GlobalSettings;
         
-        // var config = TypeAdapterConfig.GlobalSettings;
-        // config.Scan(Assembly.GetExecutingAssembly());
-        //
-        // services.AddSingleton(config);
-        // services.AddSingleton<IMapper, ServiceMapper>();
+        // ger all assemblies in the application
+        config.Scan(AppDomain.CurrentDomain.GetAssemblies());
         
+        services.AddSingleton(config);
+
         return services;
     }
 }

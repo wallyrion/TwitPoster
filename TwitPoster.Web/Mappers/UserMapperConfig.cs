@@ -4,23 +4,11 @@ using TwitPoster.Web.ViewModels;
 
 namespace TwitPoster.Web.Mappers;
 
-// public class UserMapperConfig : IRegister
-// {
-//     public void Register(TypeAdapterConfig config)
-//     {
-//         config.NewConfig<AuthorDto, AuthorViewModel>()
-//             .Map(dest => dest.Fullname, src => $"{src.FirstName} {src.LastName}");
-//     }
-// }
-
-
-
-public static class UserMapperConfig
+public class UserMapperConfig : IRegister
 {
-    public static void RegisterMappings()
+    public void Register(TypeAdapterConfig config)
     {
-        TypeAdapterConfig<AuthorDto, AuthorViewModel>
-            .NewConfig()
+        config.NewConfig<AuthorDto, AuthorViewModel>()
             .Map(dest => dest.Fullname, src => $"{src.FirstName} {src.LastName}");
     }
 }
