@@ -19,9 +19,11 @@ services:
           - seq
         networks:
           - twiposter-network
-        mem_limit: 512m
-        mem_reservation: 128M
-        cpus: 0.5
+        deploy:
+          resources:
+              limits:
+                cpus: "6"
+                memory: 1g
 
     mssqlDb:
         container_name: twitposter-mssql
@@ -35,6 +37,11 @@ services:
             ACCEPT_EULA: "Y"
         volumes:
         - twitposter-database:/var/opt/mssql
+        deploy:
+          resources:
+              limits:
+                cpus: "6"
+                memory: 2g
     seq:
         image: datalust/seq:latest
         container_name: twitposter-seq
@@ -48,6 +55,11 @@ services:
           - seq-logs:/seqdata
         networks:
         - twiposter-network
+        deploy:
+          resources:
+              limits:
+                cpus: "0.50"
+                memory: 512M
 
     seq-gelf:
       image: datalust/seq-input-gelf:latest
@@ -62,7 +74,11 @@ services:
         - "12201:12201/udp"
       networks:
         - twiposter-network
-    
+      deploy:
+        resources:
+            limits:
+              cpus: "0.50"
+              memory: 512M
     
 
 volumes:
