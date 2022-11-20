@@ -1,0 +1,70 @@
+version: "3.8"
+
+networks:
+  twiposter-network:
+    name: twiposter-network
+    driver: bridge
+
+services:
+    api:
+        container_name: twitposter-api
+        build:
+          context: .
+          dockerfile: Dockerfile
+        restart: always
+        ports:
+          - "8089:80"
+        depends_on:
+          - mssqlDb
+          - seq
+        networks:
+          - twiposter-network
+        mem_limit: 512m
+        mem_reservation: 128M
+        cpus: 0.5
+
+    mssqlDb:
+        container_name: twitposter-mssql
+        image: "mcr.microsoft.com/mssql/server:2022-latest"
+        ports:
+          - "1433:1433"
+        networks: 
+         - twiposter-network
+        environment:
+            SA_PASSWORD: "2Secure*Password2"
+            ACCEPT_EULA: "Y"
+        volumes:
+        - twitposter-database:/var/opt/mssql
+    seq:
+        image: datalust/seq:latest
+        container_name: twitposter-seq
+        restart: unless-stopped
+        environment:
+          - ACCEPT_EULA=Y
+        ports:
+          - "81:80"
+          - "5341:5341"
+        volumes:
+          - seq-logs:/seqdata
+        networks:
+        - twiposter-network
+
+    seq-gelf:
+      image: datalust/seq-input-gelf:latest
+      container_name: twitposter-seq-gelf
+      restart: unless-stopped
+      environment:
+        - ACCEPT_EULAY=Y
+        - SEQ_ADDRESS=http://seq:5341
+      depends_on:
+        - seq
+      ports:
+        - "12201:12201/udp"
+      networks:
+        - twiposter-network
+    
+    
+
+volumes:
+  twitposter-database:
+  seq-logs:

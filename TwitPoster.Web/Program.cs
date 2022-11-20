@@ -36,12 +36,29 @@ builder.Services
 
 var app = builder.Build();
 
+app.Logger.LogInformation("Starting application with {ProcessorsCount} processor(s)", Environment.ProcessorCount);
+
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+
+    var context = services.GetRequiredService<TwitPosterContext>();
+    if (context.Database.GetPendingMigrations().Any())
+    {
+        app.Logger.LogInformation("Migrating database....");
+        context.Database.Migrate();
+        app.Logger.LogInformation("Database migrated");
+    }
+}
+
 app.MapControllers()
     .RequireAuthorization();
 
 app
-    .InDevelopment(b =>
+    .UseSwagger().UseSwaggerUI()
+    /*mssqlDb.InDevelopment(b =>
         b.UseSwagger().UseSwaggerUI())
+        */
     
     .UseOutputCache()
     .UseMiddleware<RequestDurationMiddleware>()

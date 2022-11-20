@@ -3,9 +3,9 @@ import http from 'k6/http';
 import { randomIntBetween } from 'https://jslib.k6.io/k6-utils/1.2.0/index.js';
 
 const pageSize = 100;
-const baseUrl = 'https://localhost:7267'
+const baseUrl = 'http://localhost:8089'
 
-export const options = {
+/* export const options = {
     stages: [
         { duration: '30s', target: 50 }, 
         { duration: '1m', target: 300 }, // simulate ramp-up of traffic from 1 to 100 users over 5 minutes.
@@ -15,7 +15,7 @@ export const options = {
       thresholds: {
         'http_req_duration': ['p(99)<1500'], // 99% of requests must complete below 1.5s
       },
-  };
+  }; */
 
 export function setup() {
     const res = http.get(`${baseUrl}/posts/count`);
