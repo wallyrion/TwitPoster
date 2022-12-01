@@ -1,18 +1,14 @@
-﻿using System.Reflection;
-using System.Text;
+﻿using System.Text;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using Mapster;
-using MapsterMapper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Filters;
 using TwitPoster.BLL.Authentication;
-using TwitPoster.BLL.Mappers;
 using TwitPoster.Web.Validators;
 using TwitPoster.Web.ViewModels;
-using UserMapperConfig = TwitPoster.Web.Mappers.UserMapperConfig;
 
 namespace TwitPoster.Web.Extensions;
 
@@ -61,7 +57,7 @@ public static class ServiceCollectionExtensions
         services.AddSwaggerExamplesFromAssemblyOf<Program>();
         return services;
     }
-    public static IServiceCollection AddJwtBearerAuthentication(this IServiceCollection services)
+    public static IServiceCollection AddJwtBearerAuthentication(this IServiceCollection services, AuthOptions authOptions)
     {
         services.AddAuthentication(defaultScheme: JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(options => options.TokenValidationParameters = new TokenValidationParameters
@@ -70,10 +66,10 @@ public static class ServiceCollectionExtensions
                 ValidateAudience = true,
                 ValidateLifetime = true,
                 ValidateIssuerSigningKey = true,
-                ValidIssuer = AuthOptions.Issuer,
-                ValidAudience = AuthOptions.Audience,
+                ValidIssuer = authOptions.Issuer,
+                ValidAudience = authOptions.Audience,
                 IssuerSigningKey = new SymmetricSecurityKey(
-                    Encoding.UTF8.GetBytes(AuthOptions.Key))
+                    Encoding.UTF8.GetBytes(authOptions.Secret))
             });
         return services;
     }

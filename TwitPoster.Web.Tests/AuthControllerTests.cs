@@ -11,11 +11,11 @@ namespace TwitPoster.Web.Tests;
 
 public class AuthControllerTests
 {
-    private readonly Mock<IUsersService> _userServiceMock = new();
+    private readonly Mock<IAuthService> _authServiceMock = new();
     private readonly AuthController _sut;
     public AuthControllerTests()
     {
-        _sut = new AuthController(_userServiceMock.Object);
+        _sut = new AuthController(_authServiceMock.Object);
     }
     
     [Fact]
@@ -26,7 +26,7 @@ public class AuthControllerTests
         
         var registrationRequest = new RegistrationRequest("First", "Last", DateTime.UtcNow.AddYears(-1), "kornienko1296@gmail.com", "password");
         
-        _userServiceMock.Setup(e => e.Register(registrationRequest.FirstName, registrationRequest.LastName, registrationRequest.BirthDate, registrationRequest.Email, registrationRequest.Password))
+        _authServiceMock.Setup(e => e.Register(registrationRequest.FirstName, registrationRequest.LastName, registrationRequest.BirthDate, registrationRequest.Email, registrationRequest.Password))
             .ReturnsAsync(expectedUserId);
         
         // Act
@@ -42,7 +42,7 @@ public class AuthControllerTests
         // Arrange
         var registrationRequest = new RegistrationRequest("First", "Last", DateTime.UtcNow.AddYears(-1), "kornienko1296@gmail.com", "password");
 
-        _userServiceMock.Setup(e => e.Register(registrationRequest.FirstName, registrationRequest.LastName, registrationRequest.BirthDate, registrationRequest.Email, registrationRequest.Password))
+        _authServiceMock.Setup(e => e.Register(registrationRequest.FirstName, registrationRequest.LastName, registrationRequest.BirthDate, registrationRequest.Email, registrationRequest.Password))
             .ReturnsAsync( new Result<int>(new TwitPosterValidationException("Invalid email")));
         
         // Act
@@ -58,20 +58,15 @@ public class AuthControllerTests
     public async Task Login_Should_Return_Token_Correctly()
     {
         // Arrange
-        const int expectedUserId = 100;
         const string expectedToken = "SecretToken";
-        var usersServiceMock = new Mock<IUsersService>();
-        var usersService = usersServiceMock.Object;
         
-        var sut = new AuthController(usersService);
-
         var loginRequest = new LoginRequest("kornienko1296@gmail.com", "password");
         
-        usersServiceMock.Setup(e => e.Login(loginRequest.Email, loginRequest.Password))
+        _authServiceMock.Setup(e => e.Login(loginRequest.Email, loginRequest.Password))
             .ReturnsAsync(expectedToken);
         
         // Act
-        var result = await sut.Login(loginRequest);
+        var result = await _sut.Login(loginRequest);
 
         var okObjectResult = result.Result.Should().BeOfType<OkObjectResult>().Subject;
         var resultValue = okObjectResult!.Value.Should().BeOfType<string>().Subject;

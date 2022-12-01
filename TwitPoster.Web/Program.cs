@@ -1,6 +1,6 @@
-using System.Text.Json.Serialization;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
+using TwitPoster.BLL.Authentication;
 using TwitPoster.BLL.Interfaces;
 using TwitPoster.BLL.Services;
 using TwitPoster.DAL;
@@ -16,6 +16,8 @@ builder.Host.UseSerilog((ctx, lc) => lc
 
 builder.Services.AddControllers();
 
+var authOptions = builder.Configuration.GetRequiredSection("Auth").Get<AuthOptions>()!;
+
 builder.Services
 
     .AddSwaggerWithAuthorization()
@@ -23,17 +25,20 @@ builder.Services
 
     .AddFluentValidators()
     .AddProblemDetails()
-    .AddJwtBearerAuthentication()
+    .AddJwtBearerAuthentication(authOptions)
     .AddMappings()
-    
+
     .AddDbContext<TwitPosterContext>(options => options
         .UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")!))
     .AddScoped<IUsersService, UserService>()
     .AddScoped<IPostService, PostService>()
     .AddScoped<ICurrentUser, CurrentUser>()
     .AddScoped<IEmailSender, EmailSender>()
-    .AddOutputCache()
-    ;
+    .AddSingleton<IJwtTokenGenerator, JwtTokenGenerator>()
+
+    .AddOutputCache();
+    
+    
 
 var app = builder.Build();
 

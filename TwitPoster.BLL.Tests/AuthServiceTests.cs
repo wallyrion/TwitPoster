@@ -2,6 +2,7 @@ using AutoFixture;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Moq;
+using TwitPoster.BLL.Authentication;
 using TwitPoster.BLL.Exceptions;
 using TwitPoster.BLL.Interfaces;
 using TwitPoster.BLL.Services;
@@ -10,25 +11,29 @@ using TwitPoster.DAL.Models;
 
 namespace TwitPoster.BLL.Tests;
 
-public class UserServiceTests
+public class AuthServiceTests
 {
     private readonly TwitPosterContext _context;
-    private readonly UserService _sut;
+    private readonly AuthService _sut;
     private readonly Fixture _fixture = new();
-    
-    public UserServiceTests()
+    private readonly Mock<IJwtTokenGenerator> _jwtTokenGeneratorMock = new();
+
+    public AuthServiceTests()
     {
         var options = new DbContextOptionsBuilder<TwitPosterContext>()
             .UseInMemoryDatabase($"DB{Guid.NewGuid()}")
             .Options;
         _context = new TwitPosterContext(options);
-        _sut = new UserService(_context, new Mock<ICurrentUser>().Object, new Mock<IEmailSender>().Object);
+        _sut = new AuthService(new Mock<IEmailSender>().Object, _jwtTokenGeneratorMock.Object, _context);
     }
     
     [Fact]
     public async Task Login_Should_Return_AccessToken_WhenEmailIsConfirmed()
     {
         // Arrange
+        var expectedToken = "SuperSecretToken";
+        _jwtTokenGeneratorMock.Setup(x => x.GenerateToken(It.IsAny<User>())).Returns(expectedToken);
+        
         _fixture.Customize<UserAccount>(composer => composer.With(account => account.IsEmailConfirmed, true));
         var expectedUser = _fixture.Create<User>();
         _context.Users.Add(expectedUser);
@@ -39,6 +44,7 @@ public class UserServiceTests
 
         // Assert
         result.Should().NotBeNull();
+        result.Should().Be(expectedToken);
     }
     
     [Fact]

@@ -1,5 +1,4 @@
 ﻿using TwitPoster.BLL.DTOs;
-using TwitPoster.DAL.Models;
 
 namespace TwitPoster.BLL.Interfaces;
 
