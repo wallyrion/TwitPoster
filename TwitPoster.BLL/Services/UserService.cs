@@ -1,7 +1,9 @@
-﻿using LanguageExt.Common;
+﻿using LanguageExt;
+using LanguageExt.Common;
 using Mapster;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Conventions;
+using MimeKit.Text;
 using TwitPoster.BLL.Authentication;
 using TwitPoster.BLL.DTOs;
 using TwitPoster.BLL.Exceptions;
@@ -18,14 +20,16 @@ public class UserService : IUsersService
     private readonly JwtTokenGenerator _tokenGenerator = new();
     private readonly TwitPosterContext _context;
     private readonly ICurrentUser _currentUser;
-
-    public UserService(TwitPosterContext context, ICurrentUser currentUser)
+    private readonly IEmailSender _emailSender;
+    
+    public UserService(TwitPosterContext context, ICurrentUser currentUser, IEmailSender emailSender)
     {
         _context = context;
         _currentUser = currentUser;
+        _emailSender = emailSender;
     }
 
-    public async Task<(int UserId, string AccessToken)> Login(string email, string password)
+    public async Task<string> Login(string email, string password)
     {
         var user = await _context.Users.Include(u => u.UserAccount).FirstOrDefaultAsync(u => u.Email == email);
 
@@ -33,18 +37,23 @@ public class UserService : IUsersService
         {
             throw new TwitPosterValidationException("Your password or email is incorrect");
         }
+
+        if (!user.UserAccount.IsEmailConfirmed)
+        {
+            throw new TwitPosterValidationException("Your email is not confirmed. Please follow email instructions");
+        }
         
         var accessToken = _tokenGenerator.GenerateToken(user);
-        return (user.Id, accessToken);
+        return accessToken;
     }
     
-    public async Task<Result<(int UserId, string AccessToken)>> Register(string firstName, string lastName, DateTime birthDate, string email, string password)
+    public async Task<Result<int>> Register(string firstName, string lastName, DateTime birthDate, string email, string password)
     {
         var existingUser = await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
         
         if(existingUser != null)
         {
-            return new Result<(int UserId, string AccessToken)>(new TwitPosterValidationException("User with this email already exists"));
+            return new Result<int>(new TwitPosterValidationException("User with this email already exists"));
         }                           
         
         var user = new User
@@ -57,14 +66,23 @@ public class UserService : IUsersService
             UserAccount = new UserAccount
             {
                 Password = password,
-                Role = UserRole.User
+                Role = UserRole.User,
+                EmailConfirmationToken = Guid.NewGuid()
             }
         };
         _context.Users.Add(user);
+        
         await _context.SaveChangesAsync();
 
-        var accessToken = _tokenGenerator.GenerateToken(user);
-        return (user.Id, accessToken);
+        var emailBody = $"""
+            <h1> You are on the way! </h1>
+            <h2> Please confirm your email by clicking on the link below </h2>
+            <a href="https://localhost:7267/Auth/EmailConfirmation?Token={ user.UserAccount.EmailConfirmationToken}">Press to confirm email address</a>
+        """ ;
+
+        var mailCommand = new EmailCommand(email, "Welcome to TwitPoster! Confirm your email", emailBody, TextFormat.Html);
+        await _emailSender.SendEmail(mailCommand);
+        return (user.Id);
     }
 
     public async Task Ban(int userId)

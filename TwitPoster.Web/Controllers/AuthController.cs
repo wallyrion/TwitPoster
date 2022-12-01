@@ -1,3 +1,4 @@
+using System.Net;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TwitPoster.BLL.DTOs;
@@ -21,17 +22,17 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("registration")]
-    public async Task<ActionResult<RegistrationResponse>> Register(RegistrationRequest request)
+    public async Task<ActionResult> Register(RegistrationRequest request)
     {
         var registerResponse = await _usersService.Register(request.FirstName, request.LastName, request.BirthDate, request.Email, request.Password);
 
-        return this.ToOk(registerResponse, result => new RegistrationResponse(result.UserId, result.AccessToken));
+        return this.ToEmptyResult(registerResponse);
     }
     
     [HttpPost("login")]
-    public async Task<ActionResult> Login(LoginRequest request)
+    public async Task<ActionResult<string>> Login(LoginRequest request)
     {
-        var loginResponse = await _usersService.Login(request.Email, request.Password);
-        return Ok(new RegistrationResponse(loginResponse.UserId, loginResponse.AccessToken));
+        var accessToken = await _usersService.Login(request.Email, request.Password);
+        return Ok(accessToken);
     }
 }

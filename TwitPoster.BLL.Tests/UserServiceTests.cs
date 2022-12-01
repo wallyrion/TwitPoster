@@ -1,7 +1,9 @@
 using AutoFixture;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
+using Moq;
 using TwitPoster.BLL.Exceptions;
+using TwitPoster.BLL.Interfaces;
 using TwitPoster.BLL.Services;
 using TwitPoster.DAL;
 using TwitPoster.DAL.Models;
@@ -20,13 +22,14 @@ public class UserServiceTests
             .UseInMemoryDatabase($"DB{Guid.NewGuid()}")
             .Options;
         _context = new TwitPosterContext(options);
-        _sut = new UserService(_context, null!);
+        _sut = new UserService(_context, new Mock<ICurrentUser>().Object, new Mock<IEmailSender>().Object);
     }
     
     [Fact]
-    public async Task Login_Should_Return_Correct_Result()
+    public async Task Login_Should_Return_AccessToken_WhenEmailIsConfirmed()
     {
         // Arrange
+        _fixture.Customize<UserAccount>(composer => composer.With(account => account.IsEmailConfirmed, true));
         var expectedUser = _fixture.Create<User>();
         _context.Users.Add(expectedUser);
         await _context.SaveChangesAsync();
@@ -35,8 +38,23 @@ public class UserServiceTests
         var result = await _sut.Login(expectedUser.Email, expectedUser.UserAccount.Password);
 
         // Assert
-        result.AccessToken.Should().NotBeEmpty();
-        result.UserId.Should().Be(expectedUser.Id);
+        result.Should().NotBeNull();
+    }
+    
+    [Fact]
+    public async Task Login_Should_Throw_Error_WhenEmailIsNotConfirmed()
+    {
+        // Arrange
+        _fixture.Customize<UserAccount>(composer => composer.With(account => account.IsEmailConfirmed, false));
+        var expectedUser = _fixture.Create<User>();
+        _context.Users.Add(expectedUser);
+        await _context.SaveChangesAsync();
+        
+        // Act
+        var action = async() => await _sut.Login(expectedUser.Email, expectedUser.UserAccount.Password);
+
+        // Assert
+        await action.Should().ThrowAsync<TwitPosterValidationException>().WithMessage("Your email is not confirmed. Please follow email instructions");
     }
     
     [Fact]

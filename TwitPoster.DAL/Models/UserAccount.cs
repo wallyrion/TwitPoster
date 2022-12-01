@@ -7,4 +7,7 @@ public class UserAccount
     public UserRole Role { get; set; } = UserRole.User;
     public string Password { get; set; } = null!;
     public bool IsBanned { get; set; }
+    
+    public bool IsEmailConfirmed { get; set; }
+    public Guid EmailConfirmationToken { get; set; }
 }

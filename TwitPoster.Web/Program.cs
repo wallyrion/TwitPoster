@@ -31,6 +31,7 @@ builder.Services
     .AddScoped<IUsersService, UserService>()
     .AddScoped<IPostService, PostService>()
     .AddScoped<ICurrentUser, CurrentUser>()
+    .AddScoped<IEmailSender, EmailSender>()
     .AddOutputCache()
     ;
 
