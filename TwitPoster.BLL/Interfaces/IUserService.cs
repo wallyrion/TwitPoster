@@ -15,4 +15,5 @@ public interface IUsersService
     Task<List<UserSubscriptionDto>> GetSubscriptions();
     Task<List<UserSubscriptionDto>> GetSubscribers();
     Task<AccountDetailDto> GetCurrentAccountDetail();
+    Task ConfirmEmail(Guid token);
 }

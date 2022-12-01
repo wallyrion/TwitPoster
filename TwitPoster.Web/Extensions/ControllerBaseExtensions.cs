@@ -12,10 +12,10 @@ public static class ControllerBaseExtensions
             Fail: exception => controller.Problem(statusCode: StatusCodes.Status400BadRequest, title: exception.Message));
     }
     
-    public static ActionResult ToEmptyResult<T>(this ControllerBase controller, Result<T> result)
+    public static ActionResult ToActionResult<T, TResponse>(this ControllerBase controller, Result<T> result, Func<T, TResponse> successMap) where TResponse : ActionResult
     {
         return result.Match<ActionResult>(
-            Succ: _ => controller.Ok(),
+            Succ: successMap,
             Fail: exception => controller.Problem(statusCode: StatusCodes.Status400BadRequest, title: exception.Message));
     }
 }

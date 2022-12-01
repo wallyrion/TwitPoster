@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using System.Net;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -26,7 +27,7 @@ public class AuthController : ControllerBase
     {
         var registerResponse = await _usersService.Register(request.FirstName, request.LastName, request.BirthDate, request.Email, request.Password);
 
-        return this.ToEmptyResult(registerResponse);
+        return this.ToActionResult(registerResponse, _ => Content("Registration successful. Please, check your email to confirm your account."));
     }
     
     [HttpPost("login")]
@@ -34,5 +35,12 @@ public class AuthController : ControllerBase
     {
         var accessToken = await _usersService.Login(request.Email, request.Password);
         return Ok(accessToken);
+    }
+    
+    [HttpGet("EmailConfirmation")]
+    public async Task<ActionResult> EmailConfirmation([Required] Guid token)
+    {
+        await _usersService.ConfirmEmail(token);
+        return Content("Email confirmed successfully");
     }
 }

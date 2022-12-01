@@ -170,4 +170,18 @@ public class UserService : IUsersService
 
         return currentUser.ToAccountDetailDto();
     }
+
+    public async Task ConfirmEmail(Guid token)
+    {
+        var user = await _context.Users.Include(u => u.UserAccount).FirstOrDefaultAsync(u => u.UserAccount.EmailConfirmationToken == token);
+        
+        if (user == null)
+        {
+            throw new TwitPosterValidationException("Not valid token");
+        }
+        
+        user.UserAccount.IsEmailConfirmed = true;
+        user.UserAccount.EmailConfirmationToken = default;
+        await _context.SaveChangesAsync();
+    }
 }

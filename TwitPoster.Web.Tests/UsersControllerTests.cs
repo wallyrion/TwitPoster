@@ -33,7 +33,7 @@ public class AuthControllerTests
         var result = await _sut.Register(registrationRequest);
 
         // Assert
-        result.Should().BeOfType<OkResult>();
+        result.Should().BeOfType<ContentResult>().Which.Content.Should().MatchRegex("^Registration successful.*");
     }
     
     [Fact]
