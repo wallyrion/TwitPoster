@@ -108,7 +108,9 @@ public class PostService : IPostService
             UserId = _currentUser.Id
         };
         
+        post.LikesCount++;
         _context.PostLikes.Add(newLike);
+        
         await _context.SaveChangesAsync();
         
         return _context.PostLikes.Count(like => like.PostId == postId);
