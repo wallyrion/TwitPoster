@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Serilog;
 using TwitPoster.BLL.Authentication;
 using TwitPoster.BLL.Interfaces;
+using TwitPoster.BLL.Options;
 using TwitPoster.BLL.Services;
 using TwitPoster.DAL;
 using TwitPoster.Web;
@@ -16,10 +17,12 @@ builder.Host.UseSerilog((ctx, lc) => lc
 
 builder.Services.AddControllers();
 
-var authOptions = builder.Configuration.GetRequiredSection("Auth").Get<AuthOptions>()!;
+IConfigurationSection authConfig = builder.Configuration.GetRequiredSection("Auth");
+var authOptions = authConfig.Get<AuthOptions>()!;
+builder.Services.Configure<AuthOptions>(authConfig);
+builder.Services.Configure<MailOptions>(builder.Configuration.GetRequiredSection("Mail"));
 
 builder.Services
-
     .AddSwaggerWithAuthorization()
     .AddEndpointsApiExplorer()
 
@@ -34,6 +37,7 @@ builder.Services
     .AddScoped<IPostService, PostService>()
     .AddScoped<ICurrentUser, CurrentUser>()
     .AddScoped<IEmailSender, EmailSender>()
+    .AddScoped<IAuthService, AuthService>()
     .AddSingleton<IJwtTokenGenerator, JwtTokenGenerator>()
 
     .AddOutputCache();
