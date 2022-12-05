@@ -3,17 +3,19 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TwitPoster.DAL;
 
 #nullable disable
 
-namespace TwitPoster.Web.Migrations
+namespace TwitPoster.DAL.Migrations
 {
     [DbContext(typeof(TwitPosterContext))]
-    partial class TwitPosterContextModelSnapshot : ModelSnapshot
+    [Migration("20221201085159_AddLikesCountAgain")]
+    partial class AddLikesCountAgain
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -175,13 +177,7 @@ namespace TwitPoster.Web.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<Guid>("EmailConfirmationToken")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<bool>("IsBanned")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsEmailConfirmed")
                         .HasColumnType("bit");
 
                     b.Property<string>("Password")
@@ -208,9 +204,7 @@ namespace TwitPoster.Web.Migrations
                         new
                         {
                             Id = 1,
-                            EmailConfirmationToken = new Guid("00000000-0000-0000-0000-000000000000"),
                             IsBanned = false,
-                            IsEmailConfirmed = false,
                             Password = "Qwerty123",
                             Role = "DatabaseOwner",
                             UserId = 1
@@ -218,9 +212,7 @@ namespace TwitPoster.Web.Migrations
                         new
                         {
                             Id = 2,
-                            EmailConfirmationToken = new Guid("00000000-0000-0000-0000-000000000000"),
                             IsBanned = false,
-                            IsEmailConfirmed = false,
                             Password = "Qwerty123",
                             Role = "Admin",
                             UserId = 2
@@ -228,9 +220,7 @@ namespace TwitPoster.Web.Migrations
                         new
                         {
                             Id = 3,
-                            EmailConfirmationToken = new Guid("00000000-0000-0000-0000-000000000000"),
                             IsBanned = false,
-                            IsEmailConfirmed = false,
                             Password = "Qwerty123",
                             Role = "Moderator",
                             UserId = 3

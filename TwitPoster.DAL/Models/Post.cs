@@ -13,4 +13,6 @@ public class Post
 
     public List<PostComment> Comments { get; set; } = new();
     public List<PostLike> PostLikes { get; set; } = new();
+    
+    public int LikesCount { get; set; }
 }

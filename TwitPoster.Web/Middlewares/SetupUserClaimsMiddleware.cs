@@ -1,5 +1,4 @@
 ﻿using System.Security.Claims;
-using Microsoft.IdentityModel.JsonWebTokens;
 using TwitPoster.BLL.Interfaces;
 
 namespace TwitPoster.Web.Middlewares;

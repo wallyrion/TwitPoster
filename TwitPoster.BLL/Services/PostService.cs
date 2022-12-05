@@ -108,7 +108,9 @@ public class PostService : IPostService
             UserId = _currentUser.Id
         };
         
+        post.LikesCount++;
         _context.PostLikes.Add(newLike);
+        
         await _context.SaveChangesAsync();
         
         return _context.PostLikes.Count(like => like.PostId == postId);
@@ -136,9 +138,9 @@ public class PostService : IPostService
         return _context.PostLikes.Count(like => like.PostId == postId);
     }
 
-    public async Task<IEnumerable<PostCommentDto>> GetComments(int postId, int pageSize, int pageNumber)
+    public async Task<PagedResult> GetComments(int postId, int pageSize, int pageNumber)
     {
-        return await _context.PostComments
+        var posts = await _context.PostComments
             .Include(p => p.Author)
             .Where(c => c.PostId == postId)
             .OrderByDescending(c => c.CreatedAt)
@@ -146,6 +148,10 @@ public class PostService : IPostService
             .Take(pageSize)
             .ProjectToType<PostCommentDto>()
             .ToListAsync();
+        
+        var totalCount = await _context.PostComments.CountAsync(c => c.PostId == postId);
+
+        return new PagedResult(posts, totalCount);
     }
 
     public List<PostDto> GetPostsSync(int pageSize, int pageNumber)

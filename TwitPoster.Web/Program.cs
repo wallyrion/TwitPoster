@@ -1,7 +1,8 @@
-using System.Text.Json.Serialization;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
+using TwitPoster.BLL.Authentication;
 using TwitPoster.BLL.Interfaces;
+using TwitPoster.BLL.Options;
 using TwitPoster.BLL.Services;
 using TwitPoster.DAL;
 using TwitPoster.Web;
@@ -16,23 +17,32 @@ builder.Host.UseSerilog((ctx, lc) => lc
 
 builder.Services.AddControllers();
 
-builder.Services
+IConfigurationSection authConfig = builder.Configuration.GetRequiredSection("Auth");
+var authOptions = authConfig.Get<AuthOptions>()!;
+builder.Services.Configure<AuthOptions>(authConfig);
+builder.Services.Configure<MailOptions>(builder.Configuration.GetRequiredSection("Mail"));
 
+builder.Services
     .AddSwaggerWithAuthorization()
     .AddEndpointsApiExplorer()
 
     .AddFluentValidators()
     .AddProblemDetails()
-    .AddJwtBearerAuthentication()
+    .AddJwtBearerAuthentication(authOptions)
     .AddMappings()
-    
+
     .AddDbContext<TwitPosterContext>(options => options
         .UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")!))
     .AddScoped<IUsersService, UserService>()
     .AddScoped<IPostService, PostService>()
     .AddScoped<ICurrentUser, CurrentUser>()
-    .AddOutputCache()
-    ;
+    .AddScoped<IEmailSender, EmailSender>()
+    .AddScoped<IAuthService, AuthService>()
+    .AddSingleton<IJwtTokenGenerator, JwtTokenGenerator>()
+
+    .AddOutputCache();
+    
+    
 
 var app = builder.Build();
 

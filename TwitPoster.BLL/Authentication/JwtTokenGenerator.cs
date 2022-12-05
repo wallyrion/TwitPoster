@@ -1,18 +1,28 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using TwitPoster.BLL.Interfaces;
+using TwitPoster.BLL.Options;
 using TwitPoster.DAL.Models;
 
 namespace TwitPoster.BLL.Authentication;
 
-public class JwtTokenGenerator
+public class JwtTokenGenerator : IJwtTokenGenerator
 {
+    private readonly AuthOptions _authOptions;
+
+    public JwtTokenGenerator(IOptions<AuthOptions> authOptions)
+    {
+        _authOptions = authOptions.Value;
+    }
+
     public string GenerateToken(User user)
     {
         var signingCredentials = new SigningCredentials(
             new SymmetricSecurityKey(
-                Encoding.UTF8.GetBytes(AuthOptions.Key)),
+                Encoding.UTF8.GetBytes(_authOptions.Secret)),
             SecurityAlgorithms.HmacSha256);
 
         var claims = new[]
@@ -26,9 +36,9 @@ public class JwtTokenGenerator
         };
 
         var securityToken = new JwtSecurityToken(
-            issuer: AuthOptions.Issuer,
-            audience: AuthOptions.Audience,
-            expires: DateTime.UtcNow.Add(AuthOptions.Expiration),
+            issuer: _authOptions.Issuer,
+            audience: _authOptions.Audience,
+            expires: DateTime.UtcNow.Add(_authOptions.Expiration),
             claims: claims,
             signingCredentials: signingCredentials);
 

@@ -2,11 +2,7 @@ using System.ComponentModel.DataAnnotations;
 using Mapster;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.OutputCaching;
-using TwitPoster.BLL.DTOs;
 using TwitPoster.BLL.Interfaces;
-using TwitPoster.DAL.Models;
-using TwitPoster.Web.Mappers;
 using TwitPoster.Web.ViewModels;
 using TwitPoster.Web.ViewModels.Post;
 
@@ -56,13 +52,13 @@ public class PostsController : ControllerBase
     
     [HttpGet("{postId:int}/comments")]
     [AllowAnonymous]
-    public async Task<IEnumerable<PostCommentViewModel>> GetComments(
+    public async Task<PagedResponse> GetComments(
         int postId,
         [Range(1, 1000)] int pageSize = 5,
         [Range(1, int.MaxValue)] int pageNumber = 1)
     {
         var comments = await _postService.GetComments(postId, pageSize, pageNumber);
-        return comments.Adapt<IEnumerable<PostCommentViewModel>>();
+        return comments.Adapt<PagedResponse>();
     }
     
     [HttpPut("{postId:int}/like")]
