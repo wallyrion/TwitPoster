@@ -12,7 +12,7 @@ public class CreatePostExamples : IMultipleExamplesProvider<CreatePostRequest>
         return Enumerable.Range(1, 10).Select(e => SwaggerExample.Create($"Example {e}", GetExampleWithBogus())).ToList();
     }
 
-    private CreatePostRequest GetExampleWithBogus()
+    private static CreatePostRequest GetExampleWithBogus()
     {
         var faker = new Faker();
 
