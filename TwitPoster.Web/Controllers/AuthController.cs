@@ -12,9 +12,9 @@ namespace TwitPoster.Web.Controllers;
 [AllowAnonymous]
 public class AuthController : ControllerBase
 {
-    private readonly IAuthService _authService;
-    
-    public AuthController(IAuthService authService)
+    private readonly AuthServiceInterface _authService;
+
+    public AuthController(AuthServiceInterface authService)
     {
         _authService = authService;
     }
@@ -26,18 +26,20 @@ public class AuthController : ControllerBase
 
         return this.ToActionResult(registerResponse, _ => Content("Registration successful. Please, check your email to confirm your account."));
     }
-    
+
     [HttpPost("login")]
     public async Task<ActionResult<string>> Login(LoginRequest request)
     {
         var accessToken = await _authService.Login(request.Email, request.Password);
+
         return Ok(accessToken);
     }
-    
+
     [HttpGet("EmailConfirmation")]
     public async Task<ActionResult> EmailConfirmation([Required] Guid token)
     {
         await _authService.ConfirmEmail(token);
+
         return Content("Email confirmed successfully");
     }
 }

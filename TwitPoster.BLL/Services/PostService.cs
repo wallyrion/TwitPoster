@@ -19,12 +19,12 @@ public class PostService : IPostService
         _context = context;
         _currentUser = currentUser;
     }
-    
+
     public async Task<List<PostDto>> GetPosts(int pageSize, int pageNumber)
     {
         TypeAdapterHelper.Override<Post, PostDto>(out var mapConfig)
             .Map(dest => dest.IsLikedByCurrentUser, src => src.PostLikes.Any(x => x.UserId == _currentUser.Id));
-        
+
         var posts = await _context.Posts
             .OrderByDescending(p => p.CreatedAt)
             .Skip(pageSize * (pageNumber - 1))
@@ -38,32 +38,33 @@ public class PostService : IPostService
     public async Task<PostDto> CreatePost(string body)
     {
         var isBanned = await _context.Users
-            .Where(u => u.Id == _currentUser.Id)
-            .Select(u => u.UserAccount.IsBanned)
-            .FirstOrDefaultAsync();
-        
+            .Where(u => u.Id == _currentUser.Id).Select(u => u.UserAccount.IsBanned).FirstOrDefaultAsync();
+
         if (isBanned)
         {
-            throw new TwitPosterValidationException ("You are banned");
+            throw new TwitPosterValidationException("You are banned");
         }
-        
+
         var post = new Post
         {
             AuthorId = _currentUser.Id,
             Body = body,
             CreatedAt = DateTime.UtcNow
         };
-        
+
         _context.Posts.Add(post);
         await _context.SaveChangesAsync();
 
-        var createdPost = await _context.Posts.Include(p => p.Author).FirstOrDefaultAsync(p => p.Id == post.Id);
+        var createdPost = await _context.Posts
+            .Include(p => p.Author).FirstOrDefaultAsync(p => p.Id == post.Id);
+
         return createdPost!.Adapt<PostDto>();
     }
 
     public async Task<PostCommentDto> CreateComment(int postId, string text)
     {
         var post = await _context.Posts.FindAsync(postId);
+
         if (post == null)
         {
             throw new TwitPosterValidationException("Post not found");
@@ -76,9 +77,10 @@ public class PostService : IPostService
             CreatedAt = DateTime.UtcNow,
             PostId = postId
         };
+
         await _context.PostComments.AddAsync(newComment);
         await _context.SaveChangesAsync();
-        
+
         var savedComment = await _context.PostComments
             .Include(c => c.Author)
             .FirstOrDefaultAsync(c => c.Id == newComment.Id);
@@ -89,11 +91,12 @@ public class PostService : IPostService
     public async Task<int> LikePost(int postId)
     {
         var post = await _context.Posts.FindAsync(postId);
+
         if (post == null)
         {
             throw new TwitPosterValidationException("Post not found");
         }
-        
+
         var isLiked = await _context.PostLikes
             .AnyAsync(like => like.PostId == postId && like.UserId == _currentUser.Id);
 
@@ -101,29 +104,30 @@ public class PostService : IPostService
         {
             return _context.PostLikes.Count(like => like.PostId == postId);
         }
-        
+
         var newLike = new PostLike
         {
             PostId = postId,
             UserId = _currentUser.Id
         };
-        
+
         post.LikesCount++;
         _context.PostLikes.Add(newLike);
-        
+
         await _context.SaveChangesAsync();
-        
+
         return _context.PostLikes.Count(like => like.PostId == postId);
     }
 
     public async Task<int> UnlikePost(int postId)
     {
         var post = await _context.Posts.FindAsync(postId);
+
         if (post == null)
         {
             throw new TwitPosterValidationException("Post not found");
         }
-        
+
         var existingLike = await _context.PostLikes
             .FirstOrDefaultAsync(like => like.PostId == postId && like.UserId == _currentUser.Id);
 
@@ -131,10 +135,10 @@ public class PostService : IPostService
         {
             return _context.PostLikes.Count(like => like.PostId == postId);
         }
-        
+
         _context.PostLikes.Remove(existingLike);
         await _context.SaveChangesAsync();
-        
+
         return _context.PostLikes.Count(like => like.PostId == postId);
     }
 
@@ -148,7 +152,7 @@ public class PostService : IPostService
             .Take(pageSize)
             .ProjectToType<PostCommentDto>()
             .ToListAsync();
-        
+
         var totalCount = await _context.PostComments.CountAsync(c => c.PostId == postId);
 
         return new PagedResult(posts, totalCount);
@@ -158,7 +162,7 @@ public class PostService : IPostService
     {
         TypeAdapterHelper.Override<Post, PostDto>(out var mapConfig)
             .Map(dest => dest.IsLikedByCurrentUser, src => src.PostLikes.Any(x => x.UserId == _currentUser.Id));
-        
+
         var posts = _context.Posts
             .OrderByDescending(p => p.CreatedAt)
             .Skip(pageSize * (pageNumber - 1))

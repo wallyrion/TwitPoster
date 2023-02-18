@@ -3,7 +3,7 @@ using TwitPoster.BLL.Exceptions;
 
 namespace TwitPoster.BLL.Interfaces;
 
-public interface IAuthService
+public interface AuthServiceInterface
 {
     /// <summary>
     /// Tries to login user with given credentials.

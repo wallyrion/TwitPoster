@@ -26,7 +26,7 @@ public class BusinessValidationMiddleware
                 Status = StatusCodes.Status400BadRequest,
                 Title = ex.Message
             };
-            
+
             context.Response.StatusCode = StatusCodes.Status400BadRequest;
             await context.Response.WriteAsJsonAsync(error);
         }

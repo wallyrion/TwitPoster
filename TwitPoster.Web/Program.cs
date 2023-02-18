@@ -25,21 +25,18 @@ builder.Services.Configure<MailOptions>(builder.Configuration.GetRequiredSection
 builder.Services
     .AddSwaggerWithAuthorization()
     .AddEndpointsApiExplorer()
-
     .AddFluentValidators()
     .AddProblemDetails()
     .AddJwtBearerAuthentication(authOptions)
     .AddMappings()
-
     .AddDbContext<TwitPosterContext>(options => options
         .UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")!))
     .AddScoped<IUsersService, UserService>()
     .AddScoped<IPostService, PostService>()
     .AddScoped<ICurrentUser, CurrentUser>()
     .AddScoped<IEmailSender, EmailSender>()
-    .AddScoped<IAuthService, AuthService>()
+    .AddScoped<AuthServiceInterface, AuthService>()
     .AddSingleton<IJwtTokenGenerator, JwtTokenGenerator>()
-
     .AddOutputCache();
     
     

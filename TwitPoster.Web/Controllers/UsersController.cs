@@ -13,7 +13,7 @@ namespace TwitPoster.Web.Controllers;
 public class UsersController : ControllerBase
 {
     private readonly IUsersService _usersService;
-    
+
     public UsersController(IUsersService usersService)
     {
         _usersService = usersService;
@@ -27,34 +27,45 @@ public class UsersController : ControllerBase
 
     [HttpPut("ban/{userId:int}")]
     [Authorize(Roles = UserRoles.Admin)]
-    public async Task Ban (int userId)
+    public async Task Ban(int userId)
     {
         await _usersService.Ban(userId);
     }
-    
-    [HttpPut("subscribe/{userId:int}")]
-    public async Task Subscribe(int userId)
-    {
-        await _usersService.Subscribe(userId);
-    }
-    
+
     [HttpPut("unsubscribe/{userId:int}")]
-    public async Task Unsubscribe(int userId)
+    public void Unsubscribe(int userId)
     {
-        await _usersService.Unsubscribe(userId);
+        _usersService.UnsubscribeAsync(userId);
     }
-    
+
     [HttpGet("subscriptions")]
     public async Task<List<UserSubscriptionViewModel>> GetSubscriptions()
     {
         var subscriptions = await _usersService.GetSubscriptions();
+
+        Test(out var hey);
+
         return subscriptions.Adapt<List<UserSubscriptionViewModel>>();
     }
-    
+
+    private void Test(out int test)
+    {
+        test = 123;
+    }
+
+    [HttpPut("subscribe/{userId:int}")]
+    public async Task Subscribe(int userId)
+    {
+        var id = userId;
+
+        await _usersService.Subscribe(id);
+    }
+
     [HttpGet("subscribers")]
     public async Task<List<UserSubscriptionViewModel>> GetSubscribers()
     {
         var subscriptions = await _usersService.GetSubscribers();
+
         return subscriptions.Adapt<List<UserSubscriptionViewModel>>();
     }
 }
