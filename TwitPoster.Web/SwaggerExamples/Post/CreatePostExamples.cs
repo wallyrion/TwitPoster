@@ -15,6 +15,7 @@ public class CreatePostExamples : IMultipleExamplesProvider<CreatePostRequest>
     private CreatePostRequest GetExampleWithBogus()
     {
         var faker = new Faker();
+
         return new CreatePostRequest(faker.Lorem.Paragraph());
     }
 }
