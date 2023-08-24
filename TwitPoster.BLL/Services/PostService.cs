@@ -136,6 +136,7 @@ public class PostService : IPostService
             return _context.PostLikes.Count(like => like.PostId == postId);
         }
 
+        post.LikesCount--;
         _context.PostLikes.Remove(existingLike);
         await _context.SaveChangesAsync();
 

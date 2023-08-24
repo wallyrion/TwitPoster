@@ -35,7 +35,7 @@ builder.Services
     .AddScoped<IPostService, PostService>()
     .AddScoped<ICurrentUser, CurrentUser>()
     .AddScoped<IEmailSender, EmailSender>()
-    .AddScoped<AuthServiceInterface, AuthService>()
+    .AddScoped<IAuthService, AuthService>()
     .AddSingleton<IJwtTokenGenerator, JwtTokenGenerator>()
     .AddOutputCache();
 

@@ -11,7 +11,7 @@ namespace TwitPoster.Web.Tests;
 
 public class AuthControllerTests
 {
-    private readonly Mock<AuthServiceInterface> _authServiceMock = new();
+    private readonly Mock<IAuthService> _authServiceMock = new();
     private readonly AuthController _sut;
     public AuthControllerTests()
     {

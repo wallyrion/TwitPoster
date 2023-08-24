@@ -12,9 +12,9 @@ namespace TwitPoster.Web.Controllers;
 [AllowAnonymous]
 public class AuthController : ControllerBase
 {
-    private readonly AuthServiceInterface _authService;
+    private readonly IAuthService _authService;
 
-    public AuthController(AuthServiceInterface authService)
+    public AuthController(IAuthService authService)
     {
         _authService = authService;
     }

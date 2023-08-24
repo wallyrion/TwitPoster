@@ -9,7 +9,7 @@ using TwitPoster.DAL.Models;
 
 namespace TwitPoster.BLL.Authentication;
 
-public class AuthService : AuthServiceInterface
+public class AuthService : IAuthService
 {
     private readonly TwitPosterContext _context;
     private readonly IEmailSender _emailSender;
