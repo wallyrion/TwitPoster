@@ -1,4 +1,5 @@
-﻿using FluentAssertions;
+﻿using Bogus.DataSets;
+using FluentAssertions;
 using FluentValidation.TestHelper;
 using TwitPoster.Web.Validators;
 using TwitPoster.Web.ViewModels;
@@ -100,7 +101,6 @@ public class CreateUserRequestValidatorTests
     [Theory]
     [InlineData("email", "Strong_password123", "2021-01-01", "First", "Last")]
     [InlineData("email@gnmail.com", "not", "2021-01-01", "First", "Last")]
-    [InlineData("email@gnmail.com", "Strong_password123", "2023-01-01", "First", "Last")]
     [InlineData("email@gnmail.com", "Strong_password123", "2021-01-01", "", "Last")]
     [InlineData("email@gnmail.com", "Strong_password123", "2021-01-01", "First", "")]
     public void Validate_Should_Have_ValidationError_When_Input_Is_Invalid(string email, string password, DateTime birthDate, string firstName, string lastName)

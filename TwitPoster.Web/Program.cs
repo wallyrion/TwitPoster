@@ -38,8 +38,14 @@ builder.Services
     .AddScoped<AuthServiceInterface, AuthService>()
     .AddSingleton<IJwtTokenGenerator, JwtTokenGenerator>()
     .AddOutputCache();
-    
-    
+
+builder.Services.AddCors(options => options.AddPolicy("CorsPolicy", o =>
+{
+    o.AllowAnyMethod()
+        .AllowAnyHeader()
+        .WithOrigins("http://localhost:4200")
+        .AllowCredentials();
+}));
 
 var app = builder.Build();
 
@@ -50,6 +56,7 @@ app
     .InDevelopment(b =>
         b.UseSwagger().UseSwaggerUI())
     
+    .UseCors("CorsPolicy")
     .UseOutputCache()
     .UseMiddleware<RequestDurationMiddleware>()
     .Use(CustomMiddlewares.ExtendRequestDurationMiddleware)

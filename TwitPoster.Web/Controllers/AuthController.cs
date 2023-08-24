@@ -32,7 +32,7 @@ public class AuthController : ControllerBase
     {
         var accessToken = await _authService.Login(request.Email, request.Password);
 
-        return Ok(accessToken);
+        return Ok(new LoginResponse(accessToken));
     }
 
     [HttpGet("EmailConfirmation")]
