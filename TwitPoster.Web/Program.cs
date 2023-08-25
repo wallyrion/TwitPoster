@@ -1,3 +1,4 @@
+using MassTransit;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 using TwitPoster.BLL.Authentication;
@@ -20,7 +21,6 @@ builder.Services.AddControllers();
 IConfigurationSection authConfig = builder.Configuration.GetRequiredSection("Auth");
 var authOptions = authConfig.Get<AuthOptions>()!;
 builder.Services.Configure<AuthOptions>(authConfig);
-builder.Services.Configure<MailOptions>(builder.Configuration.GetRequiredSection("Mail"));
 
 builder.Services
     .AddSwaggerWithAuthorization()
@@ -34,10 +34,14 @@ builder.Services
     .AddScoped<IUsersService, UserService>()
     .AddScoped<IPostService, PostService>()
     .AddScoped<ICurrentUser, CurrentUser>()
-    .AddScoped<IEmailSender, EmailSender>()
     .AddScoped<IAuthService, AuthService>()
     .AddSingleton<IJwtTokenGenerator, JwtTokenGenerator>()
     .AddOutputCache();
+
+builder.Services.AddMassTransit(mass =>
+{
+    mass.UsingRabbitMq();
+});
 
 builder.Services.AddCors(options => options.AddPolicy("CorsPolicy", o =>
 {
