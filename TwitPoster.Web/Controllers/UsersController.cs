@@ -1,6 +1,7 @@
 using Mapster;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.StaticFiles;
 using TwitPoster.BLL.DTOs;
 using TwitPoster.BLL.Interfaces;
 using TwitPoster.DAL.Models;
@@ -13,10 +14,11 @@ namespace TwitPoster.Web.Controllers;
 public class UsersController : ControllerBase
 {
     private readonly IUsersService _usersService;
-
-    public UsersController(IUsersService usersService)
+    private readonly ICurrentUser _currentUser;
+    public UsersController(IUsersService usersService, ICurrentUser currentUser)
     {
         _usersService = usersService;
+        _currentUser = currentUser;
     }
 
     [HttpGet("me")]
@@ -43,14 +45,7 @@ public class UsersController : ControllerBase
     {
         var subscriptions = await _usersService.GetSubscriptions();
 
-        Test(out var hey);
-
         return subscriptions.Adapt<List<UserSubscriptionViewModel>>();
-    }
-
-    private void Test(out int test)
-    {
-        test = 123;
     }
 
     [HttpPut("subscribe/{userId:int}")]
@@ -67,5 +62,68 @@ public class UsersController : ControllerBase
         var subscriptions = await _usersService.GetSubscribers();
 
         return subscriptions.Adapt<List<UserSubscriptionViewModel>>();
+    }
+    
+    [HttpPost("photo")]
+    public async Task<ActionResult> UploadPhoto(IFormFile file)
+    {
+        if (!Request.Form.Files.Any())
+        {
+            return BadRequest("At least one file must be uploaded");
+        }
+        
+        var formFile = Request.Form.Files[0];
+        
+        var directoryPath = Path.Combine("uploadImages", _currentUser.Id.ToString());
+        
+        Directory.CreateDirectory(directoryPath);
+        var path = Path.Combine(directoryPath, formFile.FileName);
+
+        await using var stream = System.IO.File.OpenWrite(path);
+        await file.CopyToAsync(stream);
+
+        return Ok();
+    }
+    
+    [HttpGet("photo")]
+    public async Task<ActionResult> GetProfilePhoto()
+    {
+        var result = await GetPhoto();
+        if (result == null)
+        {
+            return NoContent();
+        }
+        
+        var provider = new FileExtensionContentTypeProvider();
+        
+        if (!provider.TryGetContentType(result.Value.fileName, out var contentType))
+        {
+            contentType = "application/octet-stream";
+        }
+        
+        return File(result.Value.file, contentType, result.Value.fileName);
+    }
+    
+    private async Task<(byte[] file, string fileName)?> GetPhoto()
+    {
+        var directoryPath = Path.Combine("uploadImages", _currentUser.Id.ToString());
+
+        if (!Directory.Exists(directoryPath))
+        {
+            return null;
+        }
+        
+        var files = Directory.GetFiles(directoryPath);
+        
+        if (files.Length == 0)
+        {
+            return null;
+        }
+        
+        var path = files[0];
+
+        var fileName = Path.GetFileName(path);
+
+        return (await System.IO.File.ReadAllBytesAsync(path), fileName);
     }
 }
