@@ -18,9 +18,9 @@ public class LoginRequestExamples : IMultipleExamplesProvider<LoginRequest>
             new LoginRequest( "oleksii.korniienko@twitposter.com", "Qwerty123"));
         yield return SwaggerExample.Create(
             "Admin",
-            new LoginRequest( "admin@google.com", "Qwerty123"));
+            new LoginRequest( "admin@twitposter.com", "Qwerty123"));
         yield return SwaggerExample.Create(
             "Moderator",
-            new LoginRequest( "moderator@google.com", "Qwerty123"));
+            new LoginRequest( "moderator@twitposter.com", "Qwerty123"));
     }
 }

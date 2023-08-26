@@ -1,4 +1,4 @@
-﻿namespace TwitPoster.BLL.Options;
+﻿namespace TwitPoster.EmailSender;
 
 public class MailOptions
 {

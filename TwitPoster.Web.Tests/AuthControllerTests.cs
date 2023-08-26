@@ -69,7 +69,7 @@ public class AuthControllerTests
         var result = await _sut.Login(loginRequest);
 
         var okObjectResult = result.Result.Should().BeOfType<OkObjectResult>().Subject;
-        var resultValue = okObjectResult!.Value.Should().BeOfType<string>().Subject;
+        var resultValue = okObjectResult!.Value.Should().BeOfType<LoginResponse>().Subject.AccessToken;
 
         // Assert
         resultValue.Should().Be(expectedToken);

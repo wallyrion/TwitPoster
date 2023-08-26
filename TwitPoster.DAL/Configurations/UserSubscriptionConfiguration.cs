@@ -11,11 +11,11 @@ internal sealed class UserSubscriptionConfiguration : IEntityTypeConfiguration<U
         builder.HasOne(e => e.Subscriber).WithMany()
             .HasForeignKey(e => e.SubscriberId)
             .OnDelete(DeleteBehavior.Cascade);
-            
+
         builder.HasOne(e => e.Subscription).WithMany()
             .HasForeignKey(e => e.SubscriptionId)
             .OnDelete(DeleteBehavior.NoAction);
-            
-        builder.HasKey(e => new {e.SubscriberId, e.SubscriptionId});
+
+        builder.HasKey(e => new { e.SubscriberId, e.SubscriptionId });
     }
 }

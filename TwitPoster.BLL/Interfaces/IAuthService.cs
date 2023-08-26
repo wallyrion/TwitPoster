@@ -6,7 +6,7 @@ namespace TwitPoster.BLL.Interfaces;
 public interface IAuthService
 {
     /// <summary>
-    /// Tries to login user with given credentials.
+    /// Tries to login user with given credentials
     /// </summary>
     /// <exception cref="TwitPosterValidationException">Validation exception is thrown when:
     /// <list type="bullet"><item>Password or email is incorrect</item> <item>Email is not confirmed</item></list>
@@ -16,5 +16,6 @@ public interface IAuthService
     /// <returns>Generated access token </returns>
     Task<string> Login(string email, string password);
     Task<Result<int>> Register(string firstName, string lastName, DateTime birthDate, string email, string password);
+
     Task ConfirmEmail(Guid token);
 }

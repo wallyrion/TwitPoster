@@ -13,7 +13,7 @@ internal sealed class UserConfiguration : IEntityTypeConfiguration<User>
         builder.HasOne(user => user.UserAccount)
             .WithOne()
             .HasForeignKey<UserAccount>(r => r.UserId);
-            
+
         builder.Property(user => user.FirstName).HasMaxLength(300);
         builder.Property(user => user.LastName).HasMaxLength(300);
     }

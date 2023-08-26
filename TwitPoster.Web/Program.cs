@@ -1,3 +1,4 @@
+using MassTransit;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 using TwitPoster.BLL.Authentication;
@@ -20,29 +21,30 @@ builder.Services.AddControllers();
 IConfigurationSection authConfig = builder.Configuration.GetRequiredSection("Auth");
 var authOptions = authConfig.Get<AuthOptions>()!;
 builder.Services.Configure<AuthOptions>(authConfig);
-builder.Services.Configure<MailOptions>(builder.Configuration.GetRequiredSection("Mail"));
 
 builder.Services
     .AddSwaggerWithAuthorization()
     .AddEndpointsApiExplorer()
-
     .AddFluentValidators()
     .AddProblemDetails()
     .AddJwtBearerAuthentication(authOptions)
     .AddMappings()
-
     .AddDbContext<TwitPosterContext>(options => options
         .UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")!))
     .AddScoped<IUsersService, UserService>()
     .AddScoped<IPostService, PostService>()
     .AddScoped<ICurrentUser, CurrentUser>()
-    .AddScoped<IEmailSender, EmailSender>()
     .AddScoped<IAuthService, AuthService>()
     .AddSingleton<IJwtTokenGenerator, JwtTokenGenerator>()
+    .AddMassTransit(mass => mass.UsingRabbitMq());
 
-    .AddOutputCache();
-    
-    
+builder.Services.AddCors(options => options.AddPolicy("CorsPolicy", o =>
+{
+    o.AllowAnyMethod()
+        .AllowAnyHeader()
+        .WithOrigins("http://localhost:4200")
+        .AllowCredentials();
+}));
 
 var app = builder.Build();
 
@@ -69,15 +71,16 @@ app
     /*mssqlDb.InDevelopment(b =>
         b.UseSwagger().UseSwaggerUI())
         */
-    
-    .UseOutputCache()
+
+    .UseCors("CorsPolicy")
+     
     .UseMiddleware<RequestDurationMiddleware>()
     .Use(CustomMiddlewares.ExtendRequestDurationMiddleware)
-    
     .UseSerilogRequestLogging()
     .UseHttpsRedirection()
     .UseAuthentication()
     .UseAuthorization()
+
     .UseExceptionHandler()
     .UseStatusCodePages();
 

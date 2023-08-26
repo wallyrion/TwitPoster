@@ -1,8 +1,5 @@
-﻿using LanguageExt.Common;
-using Mapster;
+﻿using Mapster;
 using Microsoft.EntityFrameworkCore;
-using MimeKit.Text;
-using TwitPoster.BLL.Authentication;
 using TwitPoster.BLL.DTOs;
 using TwitPoster.BLL.Exceptions;
 using TwitPoster.BLL.Extensions;
@@ -17,7 +14,7 @@ public class UserService : IUsersService
 {
     private readonly TwitPosterContext _context;
     private readonly ICurrentUser _currentUser;
-    
+
     public UserService(TwitPosterContext context, ICurrentUser currentUser)
     {
         _context = context;
@@ -37,7 +34,6 @@ public class UserService : IUsersService
             throw new TwitPosterValidationException("Not enough rights to ban this user");
         }
 
-
         user.UserAccount.IsBanned = true;
         await _context.SaveChangesAsync();
     }
@@ -45,14 +41,14 @@ public class UserService : IUsersService
     public async Task Subscribe(int userId)
     {
         var userToFollow = await _context.Users.FindAsync(userId);
-        
+
         if (userToFollow == null)
         {
             throw new TwitPosterValidationException("User not found");
         }
-        
+
         var isAlreadySubscribed = await _context.UserSubscriptions.AnyAsync(s => s.SubscriberId == _currentUser.Id && s.SubscriptionId == userId);
-        
+
         if (isAlreadySubscribed)
         {
             return;
@@ -64,14 +60,14 @@ public class UserService : IUsersService
             SubscriptionId = userId,
             SubscribedAt = DateTime.UtcNow
         });
-            
+
         await _context.SaveChangesAsync();
     }
 
-    public async Task Unsubscribe(int userId)
+    public async Task UnsubscribeAsync(int userId)
     {
         var subscriptionToUnsubscribe = await _context.UserSubscriptions.FirstOrDefaultAsync(s => s.SubscriberId == _currentUser.Id && s.SubscriptionId == userId);
-        
+
         if (subscriptionToUnsubscribe != null)
         {
             _context.UserSubscriptions.Remove(subscriptionToUnsubscribe);
@@ -95,7 +91,7 @@ public class UserService : IUsersService
     {
         TypeAdapterHelper.Override<UserSubscription, UserSubscriptionDto>(out var config)
             .Map(dest => dest.User, src => src.Subscriber);
-        
+
         return await _context
             .UserSubscriptions.Include(u => u.Subscriber)
             .Where(s => s.SubscriptionId == _currentUser.Id)
@@ -109,6 +105,4 @@ public class UserService : IUsersService
 
         return currentUser.ToAccountDetailDto();
     }
-
-    
 }

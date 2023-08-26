@@ -9,6 +9,6 @@ public class UserMapperConfig : IRegister
     public void Register(TypeAdapterConfig config)
     {
         config.NewConfig<AuthorDto, AuthorViewModel>()
-            .Map(dest => dest.Fullname, src => $"{src.FirstName} {src.LastName}");
+            .Map(dest => dest.FullName, src => $"{src.FirstName} {src.LastName}");
     }
 }

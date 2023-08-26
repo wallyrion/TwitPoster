@@ -2,6 +2,6 @@
 
 public record AuthorViewModel(
     int Id,
-    string Fullname,
+    string FullName,
     string Email
 );
