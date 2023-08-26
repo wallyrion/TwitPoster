@@ -6,7 +6,6 @@ using Moq;
 using TwitPoster.BLL.Authentication;
 using TwitPoster.BLL.Exceptions;
 using TwitPoster.BLL.Interfaces;
-using TwitPoster.BLL.Services;
 using TwitPoster.DAL;
 using TwitPoster.DAL.Models;
 
