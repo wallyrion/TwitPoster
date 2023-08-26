@@ -77,53 +77,56 @@ public class UsersController : ControllerBase
         var directoryPath = Path.Combine("uploadImages", _currentUser.Id.ToString());
         
         Directory.CreateDirectory(directoryPath);
+
+        foreach (var exisingFile in Directory.GetFiles(directoryPath))
+        {
+            System.IO.File.Delete(exisingFile);
+        }
         var path = Path.Combine(directoryPath, formFile.FileName);
 
         await using var stream = System.IO.File.OpenWrite(path);
         await file.CopyToAsync(stream);
 
-        return Ok();
+        return NoContent();
     }
     
-    [HttpGet("photo")]
-    public async Task<ActionResult> GetProfilePhoto()
+    [AllowAnonymous]
+    [HttpGet("{userId:int}/photo")]
+    public async Task<ActionResult> GetProfilePhoto(int userId)
     {
-        var result = await GetPhoto();
+        var result = await GetPhoto(userId);
         if (result == null)
         {
             return NoContent();
         }
         
         var provider = new FileExtensionContentTypeProvider();
-        
         if (!provider.TryGetContentType(result.Value.fileName, out var contentType))
         {
-            contentType = "application/octet-stream";
+            contentType = System.Net.Mime.MediaTypeNames.Application.Octet;
         }
         
         return File(result.Value.file, contentType, result.Value.fileName);
     }
     
-    private async Task<(byte[] file, string fileName)?> GetPhoto()
+    private async Task<(byte[] file, string fileName)?> GetPhoto(int userId)
     {
-        var directoryPath = Path.Combine("uploadImages", _currentUser.Id.ToString());
+        var directoryPath = Path.Combine("uploadImages", userId.ToString());
 
         if (!Directory.Exists(directoryPath))
         {
             return null;
         }
         
-        var files = Directory.GetFiles(directoryPath);
+        var filePath = Directory.GetFiles(directoryPath).FirstOrDefault();
         
-        if (files.Length == 0)
+        if (filePath is null)
         {
             return null;
         }
         
-        var path = files[0];
-
-        var fileName = Path.GetFileName(path);
-
-        return (await System.IO.File.ReadAllBytesAsync(path), fileName);
+        var fileName = Path.GetFileName(filePath);
+        var fileContent = await System.IO.File.ReadAllBytesAsync(filePath);
+        return (fileContent, fileName);
     }
 }

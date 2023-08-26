@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Filters;
-using TwitPoster.BLL.Authentication;
 using TwitPoster.BLL.Options;
 using TwitPoster.Web.Validators;
 using TwitPoster.Web.ViewModels;

@@ -1,5 +1,4 @@
-﻿using Bogus.DataSets;
-using FluentAssertions;
+﻿using FluentAssertions;
 using FluentValidation.TestHelper;
 using TwitPoster.Web.Validators;
 using TwitPoster.Web.ViewModels;

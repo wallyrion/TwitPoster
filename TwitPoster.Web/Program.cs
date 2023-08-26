@@ -36,7 +36,7 @@ builder.Services
     .AddScoped<ICurrentUser, CurrentUser>()
     .AddScoped<IAuthService, AuthService>()
     .AddSingleton<IJwtTokenGenerator, JwtTokenGenerator>()
-    .AddOutputCache()
+    
     .AddMassTransit(mass => mass.UsingRabbitMq());
 
 builder.Services.AddCors(options => options.AddPolicy("CorsPolicy", o =>
@@ -55,16 +55,15 @@ app.MapControllers()
 app
     .InDevelopment(b =>
         b.UseSwagger().UseSwaggerUI())
-    
+
     .UseCors("CorsPolicy")
-    .UseOutputCache()
     .UseMiddleware<RequestDurationMiddleware>()
     .Use(CustomMiddlewares.ExtendRequestDurationMiddleware)
-    
     .UseSerilogRequestLogging()
     .UseHttpsRedirection()
     .UseAuthentication()
     .UseAuthorization()
+
     .UseExceptionHandler()
     .UseStatusCodePages();
 
