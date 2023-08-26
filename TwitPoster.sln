@@ -20,6 +20,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.editorconfig = .editorconfig
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TwitPoster.EmailSender", "TwitPoster.EmailSender\TwitPoster.EmailSender.csproj", "{BB6E65A4-9920-496B-9D97-EC3E28E2B69D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TwitPoster.Contracts", "TwitPoster.Contracts\TwitPoster.Contracts.csproj", "{B80ED140-D31C-46D2-B862-E75094679752}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -46,6 +50,14 @@ Global
 		{C09CCE9E-1EE1-44D8-B2A6-020DDE3FE21D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C09CCE9E-1EE1-44D8-B2A6-020DDE3FE21D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C09CCE9E-1EE1-44D8-B2A6-020DDE3FE21D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BB6E65A4-9920-496B-9D97-EC3E28E2B69D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BB6E65A4-9920-496B-9D97-EC3E28E2B69D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BB6E65A4-9920-496B-9D97-EC3E28E2B69D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BB6E65A4-9920-496B-9D97-EC3E28E2B69D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B80ED140-D31C-46D2-B862-E75094679752}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B80ED140-D31C-46D2-B862-E75094679752}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B80ED140-D31C-46D2-B862-E75094679752}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B80ED140-D31C-46D2-B862-E75094679752}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,9 +1,10 @@
 ﻿using LanguageExt.Common;
+using MassTransit;
 using Microsoft.EntityFrameworkCore;
 using MimeKit.Text;
 using TwitPoster.BLL.Exceptions;
 using TwitPoster.BLL.Interfaces;
-using TwitPoster.BLL.Services;
+using TwitPoster.Contracts;
 using TwitPoster.DAL;
 using TwitPoster.DAL.Models;
 
@@ -12,14 +13,14 @@ namespace TwitPoster.BLL.Authentication;
 public class AuthService : IAuthService
 {
     private readonly TwitPosterContext _context;
-    private readonly IEmailSender _emailSender;
     private readonly IJwtTokenGenerator _tokenGenerator;
+    private readonly IPublishEndpoint _publishEndpoint;
 
-    public AuthService(IEmailSender emailSender, IJwtTokenGenerator tokenGenerator, TwitPosterContext context)
+    public AuthService(IJwtTokenGenerator tokenGenerator, TwitPosterContext context, IPublishEndpoint publishEndpoint)
     {
-        _emailSender = emailSender;
         _tokenGenerator = tokenGenerator;
         _context = context;
+        _publishEndpoint = publishEndpoint;
     }
 
     public async Task<string> Login(string email, string password)
@@ -76,7 +77,8 @@ public class AuthService : IAuthService
         """;
 
         var mailCommand = new EmailCommand(email, "Welcome to TwitPoster! Confirm your email", emailBody, TextFormat.Html);
-        await _emailSender.SendEmail(mailCommand);
+
+        await _publishEndpoint.Publish(mailCommand);
 
         return user.Id;
     }

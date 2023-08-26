@@ -3,18 +3,16 @@ using MailKit.Security;
 using Microsoft.Extensions.Options;
 using MimeKit;
 using MimeKit.Text;
-using TwitPoster.BLL.Interfaces;
-using TwitPoster.BLL.Options;
+using TwitPoster.Contracts;
 
-namespace TwitPoster.BLL.Services;
+namespace TwitPoster.EmailSender.Services;
 
-public record EmailCommand(string To, string Subject, string Body, TextFormat Format = TextFormat.Plain);
 
-public class EmailSender : IEmailSender
+public class EmailService : IEmailService
 {
     private readonly MailOptions _mailOptions;
 
-    public EmailSender(IOptions<MailOptions> mailOptions)
+    public EmailService(IOptions<MailOptions> mailOptions)
     {
         _mailOptions = mailOptions.Value;
     }
@@ -25,7 +23,7 @@ public class EmailSender : IEmailSender
         email.From.Add(MailboxAddress.Parse(_mailOptions.SendEmailFrom));
         email.To.Add(MailboxAddress.Parse(command.To));
         email.Subject = command.Subject;
-        email.Body = new TextPart(command.Format) { Text = command.Body };
+        email.Body = new TextPart(TextFormat.Plain) { Text = command.Body };
 
         using var smtp = new SmtpClient();
         await smtp.ConnectAsync(_mailOptions.Host, _mailOptions.Port, SecureSocketOptions.StartTls);
