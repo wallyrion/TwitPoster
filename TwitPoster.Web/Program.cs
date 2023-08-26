@@ -36,12 +36,8 @@ builder.Services
     .AddScoped<ICurrentUser, CurrentUser>()
     .AddScoped<IAuthService, AuthService>()
     .AddSingleton<IJwtTokenGenerator, JwtTokenGenerator>()
-    .AddOutputCache();
-
-builder.Services.AddMassTransit(mass =>
-{
-    mass.UsingRabbitMq();
-});
+    .AddOutputCache()
+    .AddMassTransit(mass => mass.UsingRabbitMq());
 
 builder.Services.AddCors(options => options.AddPolicy("CorsPolicy", o =>
 {
