@@ -5,9 +5,9 @@ name: .NET
 
 on:
   push:
-    branches: [ "master" ]
+    branches: [ "docker/with-github-actions" ]
   pull_request:
-    branches: [ "master" ]
+    branches: [ "docker/with-github-actions" ]
 
 jobs:
   build:
