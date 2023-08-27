@@ -23,6 +23,8 @@ IConfigurationSection authConfig = builder.Configuration.GetRequiredSection("Aut
 var authOptions = authConfig.Get<AuthOptions>()!;
 builder.Services.Configure<AuthOptions>(authConfig);
 
+var rabbitMqConfig = builder.Configuration.GetRequiredSection("RabbitMq");
+
 builder.Services
     .AddSwaggerWithAuthorization()
     .AddEndpointsApiExplorer()
@@ -37,12 +39,10 @@ builder.Services
     .AddScoped<ICurrentUser, CurrentUser>()
     .AddScoped<IAuthService, AuthService>()
     .AddSingleton<IJwtTokenGenerator, JwtTokenGenerator>()
-    .AddMassTransit(mass => mass.UsingRabbitMq((_, cfg) =>
-        cfg.Host("my-rabbit", "/", h =>
-        {
-            h.Username("guest");
-            h.Password("guest");
-        })));
+
+    .Configure<RabbitMqTransportOptions>(rabbitMqConfig)
+    
+    .AddMassTransit(mass => mass.UsingRabbitMq());
 
 builder.Services.AddCors(options => options.AddPolicy("CorsPolicy", o =>
 {

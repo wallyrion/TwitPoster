@@ -47,7 +47,7 @@ services:
                 memory: 2g
         healthcheck:
           test: [ "CMD", "/opt/mssql-tools/bin/sqlcmd", "-U", "sa", "-P", "2Secure*Password2", "-Q", "select 1" ]
-          interval: 30s
+          interval: 2s
           timeout: 10s
           retries: 5
     seq:
@@ -58,7 +58,7 @@ services:
           - ACCEPT_EULA=Y
         ports:
           - "82:80"
-          - "5342:5341"
+          - "5343:5341"
         volumes:
           - seq-logs:/seqdata
         networks:
@@ -68,11 +68,6 @@ services:
               limits:
                 cpus: "0.50"
                 memory: 512M
-        healthcheck:
-          test: [ "CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:5341" ]
-          interval: 2s
-          timeout: 10s
-          retries: 5
 
     seq-gelf:
       image: datalust/seq-input-gelf:latest
@@ -109,6 +104,16 @@ services:
         interval: 2s
         timeout: 10s
         retries: 5
+        
+    email-sender:
+      image: "email-sender:latest"
+      ports:
+        - "8000:8080"
+      networks:
+        - twiposter-network
+      depends_on:
+        rabbitmq:
+          condition: service_healthy
     
 
 volumes:
