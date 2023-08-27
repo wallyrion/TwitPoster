@@ -1,13 +1,14 @@
-﻿FROM mcr.microsoft.com/dotnet/aspnet:7.0 AS base
+﻿FROM mcr.microsoft.com/dotnet/nightly/aspnet:8.0-preview AS base
 WORKDIR /app
-EXPOSE 80
+EXPOSE 8080
 EXPOSE 443
 
-FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
+FROM mcr.microsoft.com/dotnet/nightly/sdk:8.0-preview AS build
 WORKDIR /src
 COPY ["TwitPoster.Web/TwitPoster.Web.csproj", "TwitPoster.Web/"]
 COPY ["TwitPoster.BLL/TwitPoster.BLL.csproj", "TwitPoster.BLL/"]
 COPY ["TwitPoster.DAL/TwitPoster.DAL.csproj", "TwitPoster.DAL/"]
+COPY ["TwitPoster.Contracts/TwitPoster.Contracts.csproj", "TwitPoster.Contracts/"]
 RUN dotnet restore "TwitPoster.Web/TwitPoster.Web.csproj"
 COPY . .
 WORKDIR "/src/TwitPoster.Web"

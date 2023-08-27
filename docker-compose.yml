@@ -13,10 +13,13 @@ services:
           dockerfile: Dockerfile
         restart: always
         ports:
-          - "8089:80"
+          - "50001:443"
+          - "54021:8080"
         depends_on:
-          - mssqlDb
-          - seq
+          mssqlDb:
+            condition: service_healthy
+          rabbitmq:
+            condition: service_healthy
         networks:
           - twiposter-network
         deploy:
@@ -29,7 +32,7 @@ services:
         container_name: twitposter-mssql
         image: "mcr.microsoft.com/mssql/server:2022-latest"
         ports:
-          - "1433:1433"
+          - "14333:1433"
         networks: 
          - twiposter-network
         environment:
@@ -42,6 +45,11 @@ services:
               limits:
                 cpus: "6"
                 memory: 2g
+        healthcheck:
+          test: [ "CMD", "/opt/mssql-tools/bin/sqlcmd", "-U", "sa", "-P", "2Secure*Password2", "-Q", "select 1" ]
+          interval: 30s
+          timeout: 10s
+          retries: 5
     seq:
         image: datalust/seq:latest
         container_name: twitposter-seq
@@ -49,8 +57,8 @@ services:
         environment:
           - ACCEPT_EULA=Y
         ports:
-          - "81:80"
-          - "5341:5341"
+          - "82:80"
+          - "5342:5341"
         volumes:
           - seq-logs:/seqdata
         networks:
@@ -60,6 +68,11 @@ services:
               limits:
                 cpus: "0.50"
                 memory: 512M
+        healthcheck:
+          test: [ "CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:5341" ]
+          interval: 2s
+          timeout: 10s
+          retries: 5
 
     seq-gelf:
       image: datalust/seq-input-gelf:latest
@@ -79,6 +92,23 @@ services:
             limits:
               cpus: "0.50"
               memory: 512M
+      
+    rabbitmq: ## defining rabbitmq service
+      image: rabbitmq:3-management
+      hostname: my-rabbit
+      environment:
+        - RABBITMQ_DEFAULT_USER=guest
+        - RABBITMQ_DEFAULT_PASS=guest
+      ports:
+        - "5672:5672"
+        - "15672:15672"
+      networks:
+        - twiposter-network
+      healthcheck:
+        test: [ "CMD", "rabbitmqctl", "status" ]
+        interval: 2s
+        timeout: 10s
+        retries: 5
     
 
 volumes:

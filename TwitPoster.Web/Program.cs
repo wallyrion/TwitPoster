@@ -1,3 +1,4 @@
+using System.Text.Json;
 using MassTransit;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
@@ -36,7 +37,12 @@ builder.Services
     .AddScoped<ICurrentUser, CurrentUser>()
     .AddScoped<IAuthService, AuthService>()
     .AddSingleton<IJwtTokenGenerator, JwtTokenGenerator>()
-    .AddMassTransit(mass => mass.UsingRabbitMq());
+    .AddMassTransit(mass => mass.UsingRabbitMq((_, cfg) =>
+        cfg.Host("my-rabbit", "/", h =>
+        {
+            h.Username("guest");
+            h.Password("guest");
+        })));
 
 builder.Services.AddCors(options => options.AddPolicy("CorsPolicy", o =>
 {
@@ -55,13 +61,17 @@ using (var scope = app.Services.CreateScope())
     var services = scope.ServiceProvider;
 
     var context = services.GetRequiredService<TwitPosterContext>();
-    if (context.Database.GetPendingMigrations().Any())
+    var pendingMigrations = (await context.Database.GetPendingMigrationsAsync()).ToList();
+    if (pendingMigrations.Any())
     {
-        app.Logger.LogInformation("Migrating database....");
+        app.Logger.LogInformation("Migrating database.... {PendingMigrations} pending migrations", JsonSerializer.Serialize(pendingMigrations));
         context.Database.Migrate();
         app.Logger.LogInformation("Database migrated");
     }
 }
+
+app.Logger.LogInformation("After migration application with {ProcessorsCount} processor(s)", Environment.ProcessorCount);
+
 
 app.MapControllers()
     .RequireAuthorization();
@@ -73,11 +83,9 @@ app
         */
 
     .UseCors("CorsPolicy")
-     
     .UseMiddleware<RequestDurationMiddleware>()
     .Use(CustomMiddlewares.ExtendRequestDurationMiddleware)
     .UseSerilogRequestLogging()
-    .UseHttpsRedirection()
     .UseAuthentication()
     .UseAuthorization()
 
@@ -88,5 +96,8 @@ app.InDevelopment(b =>
         b.UseDeveloperExceptionPage())
     .UseMiddleware<BusinessValidationMiddleware>()
     .UseMiddleware<SetupUserClaimsMiddleware>();
+
+app.Logger.LogInformation("Starting app...");
+
 
 app.Run();
