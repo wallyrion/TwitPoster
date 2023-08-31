@@ -20,7 +20,6 @@ internal static class InitialUsersSeed
                 },
                 new User
                 {
-                    
                     Email = "admin@twitposter.com",
                     Id = 2,
                     FirstName = "Admin",
