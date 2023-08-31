@@ -29,7 +29,6 @@ internal static class InitialUsersSeed
                     CreatedAt = new DateTime(2021, 1, 1),
                 }, new User
                 {
-                    
                     Email = "moderator@twitposter.com",
                     Id = 3,
                     FirstName = "Moderator",
