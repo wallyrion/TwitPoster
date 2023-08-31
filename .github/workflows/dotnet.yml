@@ -5,9 +5,9 @@ name: .NET
 
 on:
   push:
-    branches: [ "docker/with-github-actions" ]
+    branches: [ "master" ]
   pull_request:
-    branches: [ "docker/with-github-actions" ]
+    branches: [ "master" ]
 
 jobs:
   build:
@@ -26,5 +26,3 @@ jobs:
       run: dotnet build --no-restore
     - name: Test
       run: dotnet test --no-build --verbosity normal
-    - name: Build Docker Image
-      run: dotnet publish TwitPoster.EmailSender /t:PublishContainer
