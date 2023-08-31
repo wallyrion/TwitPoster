@@ -24,7 +24,8 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\TwitPoster.Web\TwitPoster.Web.csproj" />
+      <ProjectReference Include="..\..\src\TwitPoster.BLL\TwitPoster.BLL.csproj" />
+      <ProjectReference Include="..\..\src\TwitPoster.Web\TwitPoster.Web.csproj" />
     </ItemGroup>
 
 </Project>
