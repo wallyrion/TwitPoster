@@ -18,6 +18,6 @@ public class RegistrationRequestExamples : IMultipleExamplesProvider<Registratio
     {
         var faker = new Faker();
             
-        return new RegistrationRequest(faker.Person.FirstName, faker.Person.LastName, faker.Person.DateOfBirth, faker.Person.Email, faker.Internet.Password(regexPattern: "^(?=.*[A-Za-z])(?=.*\\d).+$"));
+        return new RegistrationRequest(faker.Person.FirstName, faker.Person.LastName, faker.Person.DateOfBirth, faker.Person.Email, faker.Internet.Password(5) + faker.Internet.IpAddress());
     }
 }
