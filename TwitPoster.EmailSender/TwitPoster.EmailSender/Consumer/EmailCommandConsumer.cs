@@ -1,5 +1,5 @@
 ﻿using MassTransit;
-using TwitPoster.Contracts;
+using TwitPoster.EmailSender.Contracts;
 using TwitPoster.EmailSender.Services;
 
 namespace TwitPoster.EmailSender.Consumer;

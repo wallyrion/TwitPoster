@@ -1,4 +1,4 @@
-﻿using TwitPoster.Contracts;
+﻿using TwitPoster.EmailSender.Contracts;
 
 namespace TwitPoster.EmailSender.Services;
 

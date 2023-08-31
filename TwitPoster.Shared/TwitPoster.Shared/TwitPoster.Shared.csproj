@@ -1,0 +1,18 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+
+        <PackageId>twitposter-shared</PackageId>
+        <Version>1.0.0</Version>
+        <Authors>oleksii_korniienko</Authors>
+        <Company>Wallyrion</Company>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="MimeKit" Version="4.1.0" />
+    </ItemGroup>
+
+</Project>

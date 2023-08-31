@@ -3,7 +3,7 @@ using MailKit.Security;
 using Microsoft.Extensions.Options;
 using MimeKit;
 using MimeKit.Text;
-using TwitPoster.Contracts;
+using TwitPoster.EmailSender.Contracts;
 
 namespace TwitPoster.EmailSender.Services;
 

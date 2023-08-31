@@ -6,6 +6,7 @@ using TwitPoster.BLL.Authentication;
 using TwitPoster.BLL.Interfaces;
 using TwitPoster.BLL.Options;
 using TwitPoster.BLL.Services;
+using TwitPoster.Contracts;
 using TwitPoster.DAL;
 using TwitPoster.Web;
 using TwitPoster.Web.Extensions;
@@ -43,6 +44,9 @@ builder.Services
     .Configure<RabbitMqTransportOptions>(rabbitMqConfig)
     
     .AddMassTransit(mass => mass.UsingRabbitMq());
+
+EndpointConvention.Map<EmailCommand>(new Uri("email-command"));
+
 
 builder.Services.AddCors(options => options.AddPolicy("CorsPolicy", o =>
 {
