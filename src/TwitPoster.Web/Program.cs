@@ -54,8 +54,6 @@ builder.Services.AddCors(options => options.AddPolicy("CorsPolicy", o =>
 
 var app = builder.Build();
 
-app.Logger.LogInformation("Starting application with {ProcessorsCount} processor(s)", Environment.ProcessorCount);
-
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
@@ -78,9 +76,6 @@ app.MapControllers()
 
 app
     .UseSwagger().UseSwaggerUI()
-    /*mssqlDb.InDevelopment(b =>
-        b.UseSwagger().UseSwaggerUI())
-        */
 
     .UseCors("CorsPolicy")
     .UseMiddleware<RequestDurationMiddleware>()
@@ -97,7 +92,6 @@ app.InDevelopment(b =>
     .UseMiddleware<BusinessValidationMiddleware>()
     .UseMiddleware<SetupUserClaimsMiddleware>();
 
-app.Logger.LogInformation("Starting app...");
-
+app.Logger.LogInformation("Starting application with {ProcessorsCount} processor(s)", Environment.ProcessorCount);
 
 app.Run();
