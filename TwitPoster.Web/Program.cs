@@ -1,3 +1,4 @@
+using System.Text.Json;
 using MassTransit;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
@@ -22,6 +23,8 @@ IConfigurationSection authConfig = builder.Configuration.GetRequiredSection("Aut
 var authOptions = authConfig.Get<AuthOptions>()!;
 builder.Services.Configure<AuthOptions>(authConfig);
 
+var rabbitMqConfig = builder.Configuration.GetRequiredSection("RabbitMq");
+
 builder.Services
     .AddSwaggerWithAuthorization()
     .AddEndpointsApiExplorer()
@@ -36,6 +39,8 @@ builder.Services
     .AddScoped<ICurrentUser, CurrentUser>()
     .AddScoped<IAuthService, AuthService>()
     .AddSingleton<IJwtTokenGenerator, JwtTokenGenerator>()
+
+    .Configure<RabbitMqTransportOptions>(rabbitMqConfig)
     
     .AddMassTransit(mass => mass.UsingRabbitMq());
 
@@ -49,18 +54,38 @@ builder.Services.AddCors(options => options.AddPolicy("CorsPolicy", o =>
 
 var app = builder.Build();
 
+app.Logger.LogInformation("Starting application with {ProcessorsCount} processor(s)", Environment.ProcessorCount);
+
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+
+    var context = services.GetRequiredService<TwitPosterContext>();
+    var pendingMigrations = (await context.Database.GetPendingMigrationsAsync()).ToList();
+    if (pendingMigrations.Any())
+    {
+        app.Logger.LogInformation("Migrating database.... {PendingMigrations} pending migrations", JsonSerializer.Serialize(pendingMigrations));
+        context.Database.Migrate();
+        app.Logger.LogInformation("Database migrated");
+    }
+}
+
+app.Logger.LogInformation("After migration application with {ProcessorsCount} processor(s)", Environment.ProcessorCount);
+
+
 app.MapControllers()
     .RequireAuthorization();
 
 app
-    .InDevelopment(b =>
+    .UseSwagger().UseSwaggerUI()
+    /*mssqlDb.InDevelopment(b =>
         b.UseSwagger().UseSwaggerUI())
+        */
 
     .UseCors("CorsPolicy")
     .UseMiddleware<RequestDurationMiddleware>()
     .Use(CustomMiddlewares.ExtendRequestDurationMiddleware)
     .UseSerilogRequestLogging()
-    .UseHttpsRedirection()
     .UseAuthentication()
     .UseAuthorization()
 
@@ -71,5 +96,8 @@ app.InDevelopment(b =>
         b.UseDeveloperExceptionPage())
     .UseMiddleware<BusinessValidationMiddleware>()
     .UseMiddleware<SetupUserClaimsMiddleware>();
+
+app.Logger.LogInformation("Starting app...");
+
 
 app.Run();

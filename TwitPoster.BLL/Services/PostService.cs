@@ -20,7 +20,7 @@ public class PostService : IPostService
         _currentUser = currentUser;
     }
 
-    public async Task<List<PostDto>> GetPosts(int pageSize, int pageNumber)
+    public async Task<List<PostDto>> GetPosts(int pageSize, int pageNumber, CancellationToken cancellationToken = default)
     {
         TypeAdapterHelper.Override<Post, PostDto>(out var mapConfig)
             .Map(dest => dest.IsLikedByCurrentUser, src => src.PostLikes.Any(x => x.UserId == _currentUser.Id));
@@ -30,7 +30,7 @@ public class PostService : IPostService
             .Skip(pageSize * (pageNumber - 1))
             .Take(pageSize)
             .ProjectToType<PostDto>(mapConfig)
-            .ToListAsync();
+            .ToListAsync(cancellationToken);
 
         return posts;
     }

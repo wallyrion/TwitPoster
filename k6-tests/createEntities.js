@@ -3,8 +3,8 @@ import { randomString } from 'https://jslib.k6.io/k6-utils/1.2.0/index.js';
 import { randomItem } from 'https://jslib.k6.io/k6-utils/1.2.0/index.js';
 import { randomIntBetween } from 'https://jslib.k6.io/k6-utils/1.2.0/index.js';
 
-const baseUrl = 'https://localhost:7267'
-const numberOfUsersToSetup = 10000;
+const baseUrl = 'http://localhost:8089'
+const numberOfUsersToSetup = 1000;
 const likesToSetupBetween = [5, 500];
 const commentsToSetupBetween = [1, 100];
 

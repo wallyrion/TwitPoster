@@ -25,10 +25,11 @@ public class PostsController : ControllerBase
     [AllowAnonymous]
    // [OutputCache(Duration = 300)]
     public async Task<IEnumerable<PostViewModel>> Get(
-        [Range(1, 1000)] int pageSize = 25,
-        [Range(1, int.MaxValue)] int pageNumber = 1)
+       [Range(1, 1000)] int pageSize = 25,
+       [Range(1, int.MaxValue)] int pageNumber = 1,
+       CancellationToken cancellationToken = default)
     {
-        var posts = await _postService.GetPosts(pageSize, pageNumber);
+        var posts = await _postService.GetPosts(pageSize, pageNumber, cancellationToken);
         return posts.Adapt<IEnumerable<PostViewModel>>();
     }
     

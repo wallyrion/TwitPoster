@@ -1,0 +1,121 @@
+version: "3.8"
+
+networks:
+  twiposter-network:
+    name: twiposter-network
+    driver: bridge
+
+services:
+    api:
+        container_name: twitposter-api
+        build:
+          context: .
+          dockerfile: Dockerfile
+        restart: always
+        ports:
+          - "50001:443"
+          - "54021:8080"
+        depends_on:
+          mssqlDb:
+            condition: service_healthy
+          rabbitmq:
+            condition: service_healthy
+        networks:
+          - twiposter-network
+        deploy:
+          resources:
+              limits:
+                cpus: "6"
+                memory: 1g
+
+    mssqlDb:
+        container_name: twitposter-mssql
+        image: "mcr.microsoft.com/mssql/server:2022-latest"
+        ports:
+          - "14333:1433"
+        networks: 
+         - twiposter-network
+        environment:
+            SA_PASSWORD: "2Secure*Password2"
+            ACCEPT_EULA: "Y"
+        volumes:
+        - twitposter-database:/var/opt/mssql
+        deploy:
+          resources:
+              limits:
+                cpus: "6"
+                memory: 2g
+        healthcheck:
+          test: [ "CMD", "/opt/mssql-tools/bin/sqlcmd", "-U", "sa", "-P", "2Secure*Password2", "-Q", "select 1" ]
+          interval: 2s
+          timeout: 10s
+          retries: 5
+    seq:
+        image: datalust/seq:latest
+        container_name: twitposter-seq
+        restart: unless-stopped
+        environment:
+          - ACCEPT_EULA=Y
+        ports:
+          - "82:80"
+          - "5343:5341"
+        volumes:
+          - seq-logs:/seqdata
+        networks:
+        - twiposter-network
+        deploy:
+          resources:
+              limits:
+                cpus: "0.50"
+                memory: 512M
+
+    seq-gelf:
+      image: datalust/seq-input-gelf:latest
+      container_name: twitposter-seq-gelf
+      restart: unless-stopped
+      environment:
+        - ACCEPT_EULAY=Y
+        - SEQ_ADDRESS=http://seq:5341
+      depends_on:
+        - seq
+      ports:
+        - "12201:12201/udp"
+      networks:
+        - twiposter-network
+      deploy:
+        resources:
+            limits:
+              cpus: "0.50"
+              memory: 512M
+      
+    rabbitmq: ## defining rabbitmq service
+      image: rabbitmq:3-management
+      hostname: my-rabbit
+      environment:
+        - RABBITMQ_DEFAULT_USER=guest
+        - RABBITMQ_DEFAULT_PASS=guest
+      ports:
+        - "5672:5672"
+        - "15672:15672"
+      networks:
+        - twiposter-network
+      healthcheck:
+        test: [ "CMD", "rabbitmqctl", "status" ]
+        interval: 2s
+        timeout: 10s
+        retries: 5
+        
+    email-sender:
+      image: "email-sender:latest"
+      ports:
+        - "8000:8080"
+      networks:
+        - twiposter-network
+      depends_on:
+        rabbitmq:
+          condition: service_healthy
+    
+
+volumes:
+  twitposter-database:
+  seq-logs:

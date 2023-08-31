@@ -4,7 +4,7 @@ namespace TwitPoster.BLL.Interfaces;
 
 public interface IPostService
 {
-    Task<List<PostDto>> GetPosts(int pageSize, int pageNumber);
+    Task<List<PostDto>> GetPosts(int pageSize, int pageNumber, CancellationToken cancellationToken = default);
     Task<PostDto> CreatePost(string body);
     Task<PostCommentDto> CreateComment(int postId, string text);
     Task<int> LikePost(int postId);
