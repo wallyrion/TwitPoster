@@ -15,14 +15,28 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v3
-      with:
-        dotnet-version: 8.0.x
-    - name: Restore dependencies
-      run: dotnet restore
-    - name: Build
-      run: dotnet build --no-restore
-    - name: Test
-      run: dotnet test --no-build --verbosity normal
+      - uses: actions/checkout@v3
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: 8.0.x
+      - name: Restore dependencies - TwitPoster
+        run: dotnet restore TwitPoster/TwitPoster.sln
+      - name: Build - TwitPoster
+        run: dotnet build --no-restore TwitPoster/TwitPoster.sln
+      - name: Test - TwitPoster
+        run: dotnet test --no-build --verbosity normal TwitPoster/TwitPoster.sln
+
+      - name: Restore dependencies - TwitPoster.EmailSender
+        run: dotnet restore ./TwitPoster.EmailSender
+      - name: Build - TwitPoster.EmailSender
+        run: dotnet build --no-restore ./TwitPoster.EmailSender
+      - name: Test - TwitPoster.EmailSender
+        run: dotnet test --no-build --verbosity normal ./TwitPoster.EmailSender
+
+      - name: Restore dependencies - TwitPoster.Shared
+        run: dotnet restore TwitPoster.Shared/TwitPoster.Shared.sln
+      - name: Build - TwitPoster.Shared
+        run: dotnet build --no-restore TwitPoster.Shared/TwitPoster.Shared.sln
+      - name: Test - TwitPoster.Shared
+        run: dotnet test --no-build --verbosity normal TwitPoster.Shared/TwitPoster.Shared.sln
