@@ -2,7 +2,7 @@
 
 namespace TwitPoster.Shared.Contracts;
 
-public class EmailCommand
+public sealed class EmailCommand
 {
     public string To { get; set; }
     public string Subject { get; set; }
