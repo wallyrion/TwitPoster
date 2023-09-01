@@ -2,7 +2,7 @@ name: .NET TwitPoster.EmailSender
 
 on:
   push:
-    branches: ["master"]
+    branches: ["refactoring/move-to-separate-solutions"]
     paths:
       - "TwitPoster.EmailSender/*"
   pull_request:
