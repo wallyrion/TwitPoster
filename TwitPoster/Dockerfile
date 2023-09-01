@@ -9,7 +9,7 @@ COPY ["src/TwitPoster.Web/TwitPoster.Web.csproj", "TwitPoster.Web/"]
 COPY ["src/TwitPoster.BLL/TwitPoster.BLL.csproj", "TwitPoster.BLL/"]
 COPY ["src/TwitPoster.DAL/TwitPoster.DAL.csproj", "TwitPoster.DAL/"]
 RUN dotnet restore "TwitPoster.Web/TwitPoster.Web.csproj"
-COPY . .
+COPY src .
 WORKDIR "/src/TwitPoster.Web"
 RUN dotnet build "TwitPoster.Web.csproj" -c Release -o /app/build
 

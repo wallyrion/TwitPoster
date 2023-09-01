@@ -9,7 +9,7 @@ services:
     api:
         container_name: twitposter-api
         build:
-          context: .
+          context: ./TwitPoster
           dockerfile: Dockerfile
         restart: always
         ports:
