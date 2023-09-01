@@ -29,7 +29,6 @@ public class EmailService : IEmailService
         await smtp.ConnectAsync(_mailOptions.Host, _mailOptions.Port, SecureSocketOptions.StartTls);
         await smtp.AuthenticateAsync(_mailOptions.AuthUserName, _mailOptions.AuthPassword);
         await smtp.SendAsync(email);
-
         await smtp.DisconnectAsync(true);
     }
 }
