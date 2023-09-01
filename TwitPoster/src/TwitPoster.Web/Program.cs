@@ -7,6 +7,7 @@ using TwitPoster.BLL.Interfaces;
 using TwitPoster.BLL.Options;
 using TwitPoster.BLL.Services;
 using TwitPoster.DAL;
+using TwitPoster.Shared.Contracts;
 using TwitPoster.Web;
 using TwitPoster.Web.Extensions;
 using TwitPoster.Web.Middlewares;
@@ -44,6 +45,7 @@ builder.Services
     
     .AddMassTransit(mass => mass.UsingRabbitMq());
 
+
 builder.Services.AddCors(options => options.AddPolicy("CorsPolicy", o =>
 {
     o.AllowAnyMethod()
@@ -60,7 +62,7 @@ using (var scope = app.Services.CreateScope())
 
     var context = services.GetRequiredService<TwitPosterContext>();
     var pendingMigrations = (await context.Database.GetPendingMigrationsAsync()).ToList();
-    if (pendingMigrations.Any())
+    if (pendingMigrations.Count != 0)
     {
         app.Logger.LogInformation("Migrating database.... {PendingMigrations} pending migrations", JsonSerializer.Serialize(pendingMigrations));
         context.Database.Migrate();

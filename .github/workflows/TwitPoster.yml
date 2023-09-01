@@ -1,0 +1,28 @@
+name: Build & Test - TwitPoster
+
+on:
+  push:
+    branches: ["master"]
+    paths:
+      - "TwitPoster/**"
+  pull_request:
+    branches: ["master"]
+    paths:
+      - "TwitPoster/**"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: 8.0.x
+      - name: Restore dependencies - TwitPoster
+        run: dotnet restore ./TwitPoster
+      - name: Build - TwitPoster
+        run: dotnet build --no-restore ./TwitPoster
+      - name: Test - TwitPoster
+        run: dotnet test --no-build --verbosity normal ./TwitPoster

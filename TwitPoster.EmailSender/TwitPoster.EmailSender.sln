@@ -1,0 +1,26 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TwitPoster.EmailSender", "src\TwitPoster.EmailSender\TwitPoster.EmailSender.csproj", "{832FAE69-0F82-44BA-9DCF-0F06517CA740}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SolutionItems", "SolutionItems", "{7CC80801-9EF4-49C8-92A1-040247E3FEAA}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{5891EFA0-DC08-4F26-9CA1-ECC76A746B67}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{832FAE69-0F82-44BA-9DCF-0F06517CA740}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{832FAE69-0F82-44BA-9DCF-0F06517CA740}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{832FAE69-0F82-44BA-9DCF-0F06517CA740}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{832FAE69-0F82-44BA-9DCF-0F06517CA740}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{832FAE69-0F82-44BA-9DCF-0F06517CA740} = {5891EFA0-DC08-4F26-9CA1-ECC76A746B67}
+	EndGlobalSection
+EndGlobal

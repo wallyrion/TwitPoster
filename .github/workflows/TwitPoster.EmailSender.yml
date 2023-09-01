@@ -1,0 +1,29 @@
+name: Build & Test - TwitPoster.EmailSender
+
+
+on:
+  push:
+    branches: ["master"]
+    paths:
+      - "TwitPoster.EmailSender/*"
+  pull_request:
+    branches: ["master"]
+    paths:
+      - "TwitPoster.EmailSender/*"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: 8.0.x
+      - name: Restore dependencies - TwitPoster.EmailSender
+        run: dotnet restore ./TwitPoster.EmailSender
+      - name: Build - TwitPoster.EmailSender
+        run: dotnet build --no-restore ./TwitPoster.EmailSender
+      - name: Test - TwitPoster.EmailSender
+        run: dotnet test --no-build --verbosity normal ./TwitPoster.EmailSender

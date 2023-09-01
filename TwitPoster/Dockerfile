@@ -5,12 +5,11 @@ EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/nightly/sdk:8.0-preview AS build
 WORKDIR /src
-COPY ["TwitPoster.Web/TwitPoster.Web.csproj", "TwitPoster.Web/"]
-COPY ["TwitPoster.BLL/TwitPoster.BLL.csproj", "TwitPoster.BLL/"]
-COPY ["TwitPoster.DAL/TwitPoster.DAL.csproj", "TwitPoster.DAL/"]
-COPY ["TwitPoster.Contracts/TwitPoster.Contracts.csproj", "TwitPoster.Contracts/"]
+COPY ["src/TwitPoster.Web/TwitPoster.Web.csproj", "TwitPoster.Web/"]
+COPY ["src/TwitPoster.BLL/TwitPoster.BLL.csproj", "TwitPoster.BLL/"]
+COPY ["src/TwitPoster.DAL/TwitPoster.DAL.csproj", "TwitPoster.DAL/"]
 RUN dotnet restore "TwitPoster.Web/TwitPoster.Web.csproj"
-COPY . .
+COPY src .
 WORKDIR "/src/TwitPoster.Web"
 RUN dotnet build "TwitPoster.Web.csproj" -c Release -o /app/build
 
