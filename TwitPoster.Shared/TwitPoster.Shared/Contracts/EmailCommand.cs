@@ -1,6 +1,6 @@
 ﻿using MimeKit.Text;
 
-namespace TwitPoster.EmailSender.Contracts;
+namespace TwitPoster.Shared.Contracts;
 
 public class EmailCommand
 {

@@ -19,12 +19,6 @@
         <PackageReference Include="Serilog.Extensions.Hosting" Version="7.0.0" />
         <PackageReference Include="Serilog.Sinks.Seq" Version="5.2.3-dev-00262" />
         <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
+        <PackageReference Include="Twitposter.Shared" Version="1.0.4" />
     </ItemGroup>
-
-    <ItemGroup>
-      <ProjectReference Include="..\TwitPoster.Contracts\TwitPoster.Contracts.csproj" />
-    </ItemGroup>
-
-
-
 </Project>

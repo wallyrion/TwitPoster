@@ -4,9 +4,9 @@ using Microsoft.EntityFrameworkCore;
 using MimeKit.Text;
 using TwitPoster.BLL.Exceptions;
 using TwitPoster.BLL.Interfaces;
-using TwitPoster.Contracts;
 using TwitPoster.DAL;
 using TwitPoster.DAL.Models;
+using TwitPoster.Shared.Contracts;
 
 namespace TwitPoster.BLL.Authentication;
 
