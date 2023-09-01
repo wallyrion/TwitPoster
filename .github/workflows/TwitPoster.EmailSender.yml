@@ -4,11 +4,11 @@ on:
   push:
     branches: ["master"]
     paths:
-      - "TwitPoster.EmailSender/**"
+      - "TwitPoster.EmailSender/*"
   pull_request:
     branches: ["master"]
     paths:
-      - "TwitPoster.EmailSender/**"
+      - "TwitPoster.EmailSender/*"
 
 jobs:
   build:
