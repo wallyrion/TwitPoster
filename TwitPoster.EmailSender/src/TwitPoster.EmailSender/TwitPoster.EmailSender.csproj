@@ -5,7 +5,7 @@
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
         <InvariantGlobalization>true</InvariantGlobalization>
-      <!--  <RuntimeIdentifier>linux-x64</RuntimeIdentifier>-->
+        <RuntimeIdentifier>linux-x64</RuntimeIdentifier>
         <ContainerRepository>email-sender</ContainerRepository>
         <ContainerBaseImage>mcr.microsoft.com/dotnet/aspnet:8.0-preview</ContainerBaseImage>
     </PropertyGroup>
