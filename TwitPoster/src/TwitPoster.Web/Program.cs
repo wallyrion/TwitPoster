@@ -62,7 +62,7 @@ using (var scope = app.Services.CreateScope())
 
     var context = services.GetRequiredService<TwitPosterContext>();
     var pendingMigrations = (await context.Database.GetPendingMigrationsAsync()).ToList();
-    if (pendingMigrations.Any())
+    if (pendingMigrations.Count != 0)
     {
         app.Logger.LogInformation("Migrating database.... {PendingMigrations} pending migrations", JsonSerializer.Serialize(pendingMigrations));
         context.Database.Migrate();
