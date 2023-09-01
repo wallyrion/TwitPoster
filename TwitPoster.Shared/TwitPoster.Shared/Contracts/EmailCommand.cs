@@ -16,4 +16,5 @@ public sealed class EmailCommand
         Body = body;
         Format = format;
     }
+    
 }
