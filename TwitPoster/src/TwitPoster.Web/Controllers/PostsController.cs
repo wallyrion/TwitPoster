@@ -31,6 +31,8 @@ public class PostsController : ControllerBase
     {
         var posts = await _postService.GetPosts(pageSize, pageNumber, cancellationToken);
         return posts.Adapt<IEnumerable<PostViewModel>>();
+        
+        
     }
     
     // Get total count of posts
