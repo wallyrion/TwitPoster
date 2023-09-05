@@ -33,9 +33,11 @@ public static class ServiceCollectionExtensions
             c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
             {
                 In = ParameterLocation.Header,
-                Description = "Please insert JWT with Bearer into field",
+                Description = "Please enter a valid JWT token (without prefix 'Bearer')",
                 Name = "Authorization",
-                Type = SecuritySchemeType.ApiKey
+                Type = SecuritySchemeType.Http,
+                BearerFormat = "JWT",
+                Scheme = "Bearer"
             });
             c.AddSecurityRequirement(new OpenApiSecurityRequirement
             {
