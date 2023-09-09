@@ -7,7 +7,6 @@ using TwitPoster.BLL.Interfaces;
 using TwitPoster.BLL.Options;
 using TwitPoster.BLL.Services;
 using TwitPoster.DAL;
-using TwitPoster.Shared.Contracts;
 using TwitPoster.Web;
 using TwitPoster.Web.Extensions;
 using TwitPoster.Web.Middlewares;
@@ -70,7 +69,6 @@ using (var scope = app.Services.CreateScope())
     }
 }
 
-app.Logger.LogInformation("After migration application with {ProcessorsCount} processor(s)", Environment.ProcessorCount);
 
 
 app.MapControllers()
