@@ -69,7 +69,6 @@ using (var scope = app.Services.CreateScope())
     }
 }
 
-app.Logger.LogInformation("After migration application with {ProcessorsCount} processor(s)", Environment.ProcessorCount);
 
 
 app.MapControllers()
