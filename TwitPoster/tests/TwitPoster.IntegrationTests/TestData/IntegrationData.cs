@@ -1,5 +1,5 @@
 ﻿using AutoFixture;
-using Microsoft.EntityFrameworkCore;
+using Bogus;
 using TwitPoster.DAL;
 using TwitPoster.DAL.Models;
 
@@ -13,8 +13,12 @@ public class IntegrationData
     
     public void Initialize(int defaultUserId)
     {
+        var bogus = new Faker();
+
         BaseFixture.Customize<DAL.Models.Post>(x => x
             .With(p => p.AuthorId, defaultUserId)
+            .With(p => p.LikesCount, 0)
+            .With(p => p.Body, bogus.Lorem.Paragraph())
             .Without(p => p.Id)
             .Without(p => p.Author)
             .Without(p => p.Comments)

@@ -2,7 +2,6 @@
 using AutoFixture;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using Respawn;
 using TwitPoster.BLL.Interfaces;
 using TwitPoster.DAL;
 using TwitPoster.DAL.Models;
@@ -10,6 +9,7 @@ using TwitPoster.IntegrationTests.TestData;
 
 namespace TwitPoster.IntegrationTests;
 
+[Collection(nameof(SharedTestCollection))]
 public abstract class BaseIntegrationTest : IAsyncLifetime
 {
     protected readonly IntegrationTestWebFactory Factory;
@@ -27,6 +27,7 @@ public abstract class BaseIntegrationTest : IAsyncLifetime
         Scope = factory.Services.CreateScope();
         ApiClient = factory.HttpClient;
         DbContext = Scope.ServiceProvider.GetRequiredService<TwitPosterContext>();
+        
         Data = new IntegrationData(DbContext);
     }
 

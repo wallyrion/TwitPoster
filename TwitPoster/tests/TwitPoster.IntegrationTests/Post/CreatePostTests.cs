@@ -5,7 +5,6 @@ using TwitPoster.Web.ViewModels.Post;
 
 namespace TwitPoster.IntegrationTests.Post;
 
-[Collection(nameof(SharedTestCollection))]
 public class CreatePostsTests : BaseIntegrationTest
 {
     public CreatePostsTests(IntegrationTestWebFactory factory) : base(factory)

@@ -4,18 +4,17 @@ using TwitPoster.Web.ViewModels.Post;
 
 namespace TwitPoster.IntegrationTests.Post;
 
-[Collection(nameof(SharedTestCollection))]
 public class GetPostsTests : BaseIntegrationTest
 {
     public GetPostsTests(IntegrationTestWebFactory factory) : base(factory)
     {
     }
-    
+
     [Fact]
     public async Task Get_Posts_Returns_Posts()
     {
         var expectedPosts = await Data.AddMany<DAL.Models.Post>();
-        
+
         var postsResponse = await ApiClient.GetAsync("Posts");
         postsResponse.Should()
             .Be200Ok()
@@ -26,7 +25,7 @@ public class GetPostsTests : BaseIntegrationTest
                 x.Should().BeEquivalentTo(expectedPosts, opt => opt.ExcludingMissingMembers());
             });
     }
-    
+
     [Fact]
     public async Task Get_Posts_Returns_Posts_With_isLiked()
     {
@@ -44,7 +43,7 @@ public class GetPostsTests : BaseIntegrationTest
             });
 
         await Data.AddMany(postLikes.ToList());
-        
+
         var postsResponse = await ApiClient.GetAsync("Posts");
         postsResponse.Should()
             .Be200Ok()
@@ -57,4 +56,3 @@ public class GetPostsTests : BaseIntegrationTest
             });
     }
 }
-
