@@ -1,45 +1,34 @@
 ﻿using System.Net.Http.Headers;
-using Microsoft.AspNetCore.Mvc.Testing;
+using AutoFixture;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using Testcontainers.MsSql;
 using TwitPoster.BLL.Interfaces;
 using TwitPoster.DAL;
-using TwitPoster.Web;
+using TwitPoster.DAL.Models;
+using TwitPoster.IntegrationTests.TestData;
 
 namespace TwitPoster.IntegrationTests;
 
+[Collection(nameof(SharedTestCollection))]
 public abstract class BaseIntegrationTest : IAsyncLifetime
 {
-    private readonly MsSqlContainer _msSqlContainer = new MsSqlBuilder().Build();
-    protected IServiceScope Scope = null!;
-    protected TwitPosterContext DbContext = null!;
-    protected HttpClient HttpClient = null!;
-    protected int DefaultUserId = 1;
+    protected readonly IntegrationTestWebFactory Factory;
+    protected readonly IServiceScope Scope;
+    protected readonly TwitPosterContext DbContext;
+    protected readonly HttpClient ApiClient;
     
-    public async Task InitializeAsync()
-    {
-        await _msSqlContainer.StartAsync();
-        
-        var webFactory = new WebApplicationFactory<IApiTestMarker>()
-            .WithWebHostBuilder(b =>
-            {
-                b.ConfigureServices(services =>
-                {
-                    var descriptor = services.SingleOrDefault(
-                        d => d.ServiceType == typeof(DbContextOptions<TwitPosterContext>));
+    protected int DefaultUserId;
 
-                    if (descriptor != null)
-                    {
-                        services.Remove(descriptor);
-                    }
-                
-                    services.AddDbContext<TwitPosterContext>(options => SqlServerDbContextOptionsExtensions.UseSqlServer(options, _msSqlContainer.GetConnectionString()));
-                });
-            });
-        HttpClient = webFactory.CreateClient();
-        Scope = webFactory.Services.CreateScope();
+    protected readonly IntegrationData Data;
+
+    public BaseIntegrationTest(IntegrationTestWebFactory factory)
+    {
+        Factory = factory;
+        Scope = factory.Services.CreateScope();
+        ApiClient = factory.HttpClient;
         DbContext = Scope.ServiceProvider.GetRequiredService<TwitPosterContext>();
+        
+        Data = new IntegrationData(DbContext);
     }
 
     protected async Task AddAuthorization()
@@ -48,11 +37,28 @@ public abstract class BaseIntegrationTest : IAsyncLifetime
         var jwtGenerator = Scope.ServiceProvider.GetRequiredService<IJwtTokenGenerator>();
         var token = jwtGenerator.GenerateToken(user);
 
-        HttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+        ApiClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+    }
+
+    public async Task InitializeAsync()
+    {
+        await AddDefaultUser();
+    }
+
+    private async Task AddDefaultUser()
+    {
+        var user = Data.BaseFixture.Create<User>();
+        DbContext.Users.Add(user);
+        await DbContext.SaveChangesAsync();
+        DefaultUserId = user.Id;
+        
+        Data.Initialize(user.Id);
     }
 
     public async Task DisposeAsync()
     {
-        await _msSqlContainer.DisposeAsync();
+        await Factory.ResetDatabaseAsync();
+        ApiClient.DefaultRequestHeaders.Authorization = null;
     }
 }
+    
