@@ -1,11 +1,5 @@
-﻿using System.Net.Http.Json;
+﻿using AutoFixture.Xunit2;
 using FluentAssertions;
-using Microsoft.AspNetCore.Mvc.Testing;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
-using Testcontainers.MsSql;
-using TwitPoster.DAL;
-using TwitPoster.Web;
 using TwitPoster.Web.ViewModels;
 using TwitPoster.Web.ViewModels.Post;
 
@@ -21,38 +15,18 @@ public class CreatePostsTests : BaseIntegrationTest
         createPostResponse.Should().Be401Unauthorized();
     }
 
-    [Fact]
-    public async Task Create_Post_should_create_post()
+    
+    [Theory, AutoData]
+    public async Task Create_Post_should_create_post(CreatePostRequest createPostRequest)
     {
-        var msSqlContainer = new MsSqlBuilder().Build();
-        await msSqlContainer.StartAsync();
+        await AddAuthorization();
 
-        var webFactory = new WebApplicationFactory<IApiTestMarker>()
-            .WithWebHostBuilder(b =>
-            {
-                b.ConfigureServices(services =>
-                {
-                    var descriptor = services.SingleOrDefault(
-                        d => d.ServiceType == typeof(DbContextOptions<TwitPosterContext>));
+        var postsResponse = await HttpClient.PostAsJsonAsync("Posts", createPostRequest);
 
-                    if (descriptor != null)
-                    {
-                        services.Remove(descriptor);
-                    }
-
-                    services.AddDbContext<TwitPosterContext>(options => options
-                        .UseSqlServer(msSqlContainer.GetConnectionString()));
-                });
-            });
-
-
-        var request = new CreatePostRequest("Post for integration tests");
-        var postsResponse = await HttpClient.PostAsJsonAsync("Posts", request);
-        postsResponse.Should().BeSuccessful();
-        var postResult = await postsResponse.Content.ReadFromJsonAsync<PostViewModel>();
-
-        DbContext.Posts.Should()
-            .ContainSingle(x => x.Id == postResult!.Id)
-            .Which.Body.Should().Be(request.Body);
+        postsResponse.Should().Satisfy<PostViewModel>(
+            postViewmodel =>
+                DbContext.Posts.Should().ContainSingle(p => p.Id == postViewmodel.Id)
+                    .Which.Body.Should().Be(createPostRequest.Body)
+        );
     }
 }
