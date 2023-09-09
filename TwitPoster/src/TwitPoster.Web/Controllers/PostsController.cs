@@ -29,12 +29,8 @@ public class PostsController : ControllerBase
        [Range(1, int.MaxValue)] int pageNumber = 1,
        CancellationToken cancellationToken = default)
     {
-        _logger.LogCritical("Get posts critical");
-        
         var posts = await _postService.GetPosts(pageSize, pageNumber, cancellationToken);
         return posts.Adapt<IEnumerable<PostViewModel>>();
-        
-        
     }
     
     // Get total count of posts
