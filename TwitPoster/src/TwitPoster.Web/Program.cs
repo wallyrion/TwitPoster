@@ -52,20 +52,20 @@ builder.Services
     
     .AddMassTransit(x =>
     {
-        x.UsingRabbitMq();
-        /*if (builder.Environment.IsDevelopment())
+        if (builder.Environment.IsDevelopment())
         {
+            x.UsingRabbitMq();
         }
         else
         {
             x.UsingAzureServiceBus((context, cfg) =>
             {
                 var connectionString = builder.Configuration.GetConnectionString("ServiceBus")!;
-                
+
                 Log.Logger.Information("ServiceBus connection string: {connectionString}", connectionString);
                 cfg.Host(connectionString);
-            });    
-        }*/
+            });
+        }
     })
     .AddCors(options => options.AddPolicy(WebConstants.Cors.DefaultPolicy, o =>
     {
