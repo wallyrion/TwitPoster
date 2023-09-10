@@ -41,15 +41,15 @@ jobs:
           $majorMinorVersion = $xml.Project.PropertyGroup.Version
           $majorMinorVersion =  ($majorMinorVersion -split '\s') -join ''
           Write-Host "Major/minor version from TwitPoster.csproj: '$majorMinorVersion'"
-          echo "MAJOR_MINOR_VERSION=$majorMinorVersion" >> $GITHUB_ENV
+          echo "MAJOR_MINOR_VERSION=$majorMinorVersion" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
         shell: pwsh
         
       - name: Calculate version and create tag if needed
         run: |
-          $majorMinorVersion = ${{ env.MAJOR_MINOR_VERSION }}"
-          Write-Host "Major/minor version from TwitPoster.csproj: '$majorMinorVersion'"
-          
+          $majorMinorVersion = $env:MAJOR_MINOR_VERSION
           $tagPrefix = $env:TAG_PREFIX
+          
+          Write-Host "Major/minor version from TwitPoster.csproj: '$majorMinorVersion'"
           Write-Host "Looking for old tags with prefix '$tagPrefix'"
           $versionTags = git tag --list "$tagPrefix*"
           Write-Host "Tags found: $versionTags"
@@ -86,13 +86,10 @@ jobs:
           echo "VERSION=${version}" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
         shell: pwsh
       - name: Pack
-        if: github.ref == 'refs/heads/master'
         run: dotnet pack ./TwitPoster.Shared /p:PackageVersion="${{ env.VERSION }}" --no-build -o out --configuration Release --nologo
         
       - name: Push
-        if: github.ref == 'refs/heads/master'
         run: dotnet nuget push "out/**/*.nupkg" --api-key ${{secrets.NUGET_API_KEY}} --source https://api.nuget.org/v3/index.json
 
       - name: Remove old tags and keep only the last created one
-        if: github.ref == 'refs/heads/master'
         run: pwsh .github/scripts/delete-old-tags.ps1
