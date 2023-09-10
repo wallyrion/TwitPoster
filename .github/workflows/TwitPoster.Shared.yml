@@ -50,6 +50,16 @@ jobs:
             Write-Host "mostRecentTag tag: $mostRecentTag"
             $lastTagVersion = $mostRecentTag -replace 'shared-version-',''
             $commitCount = git rev-list --count $mostRecentTag..HEAD
+          
+            $commitHead = git rev-parse HEAD
+            Write-Host "HEAD commit: $commitHead"
+              
+            $commitTag = git rev-parse $mostRecentTag
+            Write-Host "$mostRecentTag commit: $commitTag"
+              
+            $commitCount = git rev-list --count $mostRecentTag..HEAD
+            Write-Host "Commit count since last tag: $commitCount"
+          
 
           } else {
             $lastTagVersion = "0.0"
