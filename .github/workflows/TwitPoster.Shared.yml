@@ -5,6 +5,7 @@ on:
     branches: ["master", "experiments/dynamic-version"]
     paths:
       - "TwitPoster.Shared/**"
+      - ".github/workflows/TwitPoster.Shared.yml"
   pull_request:
     branches: ["master"]
     paths:
@@ -43,18 +44,15 @@ jobs:
           Write-Host "tags: $versionTags"
 
           if ($versionTags) {
-            $lastTagVersion = $versionTags | Sort-Object -Descending | Select-Object -First 1
-            Write-Host "Latest tag: $lastTagVersion"
-            $lastTagVersion = $lastTagVersion -replace 'shared-version-',''
+            $mostRecentTag = $versionTags | Sort-Object -Descending | Select-Object -First 1
+            Write-Host "mostRecentTag tag: $mostRecentTag"
+            $lastTagVersion = $mostRecentTag -replace 'shared-version-',''
           } else {
             $lastTagVersion = "0.0"
+            $commitCount = 0
           }
 
           Write-Host "most recent tag: $lastTagVersion"
-
-          if ($lastTagVersion) {
-            $lastTagVersion = $lastTagVersion -replace 'shared-version-',''
-          }
 
           if ($majorMinorVersion -ne $lastTagVersion) {
             Write-Host "New version detected, creating a new tag..."
@@ -62,7 +60,7 @@ jobs:
             git push origin "shared-version-$majorMinorVersion"
           }
 
-          $commitCount = $commitCount = git rev-list --count $mostRecentTag..HEAD
+          $commitCount = git rev-list --count $mostRecentTag..HEAD
           Write-Host "Commit count since last tag: $commitCount"
 
           $version = "$majorMinorVersion.$commitCount"
