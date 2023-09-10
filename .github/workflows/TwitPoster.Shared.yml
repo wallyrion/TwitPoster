@@ -75,6 +75,12 @@ jobs:
           
             #commitsBewtween = git rev-list $mostRecentTag...HEAD
             Write-Host "commitsBewtween 3 dots: $commitsBewtween"
+          
+           #commitsBewtween = git rev-list $commitTag..$commitHead
+            Write-Host "commitsBewtween: $commitsBewtween"
+          
+            #commitsBewtween = git rev-list $commitTag...$commitHead
+            Write-Host "commitsBewtween 3 dots: $commitsBewtween"
 
             $commitCount = git rev-list --first-parent --count $mostRecentTag..HEAD
             Write-Host "Commit count since last tag: $commitCount"
