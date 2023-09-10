@@ -40,6 +40,7 @@ jobs:
           Write-Host "Trimmed major/minor version: '$majorMinorVersion'"
           
           git fetch --tags
+          git fetch --all
           $versionTags = git tag --list "shared-version-*"
           Write-Host "tags: $versionTags"
 
@@ -51,15 +52,23 @@ jobs:
             $lastTagVersion = $mostRecentTag -replace 'shared-version-',''
             $commitCount = git rev-list --count $mostRecentTag..HEAD
           
-            $commitHead = git rev-parse HEAD
-            Write-Host "HEAD commit: $commitHead"
-              
+
             $commitTag = git rev-parse $mostRecentTag
             Write-Host "$mostRecentTag commit: $commitTag"
+          
+            $commitMessageMostRecentTag = git show -s --format=%s $mostRecentTag
+            Write-Host "Commit message for the most recent tag ($mostRecentTag): $commitMessageMostRecentTag"
               
-              
+            $commitHead = git rev-parse HEAD
+            Write-Host "HEAD commit: $commitHead"
+          
+            $commitMessageHEAD = git show -s --format=%s HEAD
+            Write-Host "Commit message for HEAD: $commitMessageHEAD"
+          
             $commitCount = git rev-list --first-parent --count $mostRecentTag..HEAD
             Write-Host "Commit count since last tag: $commitCount"
+          
+          
 
           } else {
             $lastTagVersion = "0.0"
