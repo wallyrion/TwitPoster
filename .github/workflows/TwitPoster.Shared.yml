@@ -49,6 +49,10 @@ jobs:
           if ($versionTags) {
             $mostRecentTag = $versionTags | Sort-Object -Descending | Select-Object -First 1
             Write-Host "mostRecentTag tag: $mostRecentTag"
+          
+            $commitsCountHardcoded = git rev-list --count "shared-version-1.2"..HEAD
+            Write-Host "commits count hardcoded tag: $commitsCountHardcoded"
+          
             $lastTagVersion = $mostRecentTag -replace 'shared-version-',''
             $commitCount = git rev-list --count $HEAD..$mostRecentTag
 
