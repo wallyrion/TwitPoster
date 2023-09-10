@@ -1,7 +1,6 @@
 ﻿using LanguageExt.Common;
 using MassTransit;
 using Microsoft.EntityFrameworkCore;
-using MimeKit.Text;
 using TwitPoster.BLL.Exceptions;
 using TwitPoster.BLL.Interfaces;
 using TwitPoster.DAL;

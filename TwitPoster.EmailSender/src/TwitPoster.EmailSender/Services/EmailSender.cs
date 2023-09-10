@@ -4,6 +4,7 @@ using Microsoft.Extensions.Options;
 using MimeKit;
 using MimeKit.Text;
 using TwitPoster.Shared.Contracts;
+using TextFormat = MimeKit.Text.TextFormat;
 
 namespace TwitPoster.EmailSender.Services;
 
@@ -23,7 +24,9 @@ public class EmailService : IEmailService
         email.From.Add(MailboxAddress.Parse(_mailOptions.SendEmailFrom));
         email.To.Add(MailboxAddress.Parse(command.To));
         email.Subject = command.Subject;
-        email.Body = new TextPart(TextFormat.Plain) { Text = command.Body };
+        var textFormat = command.Format.ToString();
+        var textFormatType = Enum.Parse<TextFormat>(textFormat);
+        email.Body = new TextPart(textFormatType) { Text = command.Body };
 
         using var smtp = new SmtpClient();
         await smtp.ConnectAsync(_mailOptions.Host, _mailOptions.Port, SecureSocketOptions.StartTls);
