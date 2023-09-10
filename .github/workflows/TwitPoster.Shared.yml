@@ -65,6 +65,10 @@ jobs:
             $commitMessageHEAD = git show -s --format=%s HEAD
             Write-Host "Commit message for HEAD: $commitMessageHEAD"
           
+            $commitCount = (git cherry $mostRecentTag HEAD).Length
+            Write-Host "Commit Count using cherry: $($commitCount)"
+          
+          
             $commitCount = git log --oneline $mostRecentTag..HEAD | Measure-Object -Line
             Write-Host "Commit Count: $($commitCount.Lines)"
           
