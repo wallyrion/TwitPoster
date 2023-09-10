@@ -87,6 +87,9 @@ jobs:
           
             $commitCount = git rev-list HEAD ^$mostRecentTag --pretty=oneline --count
             Write-Host "Commit count Another ONE LINER : $commitCount"
+          
+            #commitsBewtween = git rev-list 6f85f1c48cae0d6c2394a0c0e9e05599563f4cbf..24b542eb6f92818deea76778a0f16c8ee64cc3d9
+            Write-Host "commitsBewtween: $commitsBewtween"
 
           } else {
             $lastTagVersion = "0.0"
