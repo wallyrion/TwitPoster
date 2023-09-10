@@ -14,9 +14,16 @@ using TwitPoster.Web.WebHostServices;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Host.UseSerilog((ctx, lc) => lc
+/*builder.Host.UseSerilog((ctx, lc) => lc
     .ReadFrom.Configuration(ctx.Configuration)
-    .Enrich.FromLogContext());
+    .Enrich.FromLogContext());*/
+
+Log.Logger = new LoggerConfiguration()
+    .Enrich.FromLogContext()
+    .ReadFrom.Configuration(builder.Configuration)
+    .CreateLogger();
+
+builder.Host.UseSerilog();
 
 builder.Services.AddControllers();
 
@@ -43,7 +50,23 @@ builder.Services
 
     .Configure<RabbitMqTransportOptions>(rabbitMqConfig)
     
-    .AddMassTransit(mass => mass.UsingRabbitMq())
+    .AddMassTransit(x =>
+    {
+        if (builder.Environment.IsDevelopment())
+        {
+            x.UsingRabbitMq();
+        }
+        else
+        {
+            x.UsingAzureServiceBus((context, cfg) =>
+            {
+                var connectionString = builder.Configuration.GetConnectionString("ServiceBus")!;
+                
+                Log.Logger.Information("ServiceBus connection string: {connectionString}", connectionString);
+                cfg.Host(connectionString);
+            });    
+        }
+    })
     .AddCors(options => options.AddPolicy(WebConstants.Cors.DefaultPolicy, o =>
     {
         o.AllowAnyMethod()
@@ -52,6 +75,13 @@ builder.Services
             .AllowCredentials();
     }))
     .AddHostedService<MigrationHostedService>()
+    .AddHostedService<TestServiceBusService>()
+    
+    .AddStackExchangeRedisCache(x =>
+    {
+        var connectionString = builder.Configuration.GetConnectionString("Redis")!;
+        x.Configuration = connectionString;
+    })
     ;
 
 
