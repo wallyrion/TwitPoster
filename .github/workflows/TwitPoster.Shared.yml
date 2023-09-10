@@ -32,13 +32,6 @@ jobs:
       - name: Fetch all history
         run: git fetch --prune --unshallow
         
-        
-      - name: Get build number
-        run: |
-          $buildNumber = "${{ env.GITHUB_RUN_NUMBER }}"
-          Write-Host "Build Number: $buildNumber"
-        shell: pwsh
-        
       - name: Set the tagPrefix
         run: echo "TAG_PREFIX=TwitPoster.Shared.V" >> $GITHUB_ENV
 
