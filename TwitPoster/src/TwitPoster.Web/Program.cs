@@ -52,9 +52,10 @@ builder.Services
     
     .AddMassTransit(x =>
     {
-        if (builder.Environment.IsDevelopment())
+        x.UsingRabbitMq();
+
+        /*if (builder.Environment.IsDevelopment())
         {
-            x.UsingRabbitMq();
         }
         else
         {
@@ -65,7 +66,7 @@ builder.Services
                 Log.Logger.Information("ServiceBus connection string: {connectionString}", connectionString);
                 cfg.Host(connectionString);
             });    
-        }
+        }*/
     })
     .AddCors(options => options.AddPolicy(WebConstants.Cors.DefaultPolicy, o =>
     {

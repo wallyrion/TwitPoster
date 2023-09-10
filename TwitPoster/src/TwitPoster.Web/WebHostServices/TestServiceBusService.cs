@@ -18,13 +18,13 @@ internal sealed class TestServiceBusService : BackgroundService
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        await _cache.SetStringAsync("test", "test", new DistributedCacheEntryOptions
+        /*await _cache.SetStringAsync("test", "test", new DistributedCacheEntryOptions
         {
             AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(10)
         }, stoppingToken);
         
         var res = await _cache.GetStringAsync("test", stoppingToken);
         
-        _logger.LogInformation("Test cache: {ResStringFromCache}", res);
+        _logger.LogInformation("Test cache: {ResStringFromCache}", res);*/
     }
 }
