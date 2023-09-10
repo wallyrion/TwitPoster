@@ -54,10 +54,13 @@ builder.Services
     {
         if (builder.Environment.IsDevelopment())
         {
+            Log.Logger.Information("Adding mass transit with rabbitmq");
             x.UsingRabbitMq();
         }
         else
         {
+            Log.Logger.Information("Adding mass transit with azure service bus");
+
             x.UsingAzureServiceBus((context, cfg) =>
             {
                 var connectionString = builder.Configuration.GetConnectionString("ServiceBus")!;
@@ -77,11 +80,7 @@ builder.Services
     .AddHostedService<MigrationHostedService>()
     .AddHostedService<TestServiceBusService>()
     
-    .AddStackExchangeRedisCache(x =>
-    {
-        var connectionString = builder.Configuration.GetConnectionString("Redis")!;
-        x.Configuration = connectionString;
-    })
+    .AddStackExchangeRedisCache(x => x.Configuration = builder.Configuration.GetConnectionString("Redis")!)
     ;
 
 
