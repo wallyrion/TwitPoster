@@ -50,7 +50,7 @@ jobs:
           $majorMinorVersion = $env:MAJOR_MINOR_VERSION
           Write-Host "Major/minor version from TwitPoster.csproj: '$majorMinorVersion'"
           
-          $tagPrefix = $Env:tagPrefix
+          $tagPrefix = {{env.tagPrefix}}
           Write-Host "Looking for old tags with prefix '$tagPrefix'"
           $versionTags = git tag --list "$tagPrefix*"
           Write-Host "Tags found: $versionTags"
