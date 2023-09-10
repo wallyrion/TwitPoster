@@ -2,7 +2,7 @@ name: Build, Test & Publish NUGET - TwitPoster.Shared
 
 on:
   push:
-    branches: ["master", "experiments/dynamic-version"]
+    branches: ["master"]
     paths:
       - "TwitPoster.Shared/**"
       - ".github/workflows/TwitPoster.Shared.yml"
@@ -10,6 +10,7 @@ on:
     branches: ["master"]
     paths:
       - "TwitPoster.Shared/**"
+      - ".github/workflows/TwitPoster.Shared.yml"
 
 jobs:
   build:
