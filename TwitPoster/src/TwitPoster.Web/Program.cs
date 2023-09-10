@@ -1,4 +1,3 @@
-using System.Text.Json;
 using MassTransit;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
@@ -8,8 +7,10 @@ using TwitPoster.BLL.Options;
 using TwitPoster.BLL.Services;
 using TwitPoster.DAL;
 using TwitPoster.Web;
+using TwitPoster.Web.Common;
 using TwitPoster.Web.Extensions;
 using TwitPoster.Web.Middlewares;
+using TwitPoster.Web.WebHostServices;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -42,34 +43,19 @@ builder.Services
 
     .Configure<RabbitMqTransportOptions>(rabbitMqConfig)
     
-    .AddMassTransit(mass => mass.UsingRabbitMq());
+    .AddMassTransit(mass => mass.UsingRabbitMq())
+    .AddCors(options => options.AddPolicy(WebConstants.Cors.DefaultPolicy, o =>
+    {
+        o.AllowAnyMethod()
+            .AllowAnyHeader()
+            .WithOrigins("http://localhost:4200")
+            .AllowCredentials();
+    }))
+    .AddHostedService<MigrationHostedService>()
+    ;
 
-
-builder.Services.AddCors(options => options.AddPolicy("CorsPolicy", o =>
-{
-    o.AllowAnyMethod()
-        .AllowAnyHeader()
-        .WithOrigins("http://localhost:4200")
-        .AllowCredentials();
-}));
 
 var app = builder.Build();
-
-using (var scope = app.Services.CreateScope())
-{
-    var services = scope.ServiceProvider;
-
-    var context = services.GetRequiredService<TwitPosterContext>();
-    var pendingMigrations = (await context.Database.GetPendingMigrationsAsync()).ToList();
-    if (pendingMigrations.Count != 0)
-    {
-        app.Logger.LogInformation("Migrating database.... {PendingMigrations} pending migrations", JsonSerializer.Serialize(pendingMigrations));
-        context.Database.Migrate();
-        app.Logger.LogInformation("Database migrated");
-    }
-}
-
-
 
 app.MapControllers()
     .RequireAuthorization();
@@ -77,7 +63,7 @@ app.MapControllers()
 app
     .UseSwagger().UseSwaggerUI()
 
-    .UseCors("CorsPolicy")
+    .UseCors(WebConstants.Cors.DefaultPolicy)
     .UseMiddleware<RequestDurationMiddleware>()
     .Use(CustomMiddlewares.ExtendRequestDurationMiddleware)
     .UseSerilogRequestLogging()
