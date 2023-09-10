@@ -81,11 +81,5 @@ jobs:
       - name: Push
         run: dotnet nuget push "out/**/*.nupkg" --api-key ${{secrets.NUGET_API_KEY}} --source https://api.nuget.org/v3/index.json
 
-      - name: Print Working Directory
-        run: pwd
-      - name: List Files and Directories
-        run: ls -al
-      - name: Change script permissions
-        run: chmod +x .github/scripts/delete-old-tags.ps1
       - name: Remove old tags and keep only the last created one
         run: pwsh .github/scripts/delete-old-tags.ps1
