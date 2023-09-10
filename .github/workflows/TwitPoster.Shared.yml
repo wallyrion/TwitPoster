@@ -1,4 +1,4 @@
-name: Build & Test - TwitPoster.Shared
+name: Build, Test & Publish NUGET - TwitPoster.Shared
 
 on:
   push:
@@ -33,6 +33,7 @@ jobs:
         run: git fetch --prune --unshallow
         
       - name: Set the tagPrefix
+        if: github.ref == 'refs/heads/master'
         run: echo "tagPrefix=TwitPoster.Shared.V" >> $GITHUB_ENV
       - name: Calculate version and create tag if needed
         id: version
@@ -80,9 +81,13 @@ jobs:
           echo "VERSION=${version}" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
         shell: pwsh
       - name: Pack
+        if: github.ref == 'refs/heads/master'
         run: dotnet pack ./TwitPoster.Shared /p:PackageVersion="${{ env.VERSION }}" --no-build -o out --configuration Release --nologo
+        
       - name: Push
+        if: github.ref == 'refs/heads/master'
         run: dotnet nuget push "out/**/*.nupkg" --api-key ${{secrets.NUGET_API_KEY}} --source https://api.nuget.org/v3/index.json
 
       - name: Remove old tags and keep only the last created one
+        if: github.ref == 'refs/heads/master'
         run: pwsh .github/scripts/delete-old-tags.ps1
