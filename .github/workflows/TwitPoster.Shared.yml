@@ -35,14 +35,20 @@ jobs:
       - name: Set the tagPrefix
         if: github.ref == 'refs/heads/master'
         run: echo "tagPrefix=TwitPoster.Shared.V" >> $GITHUB_ENV
-      - name: Calculate version and create tag if needed
-        if: github.ref == 'refs/heads/master'
-        id: version
+
+      - name: Extract Major/Minor Version
         run: |
-          
           $xml = [xml](Get-Content ./TwitPoster.Shared/TwitPoster.Shared/TwitPoster.Shared.csproj)
           $majorMinorVersion = $xml.Project.PropertyGroup.Version
           $majorMinorVersion =  ($majorMinorVersion -split '\s') -join ''
+          Write-Host "Major/minor version from TwitPoster.csproj: '$majorMinorVersion'"
+          echo "MAJOR_MINOR_VERSION=$majorMinorVersion" >> $GITHUB_ENV
+        shell: pwsh
+        
+      - name: Calculate version and create tag if needed
+        if: github.ref == 'refs/heads/master'
+        run: |
+          $majorMinorVersion = $env:MAJOR_MINOR_VERSION
           Write-Host "Major/minor version from TwitPoster.csproj: '$majorMinorVersion'"
           
           $tagPrefix = $Env:tagPrefix
