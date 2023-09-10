@@ -70,6 +70,12 @@ jobs:
             $commitCount = git log --oneline $mostRecentTag..HEAD | Measure-Object -Line
             Write-Host "Commit Count: $($commitCount.Lines)"
           
+            #commitsBewtween = git rev-list $mostRecentTag..HEAD
+            Write-Host "commitsBewtween: $commitsBewtween"
+          
+            #commitsBewtween = git rev-list $mostRecentTag...HEAD
+            Write-Host "commitsBewtween 3 dots: $commitsBewtween"
+
             $commitCount = git rev-list --first-parent --count $mostRecentTag..HEAD
             Write-Host "Commit count since last tag: $commitCount"
           
