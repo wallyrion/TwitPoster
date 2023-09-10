@@ -35,7 +35,7 @@ jobs:
       - name: Calculate version and create tag if needed
         id: version
         run: |
-          $tagPrefix = "shared-version-"
+          $tagPrefix = "TwitPoster.Shared.V"
 
           $xml = [xml](Get-Content ./TwitPoster.Shared/TwitPoster.Shared/TwitPoster.Shared.csproj)
           $majorMinorVersion = $xml.Project.PropertyGroup.Version
