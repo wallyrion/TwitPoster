@@ -36,6 +36,7 @@ jobs:
         if: github.ref == 'refs/heads/master'
         run: echo "tagPrefix=TwitPoster.Shared.V" >> $GITHUB_ENV
       - name: Calculate version and create tag if needed
+        if: github.ref == 'refs/heads/master'
         id: version
         run: |
           
