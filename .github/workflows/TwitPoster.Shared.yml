@@ -67,7 +67,7 @@ jobs:
           $version = "$majorMinorVersion.$commitCount"
           Write-Host "Package version: $version"
 
-          echo "VERSION=$version" >> $GITHUB_ENV
+          echo "VERSION=${version}" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
         shell: pwsh
       - name: Pack
         run: |
