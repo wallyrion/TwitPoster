@@ -1,4 +1,4 @@
-$tagPrefix = "TwitPoster.Shared.V"
+$tagPrefix = $Env:tagPrefix
   
 Write-Host "Looking for old tags with prefix '$tagPrefix'"
 

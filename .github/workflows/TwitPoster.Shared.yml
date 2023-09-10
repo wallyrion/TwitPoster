@@ -32,16 +32,19 @@ jobs:
       - name: Fetch all history
         run: git fetch --prune --unshallow
         
+      - name: Set the tagPrefix
+        run: echo "tagPrefix=TwitPoster.Shared.V" >> $GITHUB_ENV
       - name: Calculate version and create tag if needed
         id: version
         run: |
-          $tagPrefix = "TwitPoster.Shared.V"
-
+          
           $xml = [xml](Get-Content ./TwitPoster.Shared/TwitPoster.Shared/TwitPoster.Shared.csproj)
           $majorMinorVersion = $xml.Project.PropertyGroup.Version
           $majorMinorVersion =  ($majorMinorVersion -split '\s') -join ''
           Write-Host "Major/minor version from TwitPoster.csproj: '$majorMinorVersion'"
           
+          $tagPrefix = $Env:tagPrefix
+          Write-Host "Looking for old tags with prefix '$tagPrefix'"
           $versionTags = git tag --list "$tagPrefix*"
           Write-Host "Tags found: $versionTags"
 
