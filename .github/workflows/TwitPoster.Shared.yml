@@ -57,9 +57,9 @@ jobs:
             $commitTag = git rev-parse $mostRecentTag
             Write-Host "$mostRecentTag commit: $commitTag"
               
-            $commitCount = git rev-list --count $mostRecentTag..HEAD
+              
+            $commitCount = git rev-list --first-parent --count $mostRecentTag..HEAD
             Write-Host "Commit count since last tag: $commitCount"
-          
 
           } else {
             $lastTagVersion = "0.0"
