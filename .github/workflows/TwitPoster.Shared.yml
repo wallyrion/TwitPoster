@@ -33,7 +33,6 @@ jobs:
         run: git fetch --prune --unshallow
         
       - name: Set the tagPrefix
-        if: github.ref == 'refs/heads/master'
         run: echo "TAG_PREFIX=TwitPoster.Shared.V" >> $GITHUB_ENV
 
       - name: Extract Major/Minor Version
