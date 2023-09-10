@@ -71,6 +71,7 @@ jobs:
             Write-Host "New version detected, creating a new tag..."
             git tag "shared-version-$majorMinorVersion"
             git push origin "shared-version-$majorMinorVersion"
+            $commitCount = 0; 
           }
 
           Write-Host "Commit count since last tag: $commitCount"
