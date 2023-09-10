@@ -9,6 +9,8 @@ public sealed class EmailCommand
     public string Body { get; set; }
     public TextFormat Format { get; set; }
     
+    
+    
     public EmailCommand(string to, string subject, string body, TextFormat format)
     {
         To = to;

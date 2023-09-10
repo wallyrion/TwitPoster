@@ -2,7 +2,7 @@ name: Build & Test - TwitPoster.Shared
 
 on:
   push:
-    branches: ["experiments/publish-nuget"]
+    branches: ["master"]
     paths:
       - "TwitPoster.Shared/**"
   pull_request:
@@ -27,6 +27,7 @@ jobs:
       - name: Test - TwitPoster.Shared
         run: dotnet test --no-build --verbosity normal ./TwitPoster.Shared
       - name: Pack
-        run: dotnet pack  ./TwitPoster.Shared --no-build -o out --configuration Release --nologo
+        run: dotnet pack ./TwitPoster.Shared --no-build -o out --configuration Release --nologo
       - name: Push
+        if: github.ref == 'refs/heads/master'
         run: dotnet nuget push "out/**/*.nupkg" --api-key ${{secrets.NUGET_API_KEY}} --source https://api.nuget.org/v3/index.json
