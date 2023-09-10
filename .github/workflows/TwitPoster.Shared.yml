@@ -26,7 +26,7 @@ jobs:
       - name: Calculate version and create tag if needed
         id: version
         run: |
-          $xml = [xml](Get-Content ./TwitPoster.Shared/TwitPoster.Shared.csproj)
+          $xml = [xml](Get-Content ./TwitPoster.Shared/TwitPoster.Shared/TwitPoster.Shared.csproj)
           $majorMinorVersion = $xml.Project.PropertyGroup.Version
           Write-Host "Major/minor version from csproj: $majorMinorVersion"
 
