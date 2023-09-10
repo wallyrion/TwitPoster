@@ -35,12 +35,14 @@ jobs:
       - name: Calculate version and create tag if needed
         id: version
         run: |
+          $tagPrefix = "shared-version-"
+
           $xml = [xml](Get-Content ./TwitPoster.Shared/TwitPoster.Shared/TwitPoster.Shared.csproj)
           $majorMinorVersion = $xml.Project.PropertyGroup.Version
           $majorMinorVersion =  ($majorMinorVersion -split '\s') -join ''
           Write-Host "Major/minor version from TwitPoster.csproj: '$majorMinorVersion'"
           
-          $versionTags = git tag --list "shared-version-*"
+          $versionTags = git tag --list "$tagPrefix*"
           Write-Host "Tags found: $versionTags"
 
           $commitCount = 0
@@ -49,12 +51,11 @@ jobs:
             $mostRecentTag = $versionTags | Sort-Object -Descending | Select-Object -First 1
             Write-Host "mostRecentTag tag: $mostRecentTag"
           
-            $lastTagVersion = $mostRecentTag -replace 'shared-version-',''
+            $lastTagVersion = $mostRecentTag -replace $tagPrefix,''
             $commitCount = git rev-list --count $HEAD..$mostRecentTag
 
             $commitCount = git rev-list HEAD ^$mostRecentTag --pretty=oneline --count
             Write-Host "Commit count between current commit and last tag : $commitCount"
-
           } else {
             $lastTagVersion = "0.0"
           }
@@ -63,8 +64,8 @@ jobs:
 
           if ($majorMinorVersion -ne $lastTagVersion) {
             Write-Host "New version detected, creating a new tag..."
-            git tag "shared-version-$majorMinorVersion"
-            git push origin "shared-version-$majorMinorVersion"
+            git tag "$tagPrefix$majorMinorVersion"
+            git push origin "$tagPrefix$majorMinorVersion"
             $commitCount = 0; 
           }
 
