@@ -74,5 +74,4 @@ jobs:
           echo "Package version: ${{ env.VERSION }}"
           dotnet pack ./TwitPoster.Shared /p:PackageVersion="${{ env.VERSION }}" --no-build -o out --configuration Release --nologo
       - name: Push
-        if: github.ref == 'refs/heads/master'
         run: dotnet nuget push "out/**/*.nupkg" --api-key ${{secrets.NUGET_API_KEY}} --source https://api.nuget.org/v3/index.json
