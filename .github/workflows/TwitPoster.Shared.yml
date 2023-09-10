@@ -42,9 +42,6 @@ jobs:
           $majorMinorVersion =  ($majorMinorVersion -split '\s') -join ''
           Write-Host "Trimmed major/minor version: '$majorMinorVersion'"
           
-          git fetch --tags
-          git fetch --all
-          
           $versionTags = git tag --list "shared-version-*"
           Write-Host "tags: $versionTags"
 
@@ -54,56 +51,9 @@ jobs:
             $mostRecentTag = $versionTags | Sort-Object -Descending | Select-Object -First 1
             Write-Host "mostRecentTag tag: $mostRecentTag"
           
-            $commitsCountHardcoded = git rev-list --count "shared-version-1.2"..HEAD
-            Write-Host "commits count hardcoded tag: $commitsCountHardcoded"
-          
-            $commitsCountHardcoded = & git rev-list --count $mostRecentTag..HEAD
-            Write-Host "commits count hardcoded tag: $commitsCountHardcoded"
-          
-            $lastTagVersion = $mostRecentTag -replace 'shared-version-',''
-            $commitCount = git rev-list --count $HEAD..$mostRecentTag
-
-            $commitTag = git rev-parse $mostRecentTag
-            Write-Host "$mostRecentTag commit: $commitTag"
-          
-            $commitMessageMostRecentTag = git show -s --format=%s $mostRecentTag
-            Write-Host "Commit message for the most recent tag ($mostRecentTag): $commitMessageMostRecentTag"
-              
-            $commitHead = git rev-parse HEAD
-            Write-Host "HEAD commit: $commitHead"
-          
-            $commitMessageHEAD = git show -s --format=%s HEAD
-            Write-Host "Commit message for HEAD: $commitMessageHEAD"
-          
-            $commitCount = (git cherry $mostRecentTag HEAD).Length
-            Write-Host "Commit Count using cherry: $($commitCount)"
-          
-            $commitCount = git log --oneline $mostRecentTag..HEAD | Measure-Object -Line
-            Write-Host "Commit Count: $($commitCount.Lines)"
-          
             #commitsBewtween = git rev-list $mostRecentTag..HEAD
             Write-Host "commitsBewtween: $commitsBewtween"
           
-            #commitsBewtween = git rev-list $mostRecentTag...HEAD
-            Write-Host "commitsBewtween 3 dots: $commitsBewtween"
-          
-           #commitsBewtween = git rev-list $commitTag..$commitHead
-            Write-Host "commitsBewtween: $commitsBewtween"
-          
-            #commitsBewtween = git rev-list $commitTag...$commitHead
-            Write-Host "commitsBewtween 3 dots: $commitsBewtween"
-
-            $commitCount = git rev-list --count 6f85f1c48cae0d6c2394a0c0e9e05599563f4cbf..24b542eb6f92818deea76778a0f16c8ee64cc3d9
-
-            $commitCount = git rev-list --first-parent --count $mostRecentTag..HEAD
-            Write-Host "Commit count since last tag: $commitCount"
-          
-            $commitCount = git rev-list HEAD ^$mostRecentTag --pretty=oneline --count
-            Write-Host "Commit count Another ONE LINER : $commitCount"
-          
-            #commitsBewtween = git rev-list 6f85f1c48cae0d6c2394a0c0e9e05599563f4cbf..24b542eb6f92818deea76778a0f16c8ee64cc3d9
-            Write-Host "commitsBewtween: $commitsBewtween"
-
           } else {
             $lastTagVersion = "0.0"
           }
