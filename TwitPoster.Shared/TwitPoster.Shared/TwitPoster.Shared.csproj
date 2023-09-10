@@ -11,9 +11,6 @@
         <Company>Wallyrion</Company>
     </PropertyGroup>
 
-    <ItemGroup>
-      <PackageReference Include="MimeKit" Version="4.1.0" />
-    </ItemGroup>
 
     <PropertyGroup>
         <PackageReadmeFile>README.md</PackageReadmeFile>
