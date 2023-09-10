@@ -6,7 +6,7 @@
         <Nullable>enable</Nullable>
 
         <PackageId>Twitposter.Shared</PackageId>
-        <Version>1.0.4</Version>
+        <Version>2.1</Version>
         <Authors>oleksii_korniienko</Authors>
         <Company>Wallyrion</Company>
     </PropertyGroup>
@@ -26,5 +26,4 @@
     <ItemGroup>
         <None Include="README.md" Pack="true" PackagePath="\"/>
     </ItemGroup>
-    
 </Project>

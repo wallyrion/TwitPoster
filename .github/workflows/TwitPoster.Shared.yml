@@ -1,14 +1,16 @@
-name: Build & Test - TwitPoster.Shared
+name: Build, Test & Publish NUGET - TwitPoster.Shared
 
 on:
   push:
     branches: ["master"]
     paths:
       - "TwitPoster.Shared/**"
+      - ".github/workflows/TwitPoster.Shared.yml"
   pull_request:
     branches: ["master"]
     paths:
       - "TwitPoster.Shared/**"
+      - ".github/workflows/TwitPoster.Shared.yml"
 
 jobs:
   build:
@@ -22,7 +24,53 @@ jobs:
           dotnet-version: 8.0.x
       - name: Restore dependencies - TwitPoster.Shared
         run: dotnet restore ./TwitPoster.Shared
+     
       - name: Build - TwitPoster.Shared
-        run: dotnet build --no-restore ./TwitPoster.Shared
+        run: dotnet build --no-restore ./TwitPoster.Shared --configuration Release --nologo
       - name: Test - TwitPoster.Shared
         run: dotnet test --no-build --verbosity normal ./TwitPoster.Shared
+
+        
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/master'
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Restore dependencies - TwitPoster.Shared
+        run: dotnet restore ./TwitPoster.Shared
+
+      - name: Build - TwitPoster.Shared
+        run: dotnet build --no-restore ./TwitPoster.Shared --configuration Release --nologo
+        
+      - name: Fetch all history
+        run: git fetch --prune --unshallow
+
+      - name: Set the tagPrefix
+        run: echo "TAG_PREFIX=TwitPoster.Shared.V" >> $GITHUB_ENV
+
+      - name: Extract Major/Minor Version
+        run: |
+          $xml = [xml](Get-Content ./TwitPoster.Shared/TwitPoster.Shared/TwitPoster.Shared.csproj)
+          $majorMinorVersion = $xml.Project.PropertyGroup.Version
+          $majorMinorVersion =  ($majorMinorVersion -split '\s') -join ''
+          Write-Host "Major/minor version from TwitPoster.csproj: '$majorMinorVersion'"
+          echo "MAJOR_MINOR_VERSION=$majorMinorVersion" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+        shell: pwsh
+
+      - name: Calculate version and create tag if needed
+        run: pwsh .github/scripts/get-version-create-tag.ps1
+
+      - name: Pack
+        run: dotnet pack ./TwitPoster.Shared /p:PackageVersion="${{ env.VERSION }}" --no-build -o out --configuration Release --nologo
+
+      - name: Push
+        run: dotnet nuget push "out/**/*.nupkg" --api-key ${{secrets.NUGET_API_KEY}} --source https://api.nuget.org/v3/index.json
+
+      - name: Remove old tags and keep only the last created one
+        run: pwsh .github/scripts/delete-old-tags.ps1
