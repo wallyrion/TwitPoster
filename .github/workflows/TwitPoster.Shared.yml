@@ -43,13 +43,16 @@ jobs:
           $versionTags = git tag --list "shared-version-*"
           Write-Host "tags: $versionTags"
 
+          $commitCount = 0
+          
           if ($versionTags) {
             $mostRecentTag = $versionTags | Sort-Object -Descending | Select-Object -First 1
             Write-Host "mostRecentTag tag: $mostRecentTag"
             $lastTagVersion = $mostRecentTag -replace 'shared-version-',''
+            $commitCount = git rev-list --count $mostRecentTag..HEAD
+
           } else {
             $lastTagVersion = "0.0"
-            $commitCount = 0
           }
 
           Write-Host "most recent tag: $lastTagVersion"
@@ -60,7 +63,6 @@ jobs:
             git push origin "shared-version-$majorMinorVersion"
           }
 
-          $commitCount = git rev-list --count $mostRecentTag..HEAD
           Write-Host "Commit count since last tag: $commitCount"
 
           $version = "$majorMinorVersion.$commitCount"
