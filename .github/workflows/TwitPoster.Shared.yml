@@ -29,6 +29,9 @@ jobs:
       - name: Test - TwitPoster.Shared
         run: dotnet test --no-build --verbosity normal ./TwitPoster.Shared
 
+      - name: Fetch all history
+        run: git fetch --prune --unshallow
+        
       - name: Calculate version and create tag if needed
         id: version
         run: |
@@ -41,6 +44,7 @@ jobs:
           
           git fetch --tags
           git fetch --all
+          
           $versionTags = git tag --list "shared-version-*"
           Write-Host "tags: $versionTags"
 
