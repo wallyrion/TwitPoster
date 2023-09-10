@@ -30,7 +30,7 @@ jobs:
         run: dotnet test --no-build --verbosity normal ./TwitPoster.Shared
 
       - name: Fetch all history
-        run: git fetch --prune --unshallow --tags
+        run: git fetch --prune --unshallow
         
       - name: Calculate version and create tag if needed
         id: version
@@ -42,6 +42,9 @@ jobs:
           $majorMinorVersion =  ($majorMinorVersion -split '\s') -join ''
           Write-Host "Trimmed major/minor version: '$majorMinorVersion'"
           
+          git fetch --tags
+          git fetch --all
+          
           $versionTags = git tag --list "shared-version-*"
           Write-Host "tags: $versionTags"
 
@@ -51,9 +54,9 @@ jobs:
             $mostRecentTag = $versionTags | Sort-Object -Descending | Select-Object -First 1
             Write-Host "mostRecentTag tag: $mostRecentTag"
           
-            #commitsBewtween = git rev-list $mostRecentTag..HEAD
-            Write-Host "commitsBewtween: $commitsBewtween"
-          
+            $commitCount = git rev-list HEAD ^$mostRecentTag --pretty=oneline --count
+            Write-Host "Commit count Another ONE LINER : $commitCount"
+
           } else {
             $lastTagVersion = "0.0"
           }
