@@ -38,6 +38,7 @@ jobs:
           $majorMinorVersion =  ($majorMinorVersion -split '\s') -join ''
           Write-Host "Trimmed major/minor version: '$majorMinorVersion'"
           
+          git fetch --tags
           $versionTags = git tag --list "shared-version-*"
           Write-Host "tags: $versionTags"
 
