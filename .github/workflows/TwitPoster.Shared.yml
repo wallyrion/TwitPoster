@@ -39,6 +39,13 @@ jobs:
         uses: actions/setup-dotnet@v3
         with:
           dotnet-version: 8.0.x
+
+      - name: Restore dependencies - TwitPoster.Shared
+        run: dotnet restore ./TwitPoster.Shared
+
+      - name: Build - TwitPoster.Shared
+        run: dotnet build --no-restore ./TwitPoster.Shared --configuration Release --nologo
+        
       - name: Fetch all history
         run: git fetch --prune --unshallow
 
