@@ -2,7 +2,7 @@ name: Build & Test - TwitPoster.Shared
 
 on:
   push:
-    branches: ["master"]
+    branches: ["master", "experiments/dynamic-version"]
     paths:
       - "TwitPoster.Shared/**"
   pull_request:
@@ -22,12 +22,43 @@ jobs:
           dotnet-version: 8.0.x
       - name: Restore dependencies - TwitPoster.Shared
         run: dotnet restore ./TwitPoster.Shared
+
+      - name: Calculate version and create tag if needed
+        id: version
+        run: |
+          $xml = [xml](Get-Content ./TwitPoster.Shared/TwitPoster.Shared.csproj)
+          $majorMinorVersion = $xml.Project.PropertyGroup.Version
+          Write-Host "Major/minor version from csproj: $majorMinorVersion"
+
+          $lastTagVersion = git describe --tags=shared-version-* --abbrev=0
+          Write-Host "Latest tag: $lastTagVersion"
+
+          if ($lastTagVersion) {
+            $lastTagVersion = $lastTagVersion -replace 'shared-version-',''
+          }
+
+          if ($majorMinorVersion -ne $lastTagVersion) {
+            Write-Host "New version detected, creating a new tag..."
+            git tag "shared-version-$majorMinorVersion"
+            git push origin "shared-version-$majorMinorVersion"
+          }
+
+          $commitCount = git rev-list --count $(git rev-list --tags=shared-version-* --max-count=1)..HEAD
+          Write-Host "Commit count since last tag: $commitCount"
+
+          $version = "$majorMinorVersion.$commitCount"
+          Write-Host "Package version: $version"
+
+          echo "VERSION=$version" >> $GITHUB_ENV
+        shell: pwsh
+     
+     
       - name: Build - TwitPoster.Shared
-        run: dotnet build --no-restore ./TwitPoster.Shared --configuration Release --nologo
+        run: dotnet build --no-restore ./TwitPoster.Shared --configuration Release --nologo $buildCount = git rev-list --count HEAD
       - name: Test - TwitPoster.Shared
         run: dotnet test --no-build --verbosity normal ./TwitPoster.Shared
       - name: Pack
-        run: dotnet pack ./TwitPoster.Shared --no-build -o out --configuration Release --nologo
+        run: dotnet pack ./TwitPoster.Shared /p:PackageVersion=1.0.$buildCount --no-build -o out --configuration Release --nologo
       - name: Push
         if: github.ref == 'refs/heads/master'
         run: dotnet nuget push "out/**/*.nupkg" --api-key ${{secrets.NUGET_API_KEY}} --source https://api.nuget.org/v3/index.json
