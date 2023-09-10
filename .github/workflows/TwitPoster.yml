@@ -28,15 +28,14 @@ jobs:
         with:
           dotnet-version: 8.0.x
       - name: Restore dependencies - TwitPoster
-        run: dotnet restore ./TwitPoster
+        run: dotnet restore ./TwitPoster -c Release
       - name: Build - TwitPoster
-        run: dotnet build --no-restore ./TwitPoster
+        run: dotnet build --no-restore ./TwitPoster -c Release
       - name: Test - TwitPoster
         run: dotnet test --no-build --verbosity normal ./TwitPoster
 
       - name: publish
         run: dotnet publish ./TwitPoster -c Release --no-build -o '${{env.AZURE_WEBAPP_PACKAGE_PATH}}}'
-        
         
       - name: Deployment
         uses: azure/webapps-deploy@v2
