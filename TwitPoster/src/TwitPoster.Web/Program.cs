@@ -53,7 +53,6 @@ builder.Services
     .AddMassTransit(x =>
     {
         x.UsingRabbitMq();
-
         /*if (builder.Environment.IsDevelopment())
         {
         }
