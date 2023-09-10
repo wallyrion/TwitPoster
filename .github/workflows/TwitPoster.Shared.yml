@@ -28,8 +28,7 @@ jobs:
         run: |
           $xml = [xml](Get-Content ./TwitPoster.Shared/TwitPoster.Shared/TwitPoster.Shared.csproj)
           $majorMinorVersion = $xml.Project.PropertyGroup.Version
-          Write-Host "Major/minor version from csproj: $majorMinorVersion"
-          $majorMinorVersion = $majorMinorVersion.trim()
+          Write-Host "Major/minor version from csproj: '$majorMinorVersion'"
           
           $versionTags = git tag --list "shared-version-*"
           
