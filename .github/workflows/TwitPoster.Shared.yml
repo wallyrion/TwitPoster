@@ -34,7 +34,7 @@ jobs:
         
       - name: Set the tagPrefix
         if: github.ref == 'refs/heads/master'
-        run: echo "tagPrefix=TwitPoster.Shared.V" >> $GITHUB_ENV
+        run: echo "TAG_PREFIX=TwitPoster.Shared.V" >> $GITHUB_ENV
 
       - name: Extract Major/Minor Version
         run: |
@@ -50,7 +50,7 @@ jobs:
           $majorMinorVersion = $env:MAJOR_MINOR_VERSION
           Write-Host "Major/minor version from TwitPoster.csproj: '$majorMinorVersion'"
           
-          $tagPrefix = {{env.tagPrefix}}
+          $tagPrefix = $env:TAG_PREFIX
           Write-Host "Looking for old tags with prefix '$tagPrefix'"
           $versionTags = git tag --list "$tagPrefix*"
           Write-Host "Tags found: $versionTags"
