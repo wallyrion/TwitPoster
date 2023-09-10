@@ -1,4 +1,5 @@
 ﻿using System.Data.Common;
+using MassTransit;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Data.SqlClient;
@@ -32,6 +33,7 @@ public class IntegrationTestWebFactory : WebApplicationFactory<IApiTestMarker>, 
             }
 
             services.AddDbContext<TwitPosterContext>(options => options.UseSqlServer(_msSqlContainer.GetConnectionString()));
+            services.AddMassTransitTestHarness();
         });
     }
     
