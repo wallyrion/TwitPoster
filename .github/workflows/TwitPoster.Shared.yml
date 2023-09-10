@@ -30,7 +30,7 @@ jobs:
           $majorMinorVersion = $xml.Project.PropertyGroup.Version
           Write-Host "Major/minor version from csproj: $majorMinorVersion"
 
-          $lastTagVersion = git describe --tags=shared-version-* --abbrev=0
+          $lastTagVersion = git describe --tags --match "shared-version-*" --abbrev=0
           Write-Host "Latest tag: $lastTagVersion"
 
           if ($lastTagVersion) {
@@ -43,7 +43,7 @@ jobs:
             git push origin "shared-version-$majorMinorVersion"
           }
 
-          $commitCount = git rev-list --count $(git rev-list --tags=shared-version-* --max-count=1)..HEAD
+          $commitCount = git rev-list --count $(git rev-list --tags --match "shared-version-*" --max-count=1)..HEAD
           Write-Host "Commit count since last tag: $commitCount"
 
           $version = "$majorMinorVersion.$commitCount"
