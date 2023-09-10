@@ -41,12 +41,12 @@ jobs:
           $majorMinorVersion = $xml.Project.PropertyGroup.Version
           $majorMinorVersion =  ($majorMinorVersion -split '\s') -join ''
           Write-Host "Major/minor version from TwitPoster.csproj: '$majorMinorVersion'"
-          echo "MAJOR_MINOR_VERSION=$majorMinorVersion" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+          echo "MAJOR_MINOR_VERSION=$majorMinorVersion" >> $GITHUB_ENV
         shell: pwsh
         
       - name: Calculate version and create tag if needed
         run: |
-          $majorMinorVersion = $env:MAJOR_MINOR_VERSION
+          $majorMinorVersion = ${{ env.MAJOR_MINOR_VERSION }}"
           Write-Host "Major/minor version from TwitPoster.csproj: '$majorMinorVersion'"
           
           $tagPrefix = $env:TAG_PREFIX
