@@ -16,5 +16,3 @@ To publish the created package to NuGet.org, you must have your API key. Use the
 `dotnet nuget push twitposter-shared.1.0.0.nupkg --api-key <apikey> --source https://api.nuget.org/v3/index.json`
 
 In the command above, pay attention to the 1.0.0 which signifies the version of the package being pushed.
-
-
