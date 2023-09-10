@@ -66,11 +66,11 @@ jobs:
      
      
       - name: Build - TwitPoster.Shared
-        run: dotnet build --no-restore ./TwitPoster.Shared --configuration Release --nologo $buildCount = git rev-list --count HEAD
+        run: dotnet build --no-restore ./TwitPoster.Shared --configuration Release --nologo
       - name: Test - TwitPoster.Shared
         run: dotnet test --no-build --verbosity normal ./TwitPoster.Shared
       - name: Pack
-        run: dotnet pack ./TwitPoster.Shared /p:PackageVersion=1.0.$buildCount --no-build -o out --configuration Release --nologo
+        run: dotnet pack /p:PackageVersion=${{ env.VERSION }} --no-build -o out --configuration Release --nologo
       - name: Push
         if: github.ref == 'refs/heads/master'
         run: dotnet nuget push "out/**/*.nupkg" --api-key ${{secrets.NUGET_API_KEY}} --source https://api.nuget.org/v3/index.json
