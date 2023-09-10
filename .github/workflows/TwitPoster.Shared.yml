@@ -37,16 +37,11 @@ jobs:
         run: |
           $xml = [xml](Get-Content ./TwitPoster.Shared/TwitPoster.Shared/TwitPoster.Shared.csproj)
           $majorMinorVersion = $xml.Project.PropertyGroup.Version
-          Write-Host "Major/minor version from csproj: '$majorMinorVersion'"
-          
           $majorMinorVersion =  ($majorMinorVersion -split '\s') -join ''
-          Write-Host "Trimmed major/minor version: '$majorMinorVersion'"
-          
-          git fetch --tags
-          git fetch --all
+          Write-Host "Major/minor version from TwitPoster.csproj: '$majorMinorVersion'"
           
           $versionTags = git tag --list "shared-version-*"
-          Write-Host "tags: $versionTags"
+          Write-Host "Tags found: $versionTags"
 
           $commitCount = 0
           
@@ -58,14 +53,13 @@ jobs:
             $commitCount = git rev-list --count $HEAD..$mostRecentTag
 
             $commitCount = git rev-list HEAD ^$mostRecentTag --pretty=oneline --count
-            Write-Host "Commit count Another ONE LINER : $commitCount"
-
+            Write-Host "Commit count between current commit and last tag : $commitCount"
 
           } else {
             $lastTagVersion = "0.0"
           }
 
-          Write-Host "most recent tag: $lastTagVersion"
+          Write-Host "Most recent version: $lastTagVersion"
 
           if ($majorMinorVersion -ne $lastTagVersion) {
             Write-Host "New version detected, creating a new tag..."
