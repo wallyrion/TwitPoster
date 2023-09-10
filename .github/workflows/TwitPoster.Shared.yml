@@ -68,14 +68,14 @@ jobs:
             $commitCount = (git cherry $mostRecentTag HEAD).Length
             Write-Host "Commit Count using cherry: $($commitCount)"
           
-          
             $commitCount = git log --oneline $mostRecentTag..HEAD | Measure-Object -Line
             Write-Host "Commit Count: $($commitCount.Lines)"
           
             $commitCount = git rev-list --first-parent --count $mostRecentTag..HEAD
             Write-Host "Commit count since last tag: $commitCount"
           
-          
+            $commitCount = git rev-list HEAD ^$mostRecentTag --pretty=oneline --count
+            Write-Host "Commit count Another ONE LINER : $commitCount"
 
           } else {
             $lastTagVersion = "0.0"
