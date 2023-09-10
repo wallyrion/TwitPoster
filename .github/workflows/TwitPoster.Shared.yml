@@ -50,8 +50,7 @@ jobs:
             $mostRecentTag = $versionTags | Sort-Object -Descending | Select-Object -First 1
             Write-Host "mostRecentTag tag: $mostRecentTag"
             $lastTagVersion = $mostRecentTag -replace 'shared-version-',''
-            $commitCount = git rev-list --count $mostRecentTag..HEAD
-          
+            $commitCount = git rev-list --count $HEAD..$mostRecentTag
 
             $commitTag = git rev-parse $mostRecentTag
             Write-Host "$mostRecentTag commit: $commitTag"
