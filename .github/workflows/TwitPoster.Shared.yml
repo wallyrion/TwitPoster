@@ -46,7 +46,6 @@ jobs:
         shell: pwsh
         
       - name: Calculate version and create tag if needed
-        if: github.ref == 'refs/heads/master'
         run: |
           $majorMinorVersion = $env:MAJOR_MINOR_VERSION
           Write-Host "Major/minor version from TwitPoster.csproj: '$majorMinorVersion'"
