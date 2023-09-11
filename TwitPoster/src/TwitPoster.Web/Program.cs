@@ -1,4 +1,5 @@
 using MassTransit;
+using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 using TwitPoster.BLL.Authentication;
@@ -14,9 +15,9 @@ using TwitPoster.Web.WebHostServices;
 
 var builder = WebApplication.CreateBuilder(args);
 
-/*builder.Host.UseSerilog((ctx, lc) => lc
+builder.Host.UseSerilog((ctx, services, lc) => lc
     .ReadFrom.Configuration(ctx.Configuration)
-    .Enrich.FromLogContext());*/
+    .Enrich.FromLogContext());
 
 Log.Logger = new LoggerConfiguration()
     .Enrich.FromLogContext()
@@ -33,6 +34,10 @@ builder.Services.Configure<AuthOptions>(authConfig);
 
 var rabbitMqConfig = builder.Configuration.GetRequiredSection("RabbitMq");
 
+if (builder.Environment.IsDevelopment())
+{
+    builder.Services.AddApplicationInsightsTelemetry();
+}
 builder.Services
     .AddSwaggerWithAuthorization()
     .AddEndpointsApiExplorer()
@@ -82,6 +87,7 @@ builder.Services
     
     .AddStackExchangeRedisCache(x => x.Configuration = builder.Configuration.GetConnectionString("Redis")!)
     ;
+
 
 
 var app = builder.Build();
