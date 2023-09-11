@@ -5,13 +5,11 @@ namespace TwitPoster.Web.WebHostServices;
 
 internal sealed class TestServiceBusService : BackgroundService
 {
-    private readonly IServiceProvider _serviceProvider;
     private readonly ILogger<TestServiceBusService> _logger;
     private readonly IDistributedCache _cache;
 
-    public TestServiceBusService(IServiceProvider serviceProvider, ILogger<TestServiceBusService> logger, IDistributedCache cache)
+    public TestServiceBusService(ILogger<TestServiceBusService> logger, IDistributedCache cache)
     {
-        _serviceProvider = serviceProvider;
         _logger = logger;
         _cache = cache;
     }
