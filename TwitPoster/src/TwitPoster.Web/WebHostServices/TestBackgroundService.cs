@@ -3,12 +3,12 @@ using Microsoft.Extensions.Caching.Distributed;
 
 namespace TwitPoster.Web.WebHostServices;
 
-internal sealed class TestServiceBusService : BackgroundService
+internal sealed class TestBackgroundService : BackgroundService
 {
-    private readonly ILogger<TestServiceBusService> _logger;
+    private readonly ILogger<TestBackgroundService> _logger;
     private readonly IDistributedCache _cache;
 
-    public TestServiceBusService(ILogger<TestServiceBusService> logger, IDistributedCache cache)
+    public TestBackgroundService(ILogger<TestBackgroundService> logger, IDistributedCache cache)
     {
         _logger = logger;
         _cache = cache;

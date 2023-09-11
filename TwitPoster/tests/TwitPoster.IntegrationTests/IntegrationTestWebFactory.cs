@@ -4,9 +4,12 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Respawn;
 using Testcontainers.MsSql;
+using Testcontainers.Redis;
 using TwitPoster.DAL;
 using TwitPoster.Web;
 
@@ -15,7 +18,7 @@ namespace TwitPoster.IntegrationTests;
 public class IntegrationTestWebFactory : WebApplicationFactory<IApiTestMarker>, IAsyncLifetime
 {
     private readonly MsSqlContainer _msSqlContainer = new MsSqlBuilder().Build();
-
+    private readonly RedisContainer _redisContainer = new RedisBuilder().Build();
     public HttpClient HttpClient { get; private set; } = null!;
     private DbConnection _dbConnection = null!;
     private Respawner _respawner = null!;
@@ -24,19 +27,25 @@ public class IntegrationTestWebFactory : WebApplicationFactory<IApiTestMarker>, 
     {
         builder.ConfigureServices(services =>
         {
-            var descriptor = services.SingleOrDefault(
-                d => d.ServiceType == typeof(DbContextOptions<TwitPosterContext>));
-
-            if (descriptor != null)
-            {
-                services.Remove(descriptor);
-            }
-
-            services.AddDbContext<TwitPosterContext>(options => options.UseSqlServer(_msSqlContainer.GetConnectionString()));
             services.AddMassTransitTestHarness();
         });
     }
-    
+
+    protected override IHost CreateHost(IHostBuilder builder)
+    {
+        builder.ConfigureHostConfiguration(x =>
+        {
+            var collection = new[]
+            {
+                KeyValuePair.Create("ConnectionStrings:Redis", _redisContainer.GetConnectionString()),
+                KeyValuePair.Create("ConnectionStrings:DefaultConnection", _msSqlContainer.GetConnectionString()),
+            };
+            x.AddInMemoryCollection(collection!);
+        });
+        
+        return base.CreateHost(builder);
+    }
+
     public async Task ResetDatabaseAsync()
     {
         await _respawner.ResetAsync(_dbConnection);
@@ -45,7 +54,9 @@ public class IntegrationTestWebFactory : WebApplicationFactory<IApiTestMarker>, 
     public async Task InitializeAsync()
     {
         await _msSqlContainer.StartAsync();
+        await _redisContainer.StartAsync();
         _dbConnection = new SqlConnection(_msSqlContainer.GetConnectionString());
+        var redisConnection = _redisContainer.GetConnectionString();
         
         HttpClient = CreateClient();
         await _dbConnection.OpenAsync();

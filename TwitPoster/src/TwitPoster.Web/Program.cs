@@ -80,9 +80,12 @@ builder.Services
             .AllowCredentials();
     }))
     .AddHostedService<MigrationHostedService>()
-    .AddHostedService<TestServiceBusService>()
+    .AddHostedService<TestBackgroundService>()
     
-    .AddStackExchangeRedisCache(x => x.Configuration = builder.Configuration.GetConnectionString("Redis")!)
+    .AddStackExchangeRedisCache(x =>
+    {
+        x.Configuration = builder.Configuration.GetConnectionString("Redis")!;
+    })
     ;
 
 
