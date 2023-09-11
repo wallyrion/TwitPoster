@@ -76,7 +76,7 @@ builder.Services
     {
         o.AllowAnyMethod()
             .AllowAnyHeader()
-            .WithOrigins("http://localhost:4200")
+            .WithOrigins("http://localhost:4200", "https://wallyrion.github.io")
             .AllowCredentials();
     }))
     .AddHostedService<MigrationHostedService>()
