@@ -34,10 +34,7 @@ builder.Services.Configure<AuthOptions>(authConfig);
 
 var rabbitMqConfig = builder.Configuration.GetRequiredSection("RabbitMq");
 
-if (builder.Environment.IsDevelopment())
-{
-    builder.Services.AddApplicationInsightsTelemetry();
-}
+builder.Services.AddApplicationInsightsTelemetry();
 builder.Services
     .AddSwaggerWithAuthorization()
     .AddEndpointsApiExplorer()
