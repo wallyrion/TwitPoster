@@ -1,5 +1,4 @@
 using MassTransit;
-using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 using TwitPoster.BLL.Authentication;
@@ -18,13 +17,6 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Host.UseSerilog((ctx, services, lc) => lc
     .ReadFrom.Configuration(ctx.Configuration)
     .Enrich.FromLogContext());
-
-Log.Logger = new LoggerConfiguration()
-    .Enrich.FromLogContext()
-    .ReadFrom.Configuration(builder.Configuration)
-    .CreateLogger();
-
-builder.Host.UseSerilog();
 
 builder.Services.AddControllers();
 
@@ -56,13 +48,10 @@ builder.Services
     {
         if (builder.Environment.IsDevelopment())
         {
-            Log.Logger.Information("Adding mass transit with rabbitmq");
             x.UsingRabbitMq();
         }
         else
         {
-            Log.Logger.Information("Adding mass transit with azure service bus");
-
             x.UsingAzureServiceBus((context, cfg) =>
             {
                 var connectionString = builder.Configuration.GetConnectionString("ServiceBus")!;
@@ -113,6 +102,6 @@ app.InDevelopment(b =>
     .UseMiddleware<BusinessValidationMiddleware>()
     .UseMiddleware<SetupUserClaimsMiddleware>();
 
-app.Logger.LogInformation("Starting application with {ProcessorsCount} processor(s)", Environment.ProcessorCount);
+app.Logger.LogInformation("Running app in {EnvironmentName} with {ProcessorsCount} processor(s)", app.Environment.EnvironmentName,  Environment.ProcessorCount);
 
 app.Run();
