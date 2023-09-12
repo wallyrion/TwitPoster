@@ -5,10 +5,17 @@ on:
     branches: ["master"]
     paths:
       - "TwitPoster/**"
+      - ".github/workflows/TwitPoster.yml"
   pull_request:
     branches: ["master"]
     paths:
       - "TwitPoster/**"
+      - ".github/workflows/TwitPoster.yml"
+
+
+env:
+  AZURE_WEBAPP_NAME: "twitposter"
+  AZURE_WEBAPP_PACKAGE_PATH: "./publish"
 
 jobs:
   build:
@@ -23,6 +30,19 @@ jobs:
       - name: Restore dependencies - TwitPoster
         run: dotnet restore ./TwitPoster
       - name: Build - TwitPoster
-        run: dotnet build --no-restore ./TwitPoster
+        run: dotnet build --no-restore ./TwitPoster -c Release
       - name: Test - TwitPoster
-        run: dotnet test --no-build --verbosity normal ./TwitPoster
+        run: dotnet test --no-build --verbosity normal ./TwitPoster -c Release
+
+      - name: publish
+        run: dotnet publish ./TwitPoster/src/TwitPoster.Web/TwitPoster.Web.csproj -c Release --no-build -o ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
+        
+      - name: Deployment
+        uses: azure/webapps-deploy@v2
+        if: github.ref == 'refs/heads/master'
+        with:
+          app-name: ${{ env.AZURE_WEBAPP_NAME }}
+          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+          package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
+        
+        

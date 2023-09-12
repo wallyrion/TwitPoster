@@ -14,7 +14,7 @@ using TwitPoster.Web.WebHostServices;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Host.UseSerilog((ctx, lc) => lc
+builder.Host.UseSerilog((ctx, services, lc) => lc
     .ReadFrom.Configuration(ctx.Configuration)
     .Enrich.FromLogContext());
 
@@ -26,6 +26,7 @@ builder.Services.Configure<AuthOptions>(authConfig);
 
 var rabbitMqConfig = builder.Configuration.GetRequiredSection("RabbitMq");
 
+builder.Services.AddApplicationInsightsTelemetry();
 builder.Services
     .AddSwaggerWithAuthorization()
     .AddEndpointsApiExplorer()
@@ -43,16 +44,29 @@ builder.Services
 
     .Configure<RabbitMqTransportOptions>(rabbitMqConfig)
     
-    .AddMassTransit(mass => mass.UsingRabbitMq())
+    .AddMassTransit(x =>
+    {
+        if (builder.Environment.IsDevelopment())
+            x.UsingRabbitMq();
+        else
+            x.UsingAzureServiceBus((_, cfg) => cfg.Host(builder.Configuration.GetConnectionString("ServiceBus")!));
+    })
     .AddCors(options => options.AddPolicy(WebConstants.Cors.DefaultPolicy, o =>
     {
         o.AllowAnyMethod()
             .AllowAnyHeader()
-            .WithOrigins("http://localhost:4200")
+            .WithOrigins("http://localhost:4200", "https://wallyrion.github.io")
             .AllowCredentials();
     }))
     .AddHostedService<MigrationHostedService>()
+    .AddHostedService<TestBackgroundService>()
+    
+    .AddStackExchangeRedisCache(x =>
+    {
+        x.Configuration = builder.Configuration.GetConnectionString("Redis")!;
+    })
     ;
+
 
 
 var app = builder.Build();
@@ -78,6 +92,6 @@ app.InDevelopment(b =>
     .UseMiddleware<BusinessValidationMiddleware>()
     .UseMiddleware<SetupUserClaimsMiddleware>();
 
-app.Logger.LogInformation("Starting application with {ProcessorsCount} processor(s)", Environment.ProcessorCount);
+app.Logger.LogInformation("Running app in {EnvironmentName} with {ProcessorsCount} processor(s)", app.Environment.EnvironmentName,  Environment.ProcessorCount);
 
 app.Run();
