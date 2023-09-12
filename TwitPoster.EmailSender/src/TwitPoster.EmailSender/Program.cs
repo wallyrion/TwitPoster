@@ -13,7 +13,7 @@ var rabbitMqConfig = builder.Configuration.GetRequiredSection("RabbitMq");
 var mailOptions = builder.Configuration.GetRequiredSection("Mail");
 
 builder.Services
-    .Configure<MailOptions>(builder.Configuration.GetRequiredSection("Mail"))
+    .Configure<MailOptions>(mailOptions)
     .Configure<RabbitMqTransportOptions>(rabbitMqConfig)
     .AddScoped<IEmailService, EmailService>()
     
@@ -21,19 +21,22 @@ builder.Services
     {
         var entryAssembly = Assembly.GetExecutingAssembly();
         x.AddConsumers(entryAssembly);
-        
-        x.UsingAzureServiceBus((context, cfg) =>
+
+        if (builder.Environment.IsDevelopment())
         {
-            cfg.Host("Endpoint=sb://twitposter-servicebus.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=9dXLmG+u5cc3FpBqeKs/WFd1yGWTdID6p+ASbHPSwMg=");
+            x.UsingRabbitMq((context, cfg) => cfg.ConfigureEndpoints(context));
+        }
+        else
+        {
+            x.UsingAzureServiceBus((context, cfg) =>
+            {
+                cfg.Host(builder.Configuration.GetConnectionString("ServiceBus"));
         
-            cfg.ConfigureEndpoints(context);
-        });
-        //mass.UsingRabbitMq((context, cfg) => cfg.ConfigureEndpoints(context));
-        
+                cfg.ConfigureEndpoints(context);
+            });    
+        }
     });
 
 var app = builder.Build();
-var mailOption = mailOptions.Get<MailOptions>()!;
-app.Logger.LogInformation("mailOptions: {@mailOption}", mailOption);
 
 app.Run();
