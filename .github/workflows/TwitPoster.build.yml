@@ -24,7 +24,7 @@ jobs:
           key: ${{ runner.os }}-nuget-${{ hashFiles('**/TwitPoster.csproj') }}
           restore-keys: |
             ${{ runner.os }}-nuget-
-        run: dotnet restore ./TwitPoster
+      - run: dotnet restore ./TwitPoster
         
       - name: Build - TwitPoster
         run: dotnet build --no-restore ./TwitPoster -c Release
