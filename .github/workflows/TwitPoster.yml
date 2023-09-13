@@ -1,27 +1,21 @@
-name: Build & Test - TwitPoster
+name: Build, Test & Deploy - TwitPoster
 
 on:
   push:
-    branches: ["master", "dev"]
+    branches: ["master"]
     paths:
       - "TwitPoster/**"
       - ".github/workflows/TwitPoster.yml"
   pull_request:
-    branches: ["master", "dev"]
+    branches: ["master"]
     paths:
       - "TwitPoster/**"
       - ".github/workflows/TwitPoster.yml"
-  
-  workflow_dispatch:
-    branches: ["master", "azure/investigate-version-problem"]
-    paths:
-      - "TwitPoster/**"
-      - ".github/workflows/TwitPoster.yml"
+
 env:
   AZURE_WEBAPP_PACKAGE_PATH: "./publish"
 
 jobs:
-
   build:
     runs-on: ubuntu-latest
 
@@ -33,10 +27,13 @@ jobs:
           dotnet-version: '8.x'
       - name: Restore dependencies - TwitPoster
         run: dotnet restore ./TwitPoster
+        
       - name: Build - TwitPoster
         run: dotnet build --no-restore ./TwitPoster -c Release
+        
       - name: Test - TwitPoster
         run: dotnet test --no-build --verbosity normal ./TwitPoster -c Release
+        
       - name: publish
         run: dotnet publish ./TwitPoster/src/TwitPoster.Web/TwitPoster.Web.csproj -c Release --no-build -o ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
 
@@ -48,9 +45,9 @@ jobs:
 
   deploy_dev:
     needs: build
+    if: github.ref == 'refs/heads/master'
     environment: 'dev'
     runs-on: ubuntu-latest
-
     steps:
       - name: Download Artifact
         uses: actions/download-artifact@v3
@@ -64,10 +61,10 @@ jobs:
           app-name: ${{ env.AZURE_WEBAPP_NAME }}
           publish-profile: ${{ secrets.AZURE_PUBLISH_PROFILE_TWITPOSTER }}
           package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
-          
+  
   deploy_prod:
     needs: build
-    if: github.event_name == 'workflow_dispatch'
+    if: github.ref == 'refs/heads/master'
     environment: 'prod'
     runs-on: ubuntu-latest
     steps:
