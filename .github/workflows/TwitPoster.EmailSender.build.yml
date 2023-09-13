@@ -2,14 +2,12 @@ name: Build & Test - TwitPoster.EmailSender
 
 
 on:
-  push:
-    branches: ["master"]
-    paths:
-      - "TwitPoster.EmailSender/**"
   pull_request:
     branches: ["master"]
     paths:
       - "TwitPoster.EmailSender/**"
+      - ".github/workflows/TwitPoster.EmailSender.build-deploy.yml"
+      - ".github/workflows/TwitPoster.EmailSender.build.yml"
 
 jobs:
   build:
@@ -26,4 +24,6 @@ jobs:
       - name: Build - TwitPoster.EmailSender
         run: dotnet build --no-restore ./TwitPoster.EmailSender -c Release
       - name: Test - TwitPoster.EmailSender
+        env:
+          ASPNETCORE_ENVIRONMENT: Production
         run: dotnet test --no-build --verbosity normal ./TwitPoster.EmailSender
