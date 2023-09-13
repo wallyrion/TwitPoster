@@ -1,4 +1,4 @@
-name: Build & Test - TwitPoster.EmailSender
+name: Build & deploy - TwitPoster.EmailSender
 
 
 on:
@@ -30,7 +30,7 @@ jobs:
         run: dotnet test --no-build --verbosity normal ./TwitPoster.EmailSender
 
       - name: publish
-        run: dotnet publish ./TwitPoster.EmailSender/TwitPoster.EmailSender.csproj -c Release --no-build -o ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
+        run: dotnet publish ./TwitPoster.EmailSender/src/TwitPoster.EmailSender/TwitPoster.EmailSender.csproj -c Release --no-build -o ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v3
