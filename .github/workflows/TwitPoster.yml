@@ -19,7 +19,7 @@ env:
 
 jobs:
   build-and-deploy:
-    environment: 'prod'
+    environment: 'dev'
 
     runs-on: ubuntu-latest
 
