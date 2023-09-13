@@ -18,6 +18,12 @@ jobs:
         with:
           dotnet-version: '8.x'
       - name: Restore dependencies - TwitPoster
+        uses: actions/cache@v2
+        with:
+          path: ~/.nuget/packages
+          key: ${{ runner.os }}-nuget-${{ hashFiles('**/TwitPoster.csproj') }}
+          restore-keys: |
+            ${{ runner.os }}-nuget-
         run: dotnet restore ./TwitPoster
         
       - name: Build - TwitPoster
