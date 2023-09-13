@@ -6,6 +6,8 @@ on:
     paths:
       - "TwitPoster/**"
       - ".github/workflows/TwitPoster.yml"
+  workflow_dispatch:
+
 
 env:
   AZURE_WEBAPP_PACKAGE_PATH: "./publish"
