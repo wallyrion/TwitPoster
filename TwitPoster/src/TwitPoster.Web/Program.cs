@@ -59,15 +59,13 @@ builder.Services
             .AllowCredentials();
     }))
     .AddHostedService<MigrationHostedService>()
-    .AddHostedService<TestBackgroundService>()
+    //.AddHostedService<TestBackgroundService>()
     
     .AddStackExchangeRedisCache(x =>
     {
         x.Configuration = builder.Configuration.GetConnectionString("Redis")!;
     })
     ;
-
-
 
 var app = builder.Build();
 
