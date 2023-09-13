@@ -20,10 +20,10 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: 8.0.x
+          dotnet-version: 8.x
       - name: Restore dependencies - TwitPoster.EmailSender
         run: dotnet restore ./TwitPoster.EmailSender
       - name: Build - TwitPoster.EmailSender
-        run: dotnet build --no-restore ./TwitPoster.EmailSender
+        run: dotnet build --no-restore ./TwitPoster.EmailSender -c Release
       - name: Test - TwitPoster.EmailSender
         run: dotnet test --no-build --verbosity normal ./TwitPoster.EmailSender
