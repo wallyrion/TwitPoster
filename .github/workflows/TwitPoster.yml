@@ -27,10 +27,13 @@ jobs:
           dotnet-version: '8.x'
       - name: Restore dependencies - TwitPoster
         run: dotnet restore ./TwitPoster
+        
       - name: Build - TwitPoster
         run: dotnet build --no-restore ./TwitPoster -c Release
+        
       - name: Test - TwitPoster
         run: dotnet test --no-build --verbosity normal ./TwitPoster -c Release
+        
       - name: publish
         run: dotnet publish ./TwitPoster/src/TwitPoster.Web/TwitPoster.Web.csproj -c Release --no-build -o ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
 
