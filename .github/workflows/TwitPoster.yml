@@ -12,33 +12,30 @@ on:
       - "TwitPoster/**"
       - ".github/workflows/TwitPoster.yml"
 
-
 env:
   AZURE_WEBAPP_NAME: "twitposter"
   AZURE_WEBAPP_PACKAGE_PATH: "./publish"
 
 jobs:
   build-and-deploy:
-
     runs-on: ubuntu-latest
 
     steps:
       - name: Identify Branch
         id: branch_name
-        run: echo ::set-output name=branch::${GITHUB_REF#refs/heads/}
+        run: echo "BRANCH=${GITHUB_REF#refs/heads/}" >> $GITHUB_ENV
 
       - name: Set environment dynamically
         id: set_env
         run: |
-          BRANCH=${{ steps.branch_name.outputs.branch }}
-          if [[ "$BRANCH" == "master" ]]; then
-            echo "::set-output name=env::prod"
-          elif [[ "$BRANCH" == "dev" ]]; then
-            echo "::set-output name=env::development"
+          if [[ "${BRANCH}" == "master" ]]; then
+            echo "ENV=prod" >> $GITHUB_ENV
+          elif [[ "${BRANCH}" == "dev" ]]; then
+            echo "ENV=development" >> $GITHUB_ENV
           else
-            echo "::set-output name=env::other-environment"
+            echo "ENV=other-environment" >> $GITHUB_ENV
           fi
-        
+
       - uses: actions/checkout@v3
       - name: Setup .NET
         uses: actions/setup-dotnet@v3
@@ -53,7 +50,7 @@ jobs:
 
       - name: publish
         run: dotnet publish ./TwitPoster/src/TwitPoster.Web/TwitPoster.Web.csproj -c Release --no-build -o ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
-        
+
       - name: Deployment to twitposter
         uses: azure/webapps-deploy@v2
         with:
