@@ -6,6 +6,8 @@ on:
     paths:
       - "TwitPoster/**"
       - ".github/workflows/TwitPoster.yml"
+  workflow_dispatch:
+
 
 env:
   AZURE_WEBAPP_PACKAGE_PATH: "./publish"
@@ -52,7 +54,7 @@ jobs:
       - name: Deployment to twitposter
         uses: azure/webapps-deploy@v2
         with:
-          app-name: ${{ env.AZURE_WEBAPP_NAME }}
+          app-name: ${{ env.AZURE_WEBAPP_NAME_TWITPOSTER }}
           publish-profile: ${{ secrets.AZURE_PUBLISH_PROFILE_TWITPOSTER }}
           package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
   
@@ -70,6 +72,6 @@ jobs:
       - name: Deployment to twitposter
         uses: azure/webapps-deploy@v2
         with:
-          app-name: ${{ env.AZURE_WEBAPP_NAME }}
+          app-name: ${{ env.AZURE_WEBAPP_NAME_TWITPOSTER }}
           publish-profile: ${{ secrets.AZURE_PUBLISH_PROFILE_TWITPOSTER }}
           package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}

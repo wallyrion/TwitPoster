@@ -6,6 +6,7 @@ using TwitPoster.BLL.Interfaces;
 using TwitPoster.BLL.Options;
 using TwitPoster.BLL.Services;
 using TwitPoster.DAL;
+using TwitPoster.Shared.Contracts;
 using TwitPoster.Web;
 using TwitPoster.Web.Common;
 using TwitPoster.Web.Extensions;
@@ -42,14 +43,19 @@ builder.Services
     .AddScoped<IAuthService, AuthService>()
     .AddSingleton<IJwtTokenGenerator, JwtTokenGenerator>()
 
-    .Configure<RabbitMqTransportOptions>(rabbitMqConfig)
+    //.Configure<RabbitMqTransportOptions>(rabbitMqConfig)
     
     .AddMassTransit(x =>
     {
-        if (builder.Environment.IsDevelopment())
+        /*if (builder.Environment.IsDevelopment())
             x.UsingRabbitMq();
-        else
-            x.UsingAzureServiceBus((_, cfg) => cfg.Host(builder.Configuration.GetConnectionString("ServiceBus")!));
+        else*/
+        x.UsingAzureServiceBus((_, cfg) =>
+        {
+            cfg.UseServiceBusMessageScheduler();
+            
+            cfg.Host(builder.Configuration.GetConnectionString("ServiceBus")!);
+        });
     })
     .AddCors(options => options.AddPolicy(WebConstants.Cors.DefaultPolicy, o =>
     {
