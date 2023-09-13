@@ -5,8 +5,8 @@ on:
     branches: ["master"]
     paths:
       - "TwitPoster/**"
-      - ".github/workflows/TwitPoster.yml"
-
+      - ".github/workflows/build-deploy.yml"
+      - ".github/workflows/build.yml"
 jobs:
   build:
     runs-on: ubuntu-latest

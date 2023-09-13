@@ -5,8 +5,8 @@ on:
     branches: ["master"]
     paths:
       - "TwitPoster/**"
-      - ".github/workflows/TwitPoster.yml"
-  workflow_dispatch:
+      - ".github/workflows/build-deploy.yml"
+      - ".github/workflows/build.yml"
 
 
 env:
@@ -60,6 +60,7 @@ jobs:
   
   deploy_prod:
     needs: build
+    if: github.ref == 'refs/heads/master'
     environment: 'prod'
     runs-on: ubuntu-latest
     steps:
