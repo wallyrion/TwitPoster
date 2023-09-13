@@ -50,7 +50,6 @@ jobs:
 
   deploy_dev:
     needs: build
-    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
     environment: 'dev'
     runs-on: ubuntu-latest
 
