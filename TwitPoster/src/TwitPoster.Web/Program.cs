@@ -35,7 +35,7 @@ builder.Services
     .AddJwtBearerAuthentication(authOptions)
     .AddMappings()
     .AddDbContext<TwitPosterContext>(options => options
-        .UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")!))
+        .UseSqlServer(builder.Configuration.GetConnectionString("DbConnection")!))
     .AddScoped<IUsersService, UserService>()
     .AddScoped<IPostService, PostService>()
     .AddScoped<ICurrentUser, CurrentUser>()
@@ -68,6 +68,8 @@ builder.Services
     ;
 
 var app = builder.Build();
+
+app.MapGet("/health", () => "OK");
 
 app.MapControllers()
     .RequireAuthorization();

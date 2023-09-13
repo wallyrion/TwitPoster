@@ -39,4 +39,5 @@ builder.Services
 
 var app = builder.Build();
 
+app.MapGet("/health", () => "OK");
 app.Run();
