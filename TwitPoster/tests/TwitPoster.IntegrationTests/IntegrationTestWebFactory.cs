@@ -3,14 +3,11 @@ using MassTransit;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Data.SqlClient;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Respawn;
 using Testcontainers.MsSql;
 using Testcontainers.Redis;
-using TwitPoster.DAL;
 using TwitPoster.Web;
 
 namespace TwitPoster.IntegrationTests;
@@ -38,7 +35,7 @@ public class IntegrationTestWebFactory : WebApplicationFactory<IApiTestMarker>, 
             var collection = new[]
             {
                 KeyValuePair.Create("ConnectionStrings:Redis", _redisContainer.GetConnectionString()),
-                KeyValuePair.Create("ConnectionStrings:DefaultConnection", _msSqlContainer.GetConnectionString()),
+                KeyValuePair.Create("ConnectionStrings:DbConnection", _msSqlContainer.GetConnectionString()),
             };
             x.AddInMemoryCollection(collection!);
         });

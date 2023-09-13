@@ -6,11 +6,6 @@ on:
     paths:
       - "TwitPoster/**"
       - ".github/workflows/TwitPoster.yml"
-  pull_request:
-    branches: ["master"]
-    paths:
-      - "TwitPoster/**"
-      - ".github/workflows/TwitPoster.yml"
 
 env:
   AZURE_WEBAPP_PACKAGE_PATH: "./publish"
@@ -45,7 +40,6 @@ jobs:
 
   deploy_dev:
     needs: build
-    if: github.ref == 'refs/heads/master'
     environment: 'dev'
     runs-on: ubuntu-latest
     steps:
@@ -64,7 +58,6 @@ jobs:
   
   deploy_prod:
     needs: build
-    if: github.ref == 'refs/heads/master'
     environment: 'prod'
     runs-on: ubuntu-latest
     steps:

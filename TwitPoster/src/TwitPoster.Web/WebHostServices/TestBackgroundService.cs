@@ -1,5 +1,4 @@
-﻿using System.Text;
-using Microsoft.Extensions.Caching.Distributed;
+﻿using Microsoft.Extensions.Caching.Distributed;
 
 namespace TwitPoster.Web.WebHostServices;
 
