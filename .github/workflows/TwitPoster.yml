@@ -2,40 +2,25 @@ name: Build & Test - TwitPoster
 
 on:
   push:
-    branches: ["master"]
+    branches: ["master", "dev"]
     paths:
       - "TwitPoster/**"
       - ".github/workflows/TwitPoster.yml"
   pull_request:
-    branches: ["master"]
+    branches: ["master", "dev"]
     paths:
       - "TwitPoster/**"
       - ".github/workflows/TwitPoster.yml"
 
 env:
-  AZURE_WEBAPP_NAME: "twitposter"
   AZURE_WEBAPP_PACKAGE_PATH: "./publish"
 
 jobs:
-  build-and-deploy:
+
+  build:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Identify Branch
-        id: branch_name
-        run: echo "BRANCH=${GITHUB_REF#refs/heads/}" >> $GITHUB_ENV
-
-      - name: Set environment dynamically
-        id: set_env
-        run: |
-          if [[ "${BRANCH}" == "master" ]]; then
-            echo "ENV=prod" >> $GITHUB_ENV
-          elif [[ "${BRANCH}" == "dev" ]]; then
-            echo "ENV=development" >> $GITHUB_ENV
-          else
-            echo "ENV=other-environment" >> $GITHUB_ENV
-          fi
-
       - uses: actions/checkout@v3
       - name: Setup .NET
         uses: actions/setup-dotnet@v3
@@ -47,13 +32,30 @@ jobs:
         run: dotnet build --no-restore ./TwitPoster -c Release
       - name: Test - TwitPoster
         run: dotnet test --no-build --verbosity normal ./TwitPoster -c Release
-
       - name: publish
         run: dotnet publish ./TwitPoster/src/TwitPoster.Web/TwitPoster.Web.csproj -c Release --no-build -o ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: TwitPoster
+          path: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
+
+  deploy:
+    needs: build
+    environment: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' && 'prod' || 'dev' }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Download Artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: TwitPoster
+          path: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
 
       - name: Deployment to twitposter
         uses: azure/webapps-deploy@v2
         with:
-          app-name: ${{ env.AZURE_WEBAPP_NAME_TWITPOSTER }}
+          app-name: ${{ env.AZURE_WEBAPP_NAME }}
           publish-profile: ${{ secrets.AZURE_PUBLISH_PROFILE_TWITPOSTER }}
           package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
