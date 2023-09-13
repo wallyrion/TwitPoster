@@ -60,7 +60,6 @@ jobs:
   
   deploy_prod:
     needs: build
-    if: github.ref == 'refs/heads/master'
     environment: 'prod'
     runs-on: ubuntu-latest
     steps:
