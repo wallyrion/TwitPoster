@@ -1,0 +1,35 @@
+name: Build & Test - TwitPoster
+
+on:
+  pull_request:
+    branches: ["master"]
+    paths:
+      - "TwitPoster/**"
+      - ".github/workflows/TwitPoster.build-deploy.yml"
+      - ".github/workflows/TwitPoster.build.yml"
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '8.x'
+      - name: Restore dependencies - TwitPoster
+        uses: actions/cache@v2
+        with:
+          path: ~/.nuget/packages
+          key: ${{ runner.os }}-nuget-${{ hashFiles('**/TwitPoster.csproj') }}
+          restore-keys: |
+            ${{ runner.os }}-nuget-
+      - run: dotnet restore ./TwitPoster
+        
+      - name: Build - TwitPoster
+        run: dotnet build --no-restore ./TwitPoster -c Release
+        
+      - name: Test - TwitPoster
+        env:
+          ASPNETCORE_ENVIRONMENT: Production
+        run: dotnet test --no-build --verbosity normal ./TwitPoster -c Release
