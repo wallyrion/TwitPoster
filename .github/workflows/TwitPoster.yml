@@ -11,6 +11,13 @@ on:
     paths:
       - "TwitPoster/**"
       - ".github/workflows/TwitPoster.yml"
+  
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Target environment'
+        required: false
+        default: 'prod'
 
 env:
   AZURE_WEBAPP_PACKAGE_PATH: "./publish"
@@ -36,19 +43,39 @@ jobs:
         run: dotnet publish ./TwitPoster/src/TwitPoster.Web/TwitPoster.Web.csproj -c Release --no-build -o ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
 
       - name: Upload Artifact
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: TwitPoster
           path: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
 
-  deploy:
+  deploy_dev:
     needs: build
-    environment: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' && 'prod' || 'dev' }}
+    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+    environment: 'dev'
     runs-on: ubuntu-latest
 
     steps:
       - name: Download Artifact
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
+        with:
+          name: TwitPoster
+          path: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
+
+      - name: Deployment to twitposter
+        uses: azure/webapps-deploy@v2
+        with:
+          app-name: ${{ env.AZURE_WEBAPP_NAME }}
+          publish-profile: ${{ secrets.AZURE_PUBLISH_PROFILE_TWITPOSTER }}
+          package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
+          
+  deploy_prod:
+    needs: build
+    if: github.event_name == 'workflow_dispatch'
+    environment: ${{ github.event.inputs.environment }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download Artifact
+        uses: actions/download-artifact@v3
         with:
           name: TwitPoster
           path: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
