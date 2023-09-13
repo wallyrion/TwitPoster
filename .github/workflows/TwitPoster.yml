@@ -19,6 +19,8 @@ env:
 
 jobs:
   build-and-deploy:
+    environment: 'prod'
+
     runs-on: ubuntu-latest
 
     steps:
@@ -38,9 +40,8 @@ jobs:
         run: dotnet publish ./TwitPoster/src/TwitPoster.Web/TwitPoster.Web.csproj -c Release --no-build -o ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
         
       - name: Deployment to twitposter
-        if: github.ref == 'refs/heads/master'
         uses: azure/webapps-deploy@v2
         with:
-          app-name: ${{ env.AZURE_WEBAPP_NAME }}
-          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+          app-name: ${{ env.AZURE_WEBAPP_NAME_TWITPOSTER }}
+          publish-profile: ${{ secrets.AZURE_PUBLISH_PROFILE_TWITPOSTER }}
           package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
