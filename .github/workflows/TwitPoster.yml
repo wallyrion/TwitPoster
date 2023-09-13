@@ -13,13 +13,10 @@ on:
       - ".github/workflows/TwitPoster.yml"
   
   workflow_dispatch:
-    branches: ["azure/investigate-version-problem"]
-    inputs:
-      environment:
-        description: 'Target environment'
-        required: false
-        default: 'prod'
-
+    branches: ["master", "azure/investigate-version-problem"]
+    paths:
+      - "TwitPoster/**"
+      - ".github/workflows/TwitPoster.yml"
 env:
   AZURE_WEBAPP_PACKAGE_PATH: "./publish"
 
@@ -71,7 +68,7 @@ jobs:
   deploy_prod:
     needs: build
     if: github.event_name == 'workflow_dispatch'
-    environment: ${{ github.event.inputs.environment }}
+    environment: 'prod'
     runs-on: ubuntu-latest
     steps:
       - name: Download Artifact
