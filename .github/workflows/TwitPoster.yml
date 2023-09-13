@@ -38,6 +38,7 @@ jobs:
         run: dotnet publish ./TwitPoster/src/TwitPoster.Web/TwitPoster.Web.csproj -c Release --no-build -o ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
         
       - name: Deployment to twitposter
+        if: github.ref == 'refs/heads/master'
         uses: azure/webapps-deploy@v2
         with:
           app-name: ${{ env.AZURE_WEBAPP_NAME }}
