@@ -5,9 +5,10 @@ on:
     branches: ["master"]
     paths:
       - "TwitPoster/**"
-      - ".github/workflows/build-deploy.yml"
-      - ".github/workflows/build.yml"
+      - ".github/workflows/TwitPoster.build-deploy.yml"
+      - ".github/workflows/TwitPoster.build.yml"
 
+  repository_dispatch:
 
 env:
   AZURE_WEBAPP_PACKAGE_PATH: "./publish"
