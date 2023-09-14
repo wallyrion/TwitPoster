@@ -3,8 +3,8 @@ using System.Security.Claims;
 using System.Text;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using TwitPoster.BLL.Common.Options;
 using TwitPoster.BLL.Interfaces;
-using TwitPoster.BLL.Options;
 using TwitPoster.DAL.Models;
 
 namespace TwitPoster.BLL.Authentication;

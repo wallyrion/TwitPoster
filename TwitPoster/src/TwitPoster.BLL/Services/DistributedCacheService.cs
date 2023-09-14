@@ -4,35 +4,32 @@ using TwitPoster.BLL.Interfaces;
 
 namespace TwitPoster.BLL.Services;
 
-public class DistributedCacheService : ICacheService
+public class DistributedCacheService(IDistributedCache distributedCache) : ICacheService
 {
-    private readonly IDistributedCache _distributedCache;
-
-    public DistributedCacheService(IDistributedCache distributedCache)
+    public async Task<T?> GetFromCacheOrCreate<T>(string key, Func<Task<T?>> factory, TimeSpan? expirationTime = null, CancellationToken cancellationToken = default)
     {
-        _distributedCache = distributedCache;
-    }
-    
-    public async Task<T?> GetFromCacheOrCreate<T>(string key, Func<Task<T>> factory, TimeSpan? expirationTime = null, CancellationToken cancellationToken = default)
-    {
-        expirationTime ??= TimeSpan.FromMinutes(10);
-        
-        var fromCache = await _distributedCache.GetStringAsync(key, cancellationToken);
+        var fromCache = await distributedCache.GetStringAsync(key, cancellationToken);
 
-        if (fromCache == null)
+        if (fromCache is not null)
         {
-            var res = await factory();
-            
-            await _distributedCache.SetStringAsync(key, JsonSerializer.Serialize(res), new DistributedCacheEntryOptions
-            {
-                AbsoluteExpirationRelativeToNow = expirationTime
-            }, cancellationToken);
-
-            return res;
+            return JsonSerializer.Deserialize<T>(fromCache);
         }
 
-        var deserialized = JsonSerializer.Deserialize<T>(fromCache);
+        var options = new DistributedCacheEntryOptions
+        {
+            AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(10)
+        };
+            
+        var response = await factory();
+            
+        if (response is null)
+        {
+            return default;
+        }
 
-        return deserialized;
+        var serialized = JsonSerializer.Serialize(response);
+        await distributedCache.SetStringAsync(key, serialized, options, cancellationToken);
+
+        return response;
     }
 }

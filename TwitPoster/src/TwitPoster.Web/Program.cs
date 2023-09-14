@@ -1,10 +1,11 @@
 using MassTransit;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.FeatureManagement;
 using Serilog;
 using TwitPoster.BLL.Authentication;
+using TwitPoster.BLL.Common.Options;
 using TwitPoster.BLL.External.Location;
 using TwitPoster.BLL.Interfaces;
-using TwitPoster.BLL.Options;
 using TwitPoster.BLL.Services;
 using TwitPoster.DAL;
 using TwitPoster.Web;
@@ -30,6 +31,7 @@ builder.Services.Configure<AuthOptions>(authConfig);
 //var rabbitMqConfig = builder.Configuration.GetRequiredSection("RabbitMq");
 
 builder.Services.AddApplicationInsightsTelemetry();
+builder.Services.AddFeatureManagement();
 builder.Services
     .AddSwaggerWithAuthorization()
     .AddEndpointsApiExplorer()
@@ -46,7 +48,6 @@ builder.Services
     .AddScoped<ILocationService, LocationService>()
     .AddTwitPosterCaching(builder.Configuration)
     .AddSingleton<IJwtTokenGenerator, JwtTokenGenerator>()
-
 
     //.Configure<RabbitMqTransportOptions>(rabbitMqConfig)
 
