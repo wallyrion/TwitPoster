@@ -1,16 +1,13 @@
 ﻿using AutoFixture.Xunit2;
 using FluentAssertions;
+using Microsoft.EntityFrameworkCore;
 using TwitPoster.Web.ViewModels;
 using TwitPoster.Web.ViewModels.Post;
 
 namespace TwitPoster.IntegrationTests.Post;
 
-public class CreatePostsTests : BaseIntegrationTest
+public class CreatePostsTests(IntegrationTestWebFactory factory) : BaseIntegrationTest(factory)
 {
-    public CreatePostsTests(IntegrationTestWebFactory factory) : base(factory)
-    {
-    }
-    
     [Fact]
     public async Task Create_Post_should_return_Unauthorized_for_anonymous()
     {
@@ -34,4 +31,21 @@ public class CreatePostsTests : BaseIntegrationTest
         );
     }
 
+    
+    [Theory, AutoData]
+    public async Task create_posts_concurrently_should_create_posts(CreatePostRequest createPostRequest)
+    {
+        var concurrentUsersCount = 10;
+        var clients = await CreateConcurrentClients(concurrentUsersCount);
+        
+        var concurrentTasks = clients.Select(client => client.apiClient.PostAsJsonAsync("Posts", createPostRequest)).ToList();
+        var results = await Task.WhenAll(concurrentTasks);
+
+        results.Should()
+            .AllSatisfy(x => x.Should().Be200Ok());
+
+        var actualPosts = await DbContext.Posts.ToListAsync();
+        actualPosts.Should().HaveSameCount(clients);
+        actualPosts.Should().AllSatisfy(x => x.Body.Should().Be(createPostRequest.Body));
+    }
 }

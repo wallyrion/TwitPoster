@@ -34,10 +34,32 @@ public abstract class BaseIntegrationTest : IAsyncLifetime
     protected async Task AddAuthorization()
     {
         var user = await DbContext.Users.Include(x => x.UserAccount).FirstAsync(user => user.Id == DefaultUserId);
+
+        await AddAuthorization(ApiClient, user.Id);
+    }
+
+    protected async Task<IReadOnlyList<(HttpClient apiClient, User user)>> CreateConcurrentClients(int usersCount = 10)
+    {
+        var users = await Data.AddMany<User>(usersCount);
+
+        var clients = new List<(HttpClient, User)>();
+        
+        foreach (var user in users)
+        {
+            var client = Factory.CreateClient();
+            await AddAuthorization(client, user.Id);
+            clients.Add((client,user ));
+        }
+
+        return clients;
+    }
+    protected async Task AddAuthorization(HttpClient httpClient, int userId)
+    {
+        var user = await DbContext.Users.Include(x => x.UserAccount).FirstAsync(user => user.Id == userId);
         var jwtGenerator = Scope.ServiceProvider.GetRequiredService<IJwtTokenGenerator>();
         var token = jwtGenerator.GenerateToken(user);
 
-        ApiClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+        httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
     }
 
     public async Task InitializeAsync()

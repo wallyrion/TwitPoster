@@ -4,12 +4,8 @@ using TwitPoster.Web.ViewModels.Post;
 
 namespace TwitPoster.IntegrationTests.Post;
 
-public class GetPostsTests : BaseIntegrationTest
+public class GetPostsTests(IntegrationTestWebFactory factory) : BaseIntegrationTest(factory)
 {
-    public GetPostsTests(IntegrationTestWebFactory factory) : base(factory)
-    {
-    }
-
     [Fact]
     public async Task Get_Posts_Returns_Posts()
     {
