@@ -1,5 +1,4 @@
 ﻿using System.Net;
-using Mapster;
 using TwitPoster.BLL.DTOs.Location;
 using TwitPoster.BLL.External.Location;
 using TwitPoster.BLL.Interfaces;
@@ -21,9 +20,10 @@ public class LocationService : ILocationService
     {
         var res = await GetFromCacheOrCreate<Country>("countries", async () =>
         {
-            var result = await _locationClient.GetCountries(cancellationToken);
+            return null;
+            /*var result = await _locationClient.GetCountries(cancellationToken);
 
-            return result.Data.Adapt<IReadOnlyList<Country>>().ToList();
+            return result.Data.Adapt<IReadOnlyList<Country>>().ToList();*/
         });
         
         return res;

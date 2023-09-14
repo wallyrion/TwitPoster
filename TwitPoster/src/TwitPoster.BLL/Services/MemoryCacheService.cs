@@ -12,16 +12,29 @@ public class MemoryCacheService : ICacheService
         _memoryCache = memoryCache;
     }
     
-    public async Task<T?> GetFromCacheOrCreate<T>(string key, Func<Task<T>> factory, TimeSpan? expirationTime = null, CancellationToken cancellationToken = default)
+    public async Task<T?> GetFromCacheOrCreate<T>(string key, Func<Task<T?>> factory, TimeSpan? expirationTime = null, CancellationToken cancellationToken = default)
     {
         expirationTime ??= TimeSpan.FromMinutes(10);
-        
-        var result = await _memoryCache.GetOrCreateAsync<T>(key, async entry =>
+
+        var fromCache = _memoryCache.Get<T>(key);
+
+        if (fromCache is not null)
         {
-            entry.AbsoluteExpirationRelativeToNow = expirationTime;
-            return await factory();
+            return fromCache;
+        }
+
+        var value = await factory();
+
+        if (value is null)
+        {
+            return default;
+        }
+
+        _memoryCache.Set(key, value, new MemoryCacheEntryOptions
+        {
+            AbsoluteExpirationRelativeToNow = expirationTime
         });
 
-        return result!;
+        return value;
     }
 }
