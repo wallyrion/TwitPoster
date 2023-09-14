@@ -1,4 +1,5 @@
-﻿using TwitPoster.BLL.Services;
+﻿using TwitPoster.BLL.Interfaces;
+using TwitPoster.BLL.Services;
 using TwitPoster.Web.Common.Options;
 
 namespace TwitPoster.Web.Common.DependencyInjection;

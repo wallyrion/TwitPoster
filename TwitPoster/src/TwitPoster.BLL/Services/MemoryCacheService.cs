@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Caching.Memory;
+using TwitPoster.BLL.Interfaces;
 
 namespace TwitPoster.BLL.Services;
 
