@@ -1,4 +1,4 @@
-﻿namespace TwitPoster.BLL.Options;
+﻿namespace TwitPoster.BLL.Common.Options;
 
 public sealed class AuthOptions
 {

@@ -4,18 +4,11 @@ using TwitPoster.BLL.Interfaces;
 
 namespace TwitPoster.BLL.Services;
 
-public class DistributedCacheService : ICacheService
+public class DistributedCacheService(IDistributedCache distributedCache) : ICacheService
 {
-    private readonly IDistributedCache _distributedCache;
-
-    public DistributedCacheService(IDistributedCache distributedCache)
-    {
-        _distributedCache = distributedCache;
-    }
-    
     public async Task<T?> GetFromCacheOrCreate<T>(string key, Func<Task<T?>> factory, TimeSpan? expirationTime = null, CancellationToken cancellationToken = default)
     {
-        var fromCache = await _distributedCache.GetStringAsync(key, cancellationToken);
+        var fromCache = await distributedCache.GetStringAsync(key, cancellationToken);
 
         if (fromCache is not null)
         {
@@ -35,8 +28,8 @@ public class DistributedCacheService : ICacheService
         }
 
         var serialized = JsonSerializer.Serialize(response);
-        await _distributedCache.SetStringAsync(key, serialized, options, cancellationToken);
+        await distributedCache.SetStringAsync(key, serialized, options, cancellationToken);
 
-        return JsonSerializer.Deserialize<T>(fromCache!);
+        return response;
     }
 }

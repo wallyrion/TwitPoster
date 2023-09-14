@@ -1,4 +1,5 @@
 ﻿using System.Net;
+using Mapster;
 using TwitPoster.BLL.DTOs.Location;
 using TwitPoster.BLL.External.Location;
 using TwitPoster.BLL.Interfaces;
@@ -18,15 +19,14 @@ public class LocationService : ILocationService
 
     public async Task<IReadOnlyList<Country>> GetCountries(CancellationToken cancellationToken = default)
     {
-        var res = await GetFromCacheOrCreate<Country>("countries", async () =>
+        var countries = await GetFromCacheOrCreate<Country>("countries", async () =>
         {
-            return null;
-            /*var result = await _locationClient.GetCountries(cancellationToken);
+            var result = await _locationClient.GetCountries(cancellationToken);
 
-            return result.Data.Adapt<IReadOnlyList<Country>>().ToList();*/
+            return result.Data.Adapt<IReadOnlyList<Country>>().ToList();
         });
         
-        return res;
+        return countries;
     }
 
     public async Task<IReadOnlyList<string>> GetStates(string countryName, CancellationToken cancellationToken = default)
@@ -50,12 +50,7 @@ public class LocationService : ILocationService
     {
         try
         {
-            var result = await _cacheService.GetFromCacheOrCreate<IReadOnlyList<T>>(key, async () =>
-            {
-                
-                return await factory();
-
-            });
+            var result = await _cacheService.GetFromCacheOrCreate<IReadOnlyList<T>>(key, async () => await factory());
 
             return result!;
 

@@ -1,6 +1,6 @@
-﻿using TwitPoster.BLL.Interfaces;
+﻿using TwitPoster.BLL.Common.Constants;
+using TwitPoster.BLL.Interfaces;
 using TwitPoster.BLL.Services;
-using TwitPoster.Web.Common.Options;
 
 namespace TwitPoster.Web.Common.DependencyInjection;
 
@@ -8,25 +8,20 @@ public static class ServiceCollectionExtension
 {
     public static IServiceCollection AddTwitPosterCaching(this IServiceCollection services, IConfigurationManager configuration)
     {
-        var featuresConfig = configuration.GetRequiredSection("Features");
         
-        var featuresOptions = featuresConfig.Get<FeatureOptions>()!;
+        services
+            .AddMemoryCache();
+            
+        services
+            .AddStackExchangeRedisCache(x =>
+            {
+                x.Configuration = configuration.GetConnectionString("Redis")!;
+            })
+                
+            .AddScoped<ICacheService, CacheService>()
+            .AddKeyedScoped<ICacheService, DistributedCacheService>(DependencyInjectionKeys.DistributedCacheService)
+            .AddKeyedScoped<ICacheService, MemoryCacheService>(DependencyInjectionKeys.MemoryService);
 
-        if (featuresOptions.UseRedisCache)
-        {
-            services
-                .AddStackExchangeRedisCache(x =>
-                {
-                    x.Configuration = configuration.GetConnectionString("Redis")!;
-                })
-                .AddScoped<ICacheService, DistributedCacheService>();
-        }
-        else
-        {
-            services
-                .AddMemoryCache()
-                .AddScoped<ICacheService, MemoryCacheService>();
-        }
 
         return services;
     } 
