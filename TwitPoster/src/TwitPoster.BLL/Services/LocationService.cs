@@ -1,8 +1,5 @@
 ﻿using System.Net;
-using System.Text.Json;
 using Mapster;
-using Microsoft.Extensions.Caching.Distributed;
-using Microsoft.Extensions.Caching.Memory;
 using TwitPoster.BLL.DTOs.Location;
 using TwitPoster.BLL.External.Location;
 using TwitPoster.BLL.Interfaces;
@@ -69,65 +66,6 @@ public class LocationService : ILocationService
         }
     }
 }
-
-public class MemoryCacheService : ICacheService
-{
-    private readonly IMemoryCache _memoryCache;
-
-    public MemoryCacheService(IMemoryCache memoryCache)
-    {
-        _memoryCache = memoryCache;
-    }
-    
-    public async Task<T?> GetFromCacheOrCreate<T>(string key, Func<Task<T>> factory, TimeSpan? expirationTime = null, CancellationToken cancellationToken = default)
-    {
-        expirationTime ??= TimeSpan.FromMinutes(10);
-        
-        var result = await _memoryCache.GetOrCreateAsync<T>(key, async entry =>
-        {
-            entry.AbsoluteExpirationRelativeToNow = expirationTime;
-            return await factory();
-        });
-
-        return result!;
-    }
-}
-
-
-public class DistributedCacheService : ICacheService
-{
-    private readonly IDistributedCache _distributedCache;
-
-    public DistributedCacheService(IDistributedCache distributedCache)
-    {
-        _distributedCache = distributedCache;
-    }
-    
-    public async Task<T?> GetFromCacheOrCreate<T>(string key, Func<Task<T>> factory, TimeSpan? expirationTime = null, CancellationToken cancellationToken = default)
-    {
-        expirationTime ??= TimeSpan.FromMinutes(10);
-        
-        var fromCache = await _distributedCache.GetStringAsync(key, cancellationToken);
-
-        if (fromCache == null)
-        {
-            var res = await factory();
-            
-            await _distributedCache.SetStringAsync(key, JsonSerializer.Serialize(res), new DistributedCacheEntryOptions
-            {
-                AbsoluteExpirationRelativeToNow = expirationTime
-            }, cancellationToken);
-
-            return res;
-        }
-
-        var deserialized = JsonSerializer.Deserialize<T>(fromCache);
-
-        return deserialized;
-    }
-}
-
-
 
 public interface ICacheService
 {
