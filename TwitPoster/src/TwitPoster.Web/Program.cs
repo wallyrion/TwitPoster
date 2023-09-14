@@ -2,13 +2,14 @@ using MassTransit;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 using TwitPoster.BLL.Authentication;
+using TwitPoster.BLL.External.Location;
 using TwitPoster.BLL.Interfaces;
 using TwitPoster.BLL.Options;
 using TwitPoster.BLL.Services;
 using TwitPoster.DAL;
-using TwitPoster.Shared.Contracts;
 using TwitPoster.Web;
 using TwitPoster.Web.Common;
+using TwitPoster.Web.Common.DependencyInjection;
 using TwitPoster.Web.Extensions;
 using TwitPoster.Web.Middlewares;
 using TwitPoster.Web.WebHostServices;
@@ -22,10 +23,11 @@ builder.Host.UseSerilog((ctx, services, lc) => lc
 builder.Services.AddControllers();
 
 IConfigurationSection authConfig = builder.Configuration.GetRequiredSection("Auth");
+
 var authOptions = authConfig.Get<AuthOptions>()!;
 builder.Services.Configure<AuthOptions>(authConfig);
 
-var rabbitMqConfig = builder.Configuration.GetRequiredSection("RabbitMq");
+//var rabbitMqConfig = builder.Configuration.GetRequiredSection("RabbitMq");
 
 builder.Services.AddApplicationInsightsTelemetry();
 builder.Services
@@ -41,10 +43,13 @@ builder.Services
     .AddScoped<IPostService, PostService>()
     .AddScoped<ICurrentUser, CurrentUser>()
     .AddScoped<IAuthService, AuthService>()
+    .AddScoped<ILocationService, LocationService>()
+    .AddTwitPosterCaching(builder.Configuration)
     .AddSingleton<IJwtTokenGenerator, JwtTokenGenerator>()
 
+
     //.Configure<RabbitMqTransportOptions>(rabbitMqConfig)
-    
+
     .AddMassTransit(x =>
     {
         /*if (builder.Environment.IsDevelopment())
@@ -53,7 +58,7 @@ builder.Services
         x.UsingAzureServiceBus((_, cfg) =>
         {
             cfg.UseServiceBusMessageScheduler();
-            
+
             cfg.Host(builder.Configuration.GetConnectionString("ServiceBus")!);
         });
     })
@@ -64,14 +69,12 @@ builder.Services
             .WithOrigins("http://localhost:4200", "https://wallyrion.github.io")
             .AllowCredentials();
     }))
-    .AddHostedService<MigrationHostedService>()
+
+    .AddHostedService<MigrationHostedService>();
     //.AddHostedService<TestBackgroundService>()
-    
-    .AddStackExchangeRedisCache(x =>
-    {
-        x.Configuration = builder.Configuration.GetConnectionString("Redis")!;
-    })
-    ;
+
+builder.Services.AddHttpClient<ILocationClient, LocationClient>(client
+    => client.BaseAddress = new Uri("https://countriesnow.space/"));
 
 var app = builder.Build();
 
