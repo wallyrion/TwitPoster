@@ -9,9 +9,6 @@ on:
       - ".github/workflows/TwitPoster.build.yml"
       - ".github/workflows/TwitPoster.deploy.docker.yml"
 
-env:
-  AZURE_WEBAPP_NAME: twitposter   # set this to your application's name
-
 permissions:
   contents: 'read'
   packages: 'write'
@@ -23,10 +20,20 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '8.x'
+      - name: Restore dependencies - TwitPoster
+        run: dotnet restore ./TwitPoster
+
+      - name: Build - TwitPoster
+        run: dotnet build --no-restore ./TwitPoster -c Release
+      
       - name: Test - TwitPoster
         env:
           ASPNETCORE_ENVIRONMENT: Production
-        run: dotnet test --verbosity normal ./TwitPoster -c Release
+        run: dotnet test --no-build --verbosity normal ./TwitPoster -c Release
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
@@ -65,6 +72,6 @@ jobs:
         id: deploy-to-webapp
         uses: azure/webapps-deploy@85270a1854658d167ab239bce43949edb336fa7c
         with:
-          app-name: ${{ env.AZURE_WEBAPP_NAME }}
-          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE_GITHUB }}
+          app-name: ${{ env.AZURE_WEBAPP_NAME_TWITPOSTER }}
+          publish-profile: ${{ secrets.AZURE_PUBLISH_PROFILE_TWITPOSTER }}
           images: 'ghcr.io/${{ env.REPO }}:${{ github.sha }}'
