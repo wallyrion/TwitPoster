@@ -1,0 +1,80 @@
+name: Build & deploy - Docker image
+
+on:
+  pull_request:
+    branches: ["master"]
+    paths:
+      - "TwitPoster/**"
+      - ".github/workflows/TwitPoster.build-deploy.yml"
+      - ".github/workflows/TwitPoster.build.yml"
+      - ".github/workflows/TwitPoster.build.docker.yml"
+
+env:
+  AZURE_WEBAPP_NAME: bible-maybe   # set this to your application's name
+
+permissions:
+  contents: 'read'
+  packages: 'write'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '8.x'
+      - name: Restore dependencies - TwitPoster
+        run: dotnet restore ./TwitPoster
+        
+      - name: Build - TwitPoster
+        run: dotnet build --no-restore ./TwitPoster -c Release
+        
+      - name: Test - TwitPoster
+        env:
+          ASPNETCORE_ENVIRONMENT: Production
+        run: dotnet test --no-build --verbosity normal ./TwitPoster -c Release
+
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Log in to GitHub container registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Lowercase the repo name
+        run: echo "REPO=${GITHUB_REPOSITORY,,}" >>${GITHUB_ENV}
+
+      - name: Build and push container image to registry
+        uses: docker/build-push-action@v4
+        with:
+          push: true
+          tags: ghcr.io/${{ env.REPO }}:${{ github.sha }}
+          file: ./TwitPoster/src/TwitPoster.Web/Dockerfile
+
+  deploy:
+    runs-on: ubuntu-latest
+  
+    needs: build
+  
+    environment:
+      name: 'production'
+      url: 'https://learn.microsoft.com/en-us/visualstudio/containers/deploy-app-service?view=vs-2022'
+  
+    steps:
+      - name: Lowercase the repo name
+        run: echo "REPO=${GITHUB_REPOSITORY,,}" >>${GITHUB_ENV}
+  
+      - name: Deploy to Azure Web App
+        id: deploy-to-webapp
+        uses: azure/webapps-deploy@85270a1854658d167ab239bce43949edb336fa7c
+        with:
+          app-name: ${{ env.AZURE_WEBAPP_NAME }}
+          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE_GITHUB }}
+          images: 'ghcr.io/${{ env.REPO }}:${{ github.sha }}'
