@@ -3,20 +3,13 @@ using TwitPoster.BLL.Interfaces;
 
 namespace TwitPoster.BLL.Services;
 
-public class MemoryCacheService : ICacheService
+public class MemoryCacheService(IMemoryCache memoryCache) : ICacheService
 {
-    private readonly IMemoryCache _memoryCache;
-
-    public MemoryCacheService(IMemoryCache memoryCache)
-    {
-        _memoryCache = memoryCache;
-    }
-    
     public async Task<T?> GetFromCacheOrCreate<T>(string key, Func<Task<T?>> factory, TimeSpan? expirationTime = null, CancellationToken cancellationToken = default)
     {
         expirationTime ??= TimeSpan.FromMinutes(10);
 
-        var fromCache = _memoryCache.Get<T>(key);
+        var fromCache = memoryCache.Get<T>(key);
 
         if (fromCache is not null)
         {
@@ -30,7 +23,7 @@ public class MemoryCacheService : ICacheService
             return default;
         }
 
-        _memoryCache.Set(key, value, new MemoryCacheEntryOptions
+        memoryCache.Set(key, value, new MemoryCacheEntryOptions
         {
             AbsoluteExpirationRelativeToNow = expirationTime
         });

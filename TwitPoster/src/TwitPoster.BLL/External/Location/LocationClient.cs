@@ -2,18 +2,11 @@
 
 namespace TwitPoster.BLL.External.Location;
 
-public class LocationClient : ILocationClient
+public class LocationClient(HttpClient httpClient) : ILocationClient
 {
-    private readonly HttpClient _httpClient;
-    
-    public LocationClient(HttpClient httpClient)
-    {
-        _httpClient = httpClient;
-    }
-    
     public async Task<CountriesResponse> GetCountries(CancellationToken cancellationToken = default)
     {
-        var response = await _httpClient.GetAsync("api/v0.1/countries/flag/unicode", cancellationToken);
+        var response = await httpClient.GetAsync("api/v0.1/countries/flag/unicode", cancellationToken);
         response.EnsureSuccessStatusCode();
         var content = await response.Content.ReadFromJsonAsync<CountriesResponse>(cancellationToken);
 
@@ -22,7 +15,7 @@ public class LocationClient : ILocationClient
 
     public async Task<StatesResponse> GetStates(string countryName, CancellationToken cancellationToken = default)
     {
-        var response = await _httpClient.PostAsJsonAsync("api/v0.1/countries/states", new { country = countryName }, cancellationToken);
+        var response = await httpClient.PostAsJsonAsync("api/v0.1/countries/states", new { country = countryName }, cancellationToken);
         response.EnsureSuccessStatusCode();
         var content = await response.Content.ReadFromJsonAsync<StatesResponse>(cancellationToken);
 
@@ -31,7 +24,7 @@ public class LocationClient : ILocationClient
 
     public async Task<CitiesResponse> GetCities(string countryName, string stateName, CancellationToken cancellationToken = default)
     {
-        var response = await _httpClient.PostAsJsonAsync("api/v0.1/countries/state/cities", new { country = countryName, state = stateName }, cancellationToken);
+        var response = await httpClient.PostAsJsonAsync("api/v0.1/countries/state/cities", new { country = countryName, state = stateName }, cancellationToken);
         response.EnsureSuccessStatusCode();
         var content = await response.Content.ReadFromJsonAsync<CitiesResponse>(cancellationToken);
 
