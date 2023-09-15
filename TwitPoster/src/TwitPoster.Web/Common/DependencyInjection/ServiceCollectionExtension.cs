@@ -8,7 +8,6 @@ public static class ServiceCollectionExtension
 {
     public static IServiceCollection AddTwitPosterCaching(this IServiceCollection services, IConfigurationManager configuration)
     {
-        
         services
             .AddMemoryCache();
             
@@ -21,7 +20,6 @@ public static class ServiceCollectionExtension
             .AddScoped<ICacheService, CacheService>()
             .AddKeyedScoped<ICacheService, DistributedCacheService>(DependencyInjectionKeys.DistributedCacheService)
             .AddKeyedScoped<ICacheService, MemoryCacheService>(DependencyInjectionKeys.MemoryService);
-
 
         return services;
     } 

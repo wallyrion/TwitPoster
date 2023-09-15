@@ -6,22 +6,13 @@ using TwitPoster.BLL.Interfaces;
 
 namespace TwitPoster.BLL.Services;
 
-public class LocationService : ILocationService
+public class LocationService(ILocationClient locationClient, ICacheService cacheService) : ILocationService
 {
-    private readonly ILocationClient _locationClient;
-    private readonly ICacheService _cacheService;
-
-    public LocationService(ILocationClient locationClient, ICacheService cacheService)
-    {
-        _locationClient = locationClient;
-        _cacheService = cacheService;
-    }
-
     public async Task<IReadOnlyList<Country>> GetCountries(CancellationToken cancellationToken = default)
     {
         var countries = await GetFromCacheOrCreate<Country>("countries", async () =>
         {
-            var result = await _locationClient.GetCountries(cancellationToken);
+            var result = await locationClient.GetCountries(cancellationToken);
 
             return result.Data.Adapt<IReadOnlyList<Country>>().ToList();
         });
@@ -33,7 +24,7 @@ public class LocationService : ILocationService
     {
         return await GetFromCacheOrCreate<string>($"country-{countryName}-states", async () =>
         {
-            var result = await _locationClient.GetStates(countryName, cancellationToken);
+            var result = await locationClient.GetStates(countryName, cancellationToken);
             return result.Data.States.Select(x => x.Name).ToList();
         });
     }
@@ -41,7 +32,7 @@ public class LocationService : ILocationService
     public async Task<IReadOnlyList<string>> GetCities(string countryName, string stateName, CancellationToken cancellationToken = default)
     {
         var cities = await GetFromCacheOrCreate<string>($"country-{countryName}-state-{stateName}-cities", async () => 
-            (await _locationClient.GetCities(countryName, stateName, cancellationToken)).Data);
+            (await locationClient.GetCities(countryName, stateName, cancellationToken)).Data);
 
         return cities;
     }
@@ -50,7 +41,7 @@ public class LocationService : ILocationService
     {
         try
         {
-            var result = await _cacheService.GetFromCacheOrCreate<IReadOnlyList<T>>(key, async () => await factory());
+            var result = await cacheService.GetFromCacheOrCreate(key, async () => await factory());
 
             return result!;
 
