@@ -27,11 +27,6 @@ jobs:
           ASPNETCORE_ENVIRONMENT: Production
         run: dotnet test --no-build --verbosity normal ./TwitPoster -c Release
 
-      - name: Test - TwitPoster
-        env:
-          ASPNETCORE_ENVIRONMENT: Production
-        run: dotnet test --no-build --verbosity normal ./TwitPoster -c Release
-
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
