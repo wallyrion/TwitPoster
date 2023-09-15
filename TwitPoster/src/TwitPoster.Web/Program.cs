@@ -82,6 +82,8 @@ builder.Services.AddHttpClient<ILocationClient, LocationClient>(client
 var app = builder.Build();
 
 app.MapGet("/health", () => "OK");
+app.MapGet("/healthy", () => "OK");
+app.MapGet("/healthy2", () => "OK");
 
 app.MapControllers()
     .RequireAuthorization();
