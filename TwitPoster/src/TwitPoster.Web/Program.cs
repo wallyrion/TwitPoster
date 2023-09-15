@@ -8,6 +8,7 @@ using TwitPoster.BLL.External.Location;
 using TwitPoster.BLL.Interfaces;
 using TwitPoster.BLL.Services;
 using TwitPoster.DAL;
+using TwitPoster.DAL.Triggers;
 using TwitPoster.Web;
 using TwitPoster.Web.Common;
 using TwitPoster.Web.Common.DependencyInjection;
@@ -40,6 +41,7 @@ builder.Services
     .AddJwtBearerAuthentication(authOptions)
     .AddMappings()
     .AddDbContext<TwitPosterContext>(options => options
+        .UseTriggers(o => o.AddTrigger<PostLikeTrigger>())
         .UseSqlServer(builder.Configuration.GetConnectionString("DbConnection")!))
     .AddScoped<IUsersService, UserService>()
     .AddScoped<IPostService, PostService>()
