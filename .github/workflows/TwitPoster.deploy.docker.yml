@@ -10,7 +10,7 @@ on:
       - ".github/workflows/TwitPoster.deploy.docker.yml"
 
 env:
-  AZURE_WEBAPP_NAME: bible-maybe   # set this to your application's name
+  AZURE_WEBAPP_NAME: twitposter   # set this to your application's name
 
 permissions:
   contents: 'read'
@@ -51,7 +51,7 @@ jobs:
   
     environment:
       name: 'production'
-      url: 'https://learn.microsoft.com/en-us/visualstudio/containers/deploy-app-service?view=vs-2022'
+      url: 'http://twitposter.azurewebsites.net/swagger/index.html'
   
     steps:
       - name: Lowercase the repo name
