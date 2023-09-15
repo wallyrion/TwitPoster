@@ -30,8 +30,8 @@ jobs:
         uses: docker/login-action@v3
         with:
           registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.MY_GITHUB_TOKEN }}
+          username: wallyrion
+          password: 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
 
       - name: publish
         run: dotnet publish ./TwitPoster/src/TwitPoster.Web/TwitPoster.Web.csproj /t:PublishContainer -c Release --no-build
