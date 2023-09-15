@@ -61,7 +61,7 @@ jobs:
     needs: build
   
     environment:
-      name: 'production'
+      name: 'prod'
       url: 'http://twitposter.azurewebsites.net/swagger/index.html'
   
     steps:
