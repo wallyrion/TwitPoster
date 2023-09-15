@@ -51,12 +51,16 @@ jobs:
       - name: Lowercase the repo name
         run: echo "REPO=${GITHUB_REPOSITORY,,}" >>${GITHUB_ENV}
 
+      - name: Set Workdir
+        run: mkdir ./TwitPoster
+        working-directory: ./
+
       - name: Build and push container image to registry
         uses: docker/build-push-action@v4
         with:
           push: true
           tags: ghcr.io/${{ env.REPO }}:${{ github.sha }}
-          file: ./TwitPoster/Dockerfile
+          file: Dockerfile
 
   deploy:
     runs-on: ubuntu-latest
