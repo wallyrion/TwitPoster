@@ -12,6 +12,7 @@ on:
       - "TwitPoster/**"
       - ".github/workflows/TwitPoster.deploy.docker.yml"
 
+
 permissions:
   contents: 'read'
   packages: 'write'
