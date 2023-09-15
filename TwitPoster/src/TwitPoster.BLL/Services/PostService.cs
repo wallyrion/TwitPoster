@@ -112,9 +112,6 @@ public class PostService : IPostService
         };
 
         _context.PostLikes.Add(newLike);
-
-        await _context.SaveChangesAsync();
-        post.LikesCount = _context.PostLikes.Count(like => like.PostId == postId);
         await _context.SaveChangesAsync();
 
         return _context.PostLikes.Count(like => like.PostId == postId);
@@ -138,9 +135,6 @@ public class PostService : IPostService
         }
 
         _context.PostLikes.Remove(existingLike);
-        await _context.SaveChangesAsync();
-
-        post.LikesCount = _context.PostLikes.Count(like => like.PostId == postId);
         await _context.SaveChangesAsync();
 
         return _context.PostLikes.Count(like => like.PostId == postId);
