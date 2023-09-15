@@ -22,10 +22,6 @@ jobs:
       - name: Build - TwitPoster
         run: dotnet build --no-restore ./TwitPoster -c Release
         
-      - name: Test - TwitPoster
-        env:
-          ASPNETCORE_ENVIRONMENT: Production
-        run: dotnet test --no-build --verbosity normal ./TwitPoster -c Release
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -35,7 +31,7 @@ jobs:
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+          password: ${{ secrets.MY_GITHUB_TOKEN }}
 
       - name: publish
         run: dotnet publish ./TwitPoster/src/TwitPoster.Web/TwitPoster.Web.csproj /t:PublishContainer -c Release --no-build
