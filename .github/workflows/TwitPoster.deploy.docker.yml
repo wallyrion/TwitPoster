@@ -7,7 +7,7 @@ on:
       - "TwitPoster/**"
       - ".github/workflows/TwitPoster.build-deploy.yml"
       - ".github/workflows/TwitPoster.build.yml"
-      - ".github/workflows/TwitPoster.build.docker.yml"
+      - ".github/workflows/TwitPoster.deploy.docker.yml"
 
 env:
   AZURE_WEBAPP_NAME: bible-maybe   # set this to your application's name
