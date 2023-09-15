@@ -15,12 +15,13 @@ public class LikePostTests(IntegrationTestWebFactory factory) : BaseIntegrationT
         var postResponse = await ApiClient.PostAsJsonAsync("Posts", createPostRequest);
         postResponse.Should().Be200Ok();
         var post = await postResponse.Content.ReadFromJsonAsync<PostViewModel>();
+        post.Should().NotBeNull();
         
         var concurrentUsersCount = 100;
         var clients = await CreateConcurrentClients(concurrentUsersCount);
 
         var results = await Task.WhenAll(clients.Select(x => 
-            x.apiClient.PutAsync($"Posts/{post.Id}/like", null)));
+            x.apiClient.PutAsync($"Posts/{post!.Id}/like", null)));
 
         results.Should()
             .AllSatisfy(x => x.Should().Be200Ok());
@@ -39,18 +40,19 @@ public class LikePostTests(IntegrationTestWebFactory factory) : BaseIntegrationT
         var postResponse = await ApiClient.PostAsJsonAsync("Posts", createPostRequest);
         postResponse.Should().Be200Ok();
         var post = await postResponse.Content.ReadFromJsonAsync<PostViewModel>();
+        post.Should().NotBeNull();
         
         var concurrentUsersCount = 100;
         var clients = await CreateConcurrentClients(concurrentUsersCount);
 
         var resultsLike = await Task.WhenAll(clients.Select(x => 
-            x.apiClient.PutAsync($"Posts/{post.Id}/like", null)));
+            x.apiClient.PutAsync($"Posts/{post!.Id}/like", null)));
 
         resultsLike.Should()
             .AllSatisfy(x => x.Should().Be200Ok());
         
         var resultsUnlike = await Task.WhenAll(clients.Take(50).Select(x => 
-            x.apiClient.PutAsync($"Posts/{post.Id}/unlike", null)));
+            x.apiClient.PutAsync($"Posts/{post!.Id}/unlike", null)));
         
         resultsUnlike.Should()
             .AllSatisfy(x => x.Should().Be200Ok());
