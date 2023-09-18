@@ -38,4 +38,4 @@ jobs:
           password: ${{ secrets.DOCKER_HUB_PASSWORD }}
         
       - name: publish image to docker hub
-        run: dotnet publish ./TwitPoster/src/TwitPoster.Web/TwitPoster.Web.csproj /t:PublishContainer -c Release --no-build -r linux-x64
+        run: dotnet publish ./TwitPoster/src/TwitPoster.Web/TwitPoster.Web.csproj /t:PublishContainer -r linux-x64
