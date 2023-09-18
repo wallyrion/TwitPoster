@@ -28,6 +28,11 @@ jobs:
       - name: Build - TwitPoster
         run: dotnet build --no-restore ./TwitPoster -c Release -r linux-x64
 
+      - name: Test - TwitPoster
+        env:
+          ASPNETCORE_ENVIRONMENT: Production
+        run: dotnet test --no-build --verbosity normal ./TwitPoster -c Release
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
         
