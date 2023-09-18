@@ -7,7 +7,7 @@
         <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
         <UserSecretsId>0dc85be5-c355-49dc-b67a-8b8178fb927d</UserSecretsId>
         <ContainerRegistry>docker.io</ContainerRegistry>
-        <ContainerRepository>oleksiikorniienko/twitposter:latest</ContainerRepository>
+        <ContainerRepository>oleksiikorniienko/twitposter</ContainerRepository>
     </PropertyGroup>
 
     <ItemGroup>
