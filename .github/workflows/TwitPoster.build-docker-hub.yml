@@ -59,14 +59,6 @@ jobs:
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}/swagger/index.html
       
     steps:
-      - name: Deploy to Azure Web App
-        id: deploy-to-webapp
-        uses: azure/webapps-deploy@v2
-        with:
-          app-name: experiment-1-twitposter
-          publish-profile: ${{ secrets.AZURE_WEBAPP_1_PUBLISH_PROFILE }}
-          images: ${{ env.twitposter-image }}
-          
       - name: Trigger Azure WebHook
         run: |
           curl -X POST $WEBHOOK_URL
