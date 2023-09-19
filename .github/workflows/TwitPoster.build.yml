@@ -64,4 +64,4 @@ jobs:
         with:
           app-name: 'twitposter'
           publish-profile: ${{ secrets.AZURE_PUBLISH_PROFILE_TWITPOSTER }}
-          images: 'oleksiikorniienko/twitposter:latest'
+          images: 'docker.io/oleksiikorniienko/twitposter:latest'
