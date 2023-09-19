@@ -1,4 +1,4 @@
-name: Build & Test - TwitPoster
+name: Build & Test - docker hub - TwitPoster
 
 on:
   pull_request:
