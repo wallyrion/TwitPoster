@@ -44,7 +44,7 @@ jobs:
         run: dotnet publish ./TwitPoster/src/TwitPoster.Web/TwitPoster.Web.csproj /t:PublishContainer -r linux-x64
         
       - name: Docker Push
-        run: docker tag twitposter:latest ghcr.io/wallyrion/twitposter  
+        run: docker tag twitposter:latest ghcr.io/wallyrion/twitposter:latest
       
       - name: Docker Push
         run: docker push ghcr.io/wallyrion/twitposter
@@ -55,7 +55,7 @@ jobs:
     needs: build
     environment:
       name: 'prod'
-      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
+      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}/swagger/index.html
       
     steps:
 
@@ -63,6 +63,6 @@ jobs:
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v2
         with:
-          app-name: 'twitposter'
+          app-name: ${{ env.AZURE_WEBAPP_NAME_TWITPOSTER }}
           publish-profile: ${{ secrets.AZURE_PUBLISH_PROFILE_TWITPOSTER }}
           images: 'ghcr.io/wallyrion/twitposter:latest'
