@@ -5,12 +5,8 @@ using TwitPoster.Web.ViewModels;
 
 namespace TwitPoster.IntegrationTests.Auth;
 
-public class RegisterUserTests : BaseIntegrationTest
+public class RegisterUserTests(IntegrationTestWebFactory factory) : BaseIntegrationTest(factory)
 {
-    public RegisterUserTests(IntegrationTestWebFactory factory) : base(factory)
-    {
-    }
-    
     [Fact]
     public async Task Create_user_should_create_user_and_publish_emailCommand()
     {
