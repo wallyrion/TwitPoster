@@ -66,3 +66,10 @@ jobs:
           app-name: experiment-1-twitposter
           publish-profile: ${{ secrets.AZURE_WEBAPP_1_PUBLISH_PROFILE }}
           images: ${{ env.twitposter-image }}
+          
+      - name: Trigger Azure WebHook
+        run: |
+          curl -X POST $WEBHOOK_URL
+        env:
+          WEBHOOK_URL: ${{ secrets.TWITPOSTER_1_WEBHOOK_URL }}
+        shell: bash
