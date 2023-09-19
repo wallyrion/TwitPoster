@@ -60,7 +60,6 @@ jobs:
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}/swagger/index.html
       
     steps:
-
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v2
