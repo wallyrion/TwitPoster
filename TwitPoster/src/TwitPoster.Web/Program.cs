@@ -86,6 +86,7 @@ app.MapGet("/health2", () => "OK");
 app.MapGet("/health3", () => "OK");
 app.MapGet("/health4", () => "OK");
 app.MapGet("/health5", () => "OK");
+app.MapGet("/health6", () => "OK");
 
 app.MapControllers()
     .RequireAuthorization();
