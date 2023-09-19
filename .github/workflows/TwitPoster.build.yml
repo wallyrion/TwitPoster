@@ -11,6 +11,8 @@ permissions:
   contents: 'read'
   packages: 'write'
 
+env:
+  twitposter-image: 'ghcr.io/wallyrion/twitposter:latest'
 
 jobs:
   build:
@@ -40,14 +42,14 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
         
-      - name: publish image to docker hub
+      - name: publish image
         run: dotnet publish ./TwitPoster/src/TwitPoster.Web/TwitPoster.Web.csproj /t:PublishContainer -r linux-x64
         
-      - name: Docker Push
-        run: docker tag twitposter:latest ghcr.io/wallyrion/twitposter:latest
+      - name: change image tag 
+        run: docker tag twitposter:latest ${{ env.twitposter-image }}
       
       - name: Docker Push
-        run: docker push ghcr.io/wallyrion/twitposter
+        run: docker push ${{ env.twitposter-image }}
 
 
   deploy:
@@ -65,4 +67,4 @@ jobs:
         with:
           app-name: ${{ env.AZURE_WEBAPP_NAME_TWITPOSTER }}
           publish-profile: ${{ secrets.AZURE_PUBLISH_PROFILE_TWITPOSTER }}
-          images: 'ghcr.io/wallyrion/twitposter:latest'
+          images: ${{ env.twitposter-image }}
