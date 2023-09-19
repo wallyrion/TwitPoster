@@ -33,44 +33,32 @@ jobs:
           ASPNETCORE_ENVIRONMENT: Production
         run: dotnet test --no-build --verbosity normal ./TwitPoster -c Release
         
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-
       - name: Log in to GitHub container registry
         uses: docker/login-action@v3
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Lowercase the repo name
-        run: echo "REPO=${GITHUB_REPOSITORY,,}" >>${GITHUB_ENV}
-
-      - name: Build and push container image to registry
-        uses: docker/build-push-action@v5
-        with:
-          push: true
-          tags: ghcr.io/${{ env.REPO }}:${{ github.sha }}
-          context: ./TwitPoster
+        
+      - name: publish image to docker hub
+        run: dotnet publish ./TwitPoster/src/TwitPoster.Web/TwitPoster.Web.csproj /t:PublishContainer -r linux-x64
+        
+      - name: Docker Push
+        run: docker push ghcr.io/oleksiikorniienko/twitposter
 
 
   deploy:
     runs-on: ubuntu-latest
-    
     needs: build
-    
     environment:
-      name: 'prod'
-      url: 'http://twitposter.azurewebsites.net/swagger/index.html'
+      name: 'production'
     
     steps:
-      - name: Lowercase the repo name
-        run: echo "REPO=${GITHUB_REPOSITORY,,}" >>${GITHUB_ENV}
 
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v2
         with:
-          app-name: ${{ env.AZURE_WEBAPP_NAME_TWITPOSTER }}
+          app-name: 'twitposter'
           publish-profile: ${{ secrets.AZURE_PUBLISH_PROFILE_TWITPOSTER }}
-          images: 'ghcr.io/${{ env.REPO }}:${{ github.sha }}'
+          images: 'oleksiikorniienko/twitposter:latest'
