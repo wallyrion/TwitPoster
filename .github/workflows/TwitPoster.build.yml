@@ -51,6 +51,13 @@ jobs:
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
     
     steps:
+
+      - uses: azure/docker-login@v1
+        with:
+          login-server: index.docker.io
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_PASSWORD }}
+      
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v2
@@ -58,4 +65,4 @@ jobs:
           app-name: 'twitposter'
           slot-name: 'production'
           publish-profile: ${{ secrets.AZURE_PUBLISH_PROFILE_TWITPOSTER }}
-          images: 'index.docker.io/v1/oleksiikorniienko/twitposter:latest'
+          images: 'index.docker.io/oleksiikorniienko/twitposter:latest'
