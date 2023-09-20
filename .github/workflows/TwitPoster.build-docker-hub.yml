@@ -45,7 +45,7 @@ jobs:
         run: dotnet publish ./TwitPoster/src/TwitPoster.Web/TwitPoster.Web.csproj /t:PublishContainer -r linux-x64
         
       - name: change image tag 
-        run: docker tag twitposter:latest ${{ env.twitposter-image }}
+        run: docker tag twitposter ${{ env.twitposter-image }}
       
       - name: Docker Push
         run: docker push ${{ env.twitposter-image }}
