@@ -18,10 +18,10 @@ jobs:
           dotnet-version: '8.x'
       - name: Restore dependencies - TwitPoster
         run: dotnet restore ./TwitPoster
-        
+
       - name: Build - TwitPoster
         run: dotnet build --no-restore ./TwitPoster -c Release
-        
+
       - name: Test - TwitPoster
         env:
           ASPNETCORE_ENVIRONMENT: Production

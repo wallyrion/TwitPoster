@@ -6,6 +6,8 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
         <UserSecretsId>0dc85be5-c355-49dc-b67a-8b8178fb927d</UserSecretsId>
+        <ContainerRepository>twitposter</ContainerRepository>
+
     </PropertyGroup>
 
     <ItemGroup>
