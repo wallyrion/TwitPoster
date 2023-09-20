@@ -6,7 +6,6 @@ on:
     branches: ["master"]
     paths:
       - "TwitPoster.EmailSender/**"
-      - ".github/workflows/TwitPoster.EmailSender.build-deploy.yml"
       - ".github/workflows/TwitPoster.EmailSender.build.yml"
 
 jobs:
