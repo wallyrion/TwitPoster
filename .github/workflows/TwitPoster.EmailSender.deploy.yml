@@ -2,12 +2,6 @@ name: Build & deploy - TwitPoster.EmailSender
 
 
 on:
-  pull_request:
-    branches: [ "master" ]
-    paths:
-      - "TwitPoster.EmailSender/**"
-      - ".github/workflows/TwitPoster.EmailSender.deploy.yml"
-  
   push:
     branches: ["master"]
     paths:
