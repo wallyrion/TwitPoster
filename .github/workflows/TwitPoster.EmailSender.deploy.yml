@@ -64,12 +64,6 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
-      - name: Download Artifact
-        uses: actions/download-artifact@v3
-        with:
-          name: TwitPoster.EmailSender
-          path: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
-
       - name: Deployment to twitposter
         uses: azure/webapps-deploy@v2
         with:
