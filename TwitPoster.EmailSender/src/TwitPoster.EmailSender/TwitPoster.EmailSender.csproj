@@ -5,8 +5,7 @@
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
         <InvariantGlobalization>true</InvariantGlobalization>
-        <ContainerRepository>email-sender</ContainerRepository>
-        <ContainerBaseImage>mcr.microsoft.com/dotnet/aspnet:8.0-preview</ContainerBaseImage>
+        <ContainerRepository>twitposter-emailsender</ContainerRepository>
         <UserSecretsId>137ac6c7-ef3e-4191-8338-6c7a7c3059bf</UserSecretsId>
     </PropertyGroup>
 

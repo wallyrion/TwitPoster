@@ -2,13 +2,24 @@ name: Build & deploy - TwitPoster.EmailSender
 
 
 on:
+  pull_request:
+    branches: [ "master" ]
+    paths:
+      - "TwitPoster.EmailSender/**"
+      - ".github/workflows/TwitPoster.EmailSender.deploy.yml"
+  
   push:
     branches: ["master"]
     paths:
       - "TwitPoster.EmailSender/**"
       - ".github/workflows/TwitPoster.EmailSender.deploy.yml"
+
+permissions:
+  contents: 'read'
+  packages: 'write'
+
 env:
-  AZURE_WEBAPP_PACKAGE_PATH: "./publish"
+   twitposter-emailsender-image: 'ghcr.io/wallyrion/twitposter-emailsender:latest'
 
 jobs:
   build:
@@ -19,28 +30,39 @@ jobs:
         uses: actions/setup-dotnet@v3
         with:
           dotnet-version: 8.x
+      
       - name: Restore dependencies - TwitPoster.EmailSender
         run: dotnet restore ./TwitPoster.EmailSender
+        
       - name: Build - TwitPoster.EmailSender
         run: dotnet build --no-restore ./TwitPoster.EmailSender -c Release
+        
       - name: Test - TwitPoster.EmailSender
         env:
           ASPNETCORE_ENVIRONMENT: Production
         run: dotnet test --no-build --verbosity normal ./TwitPoster.EmailSender
 
-      - name: publish
-        run: dotnet publish ./TwitPoster.EmailSender/src/TwitPoster.EmailSender/TwitPoster.EmailSender.csproj -c Release --no-build -o ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
-
-      - name: Upload Artifact
-        uses: actions/upload-artifact@v3
+      - name: Log in to GitHub container registry
+        uses: docker/login-action@v3
         with:
-          name: TwitPoster.EmailSender
-          path: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
- 
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+          
+      - name: publish image
+        run: dotnet publish ./TwitPoster.EmailSender/src/TwitPoster.EmailSender/TwitPoster.EmailSender.csproj /t:PublishContainer -r linux-x64
+
+      - name: change image tag
+        run: docker tag twitposter-emailsender ${{ env.twitposter-emailsender-image }}
+
+      - name: Docker Push
+        run: docker push ${{ env.twitposter-emailsender-image }}
+
   deploy_prod:
     needs: build
     environment: 'prod'
     runs-on: ubuntu-latest
+    
     steps:
       - name: Download Artifact
         uses: actions/download-artifact@v3
@@ -53,4 +75,4 @@ jobs:
         with:
           app-name: ${{ env.AZURE_WEBAPP_NAME_EMAIL_SENDER }}
           publish-profile: ${{ secrets.AZURE_PUBLISH_PROFILE_EMAIL_SENDER }}
-          package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
+          images: ${{ env.twitposter-emailsender-image }}
