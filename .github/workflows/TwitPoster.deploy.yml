@@ -5,6 +5,12 @@ concurrency:
   cancel-in-progress: true
 
 on:
+  pull_request:
+    branches: [ "master" ]
+    paths:
+      - "TwitPoster/**"
+      - ".github/workflows/TwitPoster.deploy.yml"
+  
   push:
     branches: ["master"]
     paths:
