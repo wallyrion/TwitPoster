@@ -91,7 +91,7 @@ jobs:
     needs: build
     environment:
       name: 'vm'
-      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
+      url: http://twitposters.com/swagger/index.html
 
     steps:
       - name: Log in to GitHub container registry
