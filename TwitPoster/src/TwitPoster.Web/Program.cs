@@ -100,11 +100,12 @@ try
 
     app.MapGet("/health", () => "OK");
 
-
+    app.MapGet(".well-known/acme-challenge/testfile", () => "something");
     app.MapControllers()
         .RequireAuthorization();
 
     app
+        .UseStaticFiles()
         .UseSwagger().UseSwaggerUI()
 
         .UseCors(WebConstants.Cors.DefaultPolicy)

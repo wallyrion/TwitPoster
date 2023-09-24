@@ -43,6 +43,12 @@
       </None>
     </ItemGroup>
 
+    <ItemGroup>
+      <Content Update="wwwroot\.well-known\acme-challenge\testfile">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+    </ItemGroup>
+
 
 
 
