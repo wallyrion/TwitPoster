@@ -36,6 +36,8 @@ public class IntegrationTestWebFactory : WebApplicationFactory<IApiTestMarker>, 
             {
                 KeyValuePair.Create("ConnectionStrings:Redis", _redisContainer.GetConnectionString()),
                 KeyValuePair.Create("ConnectionStrings:DbConnection", _msSqlContainer.GetConnectionString()),
+                KeyValuePair.Create("Secrets:UseSecrets", "false"),
+                KeyValuePair.Create("Auth:Secret", "topsecret_secretkey!123_for#TwitPosterApp"),
             };
             x.AddInMemoryCollection(collection!);
         });
