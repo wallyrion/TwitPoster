@@ -11,7 +11,7 @@ public class SecretOptions : ITwitposterOptions<SecretOptions>
     public required string TenantId { get; init; }
     public required bool UseSecrets { get; init; }
 
-    public new static string SectionName => "Secrets";
+    public static string SectionName => "Secrets";
 
     public InlineValidator<SecretOptions> Validator => new()
     {
