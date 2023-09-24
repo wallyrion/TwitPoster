@@ -11,6 +11,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <PackageReference Include="Azure.Extensions.AspNetCore.Configuration.Secrets" Version="1.2.2" />
         <PackageReference Include="Azure.Messaging.ServiceBus" Version="7.16.1" />
         <PackageReference Include="Bogus" Version="34.0.2" />
         <PackageReference Include="FluentValidation.AspNetCore" Version="11.3.0" />
@@ -34,6 +35,12 @@
 
     <ItemGroup>
       <ProjectReference Include="..\TwitPoster.BLL\TwitPoster.BLL.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Update="cert.pfx">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
     </ItemGroup>
 
 
