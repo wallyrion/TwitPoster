@@ -24,7 +24,11 @@ try
     var builder = WebApplication.CreateBuilder(args);
 
     var secrets = builder.Configuration.BindOption<SecretOptions>(builder.Services, false);
-    builder.Configuration.AddAzureKeyVault(new Uri(secrets.KeyVaultUri), new ClientSecretCredential(secrets.TenantId, secrets.ClientId, secrets.ClientSecret));
+
+    if (secrets.UseSecrets)
+    {
+        builder.Configuration.AddAzureKeyVault(new Uri(secrets.KeyVaultUri), new ClientSecretCredential(secrets.TenantId, secrets.ClientId, secrets.ClientSecret));
+    }
 
     Log.Logger = new LoggerConfiguration()
         .ReadFrom.Configuration(builder.Configuration)
@@ -127,5 +131,6 @@ catch (Exception ex)
 }
 finally
 {
+    Log.Information("Host shutting down...");
     Log.CloseAndFlush();
 }
