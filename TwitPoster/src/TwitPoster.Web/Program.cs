@@ -100,7 +100,7 @@ try
 
     app.MapGet("/health", () => "OK");
 
-    app.MapGet(".well-known/acme-challenge/testfile", () => "something");
+    app.MapGet(".well-known/acme-challenge/{file}", () => "something");
     app.MapControllers()
         .RequireAuthorization();
 
