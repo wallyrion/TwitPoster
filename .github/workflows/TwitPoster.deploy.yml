@@ -6,6 +6,12 @@ concurrency:
 
 
 on:
+  pull_request:
+    branches: ["master"]
+    paths:
+      - "TwitPoster/**"
+      - ".github/workflows/TwitPoster.deploy.yml"
+  
   push:
     branches: ["master"]
     paths:
@@ -17,7 +23,7 @@ permissions:
   packages: 'write'
 
 env:
-  twitposter-image: 'ghcr.io/wallyrion/twitposter:latest'
+  twitposter_image: 'ghcr.io/wallyrion/twitposter:latest'
 
 jobs:
   build:
@@ -51,10 +57,10 @@ jobs:
         run: dotnet publish ./TwitPoster/src/TwitPoster.Web/TwitPoster.Web.csproj /t:PublishContainer -r linux-x64
 
       - name: change image tag
-        run: docker tag twitposter ${{ env.twitposter-image }}
+        run: docker tag twitposter ${{ env.twitposter_image }}
 
       - name: Docker Push
-        run: docker push ${{ env.twitposter-image }}
+        run: docker push ${{ env.twitposter_image }}
 
   deploy:
     runs-on: ubuntu-latest
@@ -70,7 +76,7 @@ jobs:
         with:
           app-name: ${{ env.AZURE_WEBAPP_NAME_TWITPOSTER }}
           publish-profile: ${{ secrets.AZURE_PUBLISH_PROFILE_TWITPOSTER }}
-          images: ${{ env.twitposter-image }}
+          images: ${{ env.twitposter_image }}
 
       - name: Trigger Azure WebHook
         run: |
@@ -78,3 +84,31 @@ jobs:
         env:
           WEBHOOK_URL: ${{ secrets.AZURE_WEBHOOK_URL_TWITPOSTER }}
         shell: bash
+        
+      
+  deploy_to_VM:
+    runs-on: ubuntu-latest
+    needs: build
+    environment:
+      name: 'vm'
+      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
+
+    steps:
+      - name: Log in to GitHub container registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Pull the image to VM
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_KEY }}
+          script:
+            sudo docker pull ${{ env.twitposter_image}};
+            sudo docker stop twitposter || true;
+            sudo docker rm twitposter || true;
+            sudo docker run -p 5000:8080 -p 5001:443  --restart unless-stopped --name twitposter -e "Secrets__ClientId=f424bd77-0276-4ebc-96aa-fb9b2d741cb4" -e "Secrets__ClientSecret=Gft8Q~WjompyCapfpXlMgaTRdjlbhDzQObXA0cTH" -e "Secrets__TenantId=0040c61f-4816-4e78-a381-f2c324f72482" -e "ASPNETCORE_Kestrel__Certificates__Default__Path=cert.pfx" -e "ASPNETCORE_Kestrel__Certificates__Default__Password=Test1234!" -e "ASPNETCORE_URLS=https://+:443;http://+:8080" twitposter
+            sudo docker run -d -p 5000:8080 --name twitposter ${{ env.twitposter_image }};

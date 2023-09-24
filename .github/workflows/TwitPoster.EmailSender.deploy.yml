@@ -2,6 +2,7 @@ name: Build & deploy - TwitPoster.EmailSender
 
 
 on:
+  
   push:
     branches: ["master"]
     paths:
@@ -13,7 +14,7 @@ permissions:
   packages: 'write'
 
 env:
-   twitposter-emailsender-image: 'ghcr.io/wallyrion/twitposter-emailsender:latest'
+   twitposter_emailsender_image: 'ghcr.io/wallyrion/twitposter-emailsender:latest'
 
 jobs:
   build:
@@ -47,10 +48,10 @@ jobs:
         run: dotnet publish ./TwitPoster.EmailSender/src/TwitPoster.EmailSender/TwitPoster.EmailSender.csproj /t:PublishContainer -r linux-x64
 
       - name: change image tag
-        run: docker tag twitposter-emailsender ${{ env.twitposter-emailsender-image }}
+        run: docker tag twitposter-emailsender ${{ env.twitposter_emailsender_image }}
 
       - name: Docker Push
-        run: docker push ${{ env.twitposter-emailsender-image }}
+        run: docker push ${{ env.twitposter_emailsender_image }}
 
   deploy_prod:
     needs: build
@@ -63,7 +64,7 @@ jobs:
         with:
           app-name: ${{ env.AZURE_WEBAPP_NAME_EMAIL_SENDER }}
           publish-profile: ${{ secrets.AZURE_PUBLISH_PROFILE_EMAIL_SENDER }}
-          images: ${{ env.twitposter-emailsender-image }}
+          images: ${{ env.twitposter_emailsender_image }}
 
       - name: Trigger Azure WebHook
         run: |
