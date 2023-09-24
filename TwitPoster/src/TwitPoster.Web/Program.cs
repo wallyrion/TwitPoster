@@ -104,6 +104,7 @@ try
     app.MapControllers()
         .RequireAuthorization();
 
+    
     app
         .UseStaticFiles()
         .UseSwagger().UseSwaggerUI()
