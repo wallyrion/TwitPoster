@@ -6,8 +6,10 @@ using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Respawn;
+using Respawn.Graph;
 using Testcontainers.MsSql;
 using Testcontainers.Redis;
+using TwitPoster.IntegrationTests.ExternalApis;
 using TwitPoster.Web;
 
 namespace TwitPoster.IntegrationTests;
@@ -16,10 +18,11 @@ public class IntegrationTestWebFactory : WebApplicationFactory<IApiTestMarker>, 
 {
     private readonly MsSqlContainer _msSqlContainer = new MsSqlBuilder().Build();
     private readonly RedisContainer _redisContainer = new RedisBuilder().Build();
-    public HttpClient HttpClient { get; private set; } = null!;
     private DbConnection _dbConnection = null!;
     private Respawner _respawner = null!;
     
+    public HttpClient HttpClient { get; private set; } = null!;
+    public readonly LocationApiServer LocationApiServer = new(); 
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
         builder.ConfigureServices(services =>
@@ -38,6 +41,7 @@ public class IntegrationTestWebFactory : WebApplicationFactory<IApiTestMarker>, 
                 KeyValuePair.Create("ConnectionStrings:DbConnection", _msSqlContainer.GetConnectionString()),
                 KeyValuePair.Create("Secrets:UseSecrets", "false"),
                 KeyValuePair.Create("Auth:Secret", "topsecret_secretkey!123_for#TwitPosterApp"),
+                KeyValuePair.Create("CountriesApi:Uri", LocationApiServer.Url),
             };
             x.AddInMemoryCollection(collection!);
         });
@@ -55,7 +59,7 @@ public class IntegrationTestWebFactory : WebApplicationFactory<IApiTestMarker>, 
         await _msSqlContainer.StartAsync();
         await _redisContainer.StartAsync();
         _dbConnection = new SqlConnection(_msSqlContainer.GetConnectionString());
-        var redisConnection = _redisContainer.GetConnectionString();
+        LocationApiServer.Start();
         
         HttpClient = CreateClient();
         await _dbConnection.OpenAsync();
@@ -63,6 +67,7 @@ public class IntegrationTestWebFactory : WebApplicationFactory<IApiTestMarker>, 
         {
             DbAdapter = DbAdapter.SqlServer,
             SchemasToInclude = new []{ "dbo" },
+            TablesToIgnore = new []{new Table("__EFMigrationsHistory")}
         });
     }
 

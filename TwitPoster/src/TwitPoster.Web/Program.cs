@@ -40,9 +40,12 @@ try
 
     var authConfig = builder.Configuration.BindOption<AuthOptions>(builder.Services);
     var connectionStrings = builder.Configuration.BindOption<ConnectionStringsOptions>(builder.Services);
+    var countriesApiOptions = builder.Configuration.BindOption<CountriesApiOptions>(builder.Services);
 
     builder.Services.AddApplicationInsightsTelemetry();
     builder.Services.AddFeatureManagement();
+    builder.Services.AddHttpClient<ILocationClient, LocationClient>(client
+        => client.BaseAddress = new Uri(countriesApiOptions.Uri));
     builder.Services
         .AddSwaggerWithAuthorization()
         .AddEndpointsApiExplorer()
@@ -92,8 +95,6 @@ try
         .AddHostedService<MigrationHostedService>();
     //.AddHostedService<TestBackgroundService>()
 
-    builder.Services.AddHttpClient<ILocationClient, LocationClient>(client
-        => client.BaseAddress = new Uri("https://countriesnow.space/"));
 
     var app = builder.Build();
 

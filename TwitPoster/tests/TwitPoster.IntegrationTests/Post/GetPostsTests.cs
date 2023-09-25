@@ -1,4 +1,5 @@
-﻿using FluentAssertions;
+﻿
+using FluentAssertions;
 using TwitPoster.DAL.Models;
 using TwitPoster.Web.ViewModels.Post;
 
