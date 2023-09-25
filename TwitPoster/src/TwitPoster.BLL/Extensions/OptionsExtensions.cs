@@ -19,8 +19,7 @@ public static class OptionsExtensions
         var validationResult = options.Validate();
         if (!validationResult.IsValid)
         {
-            throw new ConfigurationValidationException($"{typeof(TOption).Name} validation failed. See inner exception for more details.",
-                new ValidationException(validationResult.Errors));
+            throw new ValidationException(validationResult.Errors);
         }
 
         if (configure)

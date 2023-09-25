@@ -22,14 +22,14 @@ using TwitPoster.Web.WebHostServices;
 try
 {
     var builder = WebApplication.CreateBuilder(args);
-
+    
     var secrets = builder.Configuration.BindOption<SecretOptions>(builder.Services, false);
 
     if (secrets.UseSecrets)
     {
         builder.Configuration.AddAzureKeyVault(new Uri(secrets.KeyVaultUri), new ClientSecretCredential(secrets.TenantId, secrets.ClientId, secrets.ClientSecret));
     }
-
+    
     Log.Logger = new LoggerConfiguration()
         .ReadFrom.Configuration(builder.Configuration)
         .CreateLogger();
@@ -98,11 +98,13 @@ try
     var app = builder.Build();
 
     app.MapGet("/health", () => "OK");
+    app.MapGet("/health2", () => "OK");
 
-
+    app.MapGet(".well-known/acme-challenge/{file}", () => "something");
     app.MapControllers()
         .RequireAuthorization();
 
+    
     app
         .UseSwagger().UseSwaggerUI()
 
@@ -127,6 +129,7 @@ try
 }
 catch (Exception ex)
 {
+    Console.WriteLine("Error while starting app..." + ex.Message);
     Log.Fatal(ex, "Host terminated unexpectedly");
 }
 finally
