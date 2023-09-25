@@ -21,7 +21,6 @@ using TwitPoster.Web.WebHostServices;
 
 try
 {
-    
     var builder = WebApplication.CreateBuilder(args);
     
     var secrets = builder.Configuration.BindOption<SecretOptions>(builder.Services, false);
@@ -99,6 +98,7 @@ try
     var app = builder.Build();
 
     app.MapGet("/health", () => "OK");
+    app.MapGet("/health2", () => "OK");
 
     app.MapGet(".well-known/acme-challenge/{file}", () => "something");
     app.MapControllers()
@@ -106,7 +106,6 @@ try
 
     
     app
-        .UseStaticFiles()
         .UseSwagger().UseSwaggerUI()
 
         .UseCors(WebConstants.Cors.DefaultPolicy)
