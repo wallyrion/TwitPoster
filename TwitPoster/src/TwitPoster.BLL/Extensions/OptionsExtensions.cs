@@ -2,7 +2,6 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using TwitPoster.BLL.Common.Options;
-using TwitPoster.BLL.Exceptions;
 
 namespace TwitPoster.BLL.Extensions;
 
