@@ -1,6 +1,8 @@
 using Azure.Identity;
+using Azure.Storage;
 using MassTransit;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Azure;
 using Microsoft.FeatureManagement;
 using Serilog;
 using TwitPoster.BLL.Authentication;
@@ -35,7 +37,14 @@ try
         .CreateLogger();
 
     builder.Host.UseSerilog(Log.Logger);
-
+    
+    builder.Services.AddAzureClients(clientBuilder =>
+    {
+        var storageAccount = "storagetwitposter";
+        var storageUrl = $"https://{storageAccount}.blob.core.windows.net";
+        clientBuilder.AddBlobServiceClient(new Uri(storageUrl), new StorageSharedKeyCredential(storageAccount, "+Qo/+2PgcTmNcXMDfgscpPYyjpPkF/pxuMz1QcIes5m0S9EpSvTBN/3Ewii89dM2r5PK6qcmXsmK+AStctnBMw=="));
+    });
+    
     builder.Services.AddControllers();
 
     var authConfig = builder.Configuration.BindOption<AuthOptions>(builder.Services);
