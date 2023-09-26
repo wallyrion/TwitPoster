@@ -5,7 +5,9 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.StaticFiles;
 using TwitPoster.BLL.DTOs;
+using TwitPoster.BLL.Exceptions;
 using TwitPoster.BLL.Interfaces;
+using TwitPoster.DAL;
 using TwitPoster.DAL.Models;
 using TwitPoster.Web.ViewModels;
 
@@ -67,7 +69,7 @@ public class UsersController : ControllerBase
     }
     
     [HttpPost("photo")]
-    public async Task<ActionResult> UploadPhoto(IFormFile file, [FromServices] BlobServiceClient blobServiceClient)
+    public async Task<ActionResult> UploadPhoto(IFormFile file, [FromServices] BlobServiceClient blobServiceClient, [FromServices] TwitPosterContext context)
     {
         if (!Request.Form.Files.Any())
         {
@@ -86,7 +88,9 @@ public class UsersController : ControllerBase
         var blob = containerClient.GetBlobClient(directoryPath);
         var response = await blob.UploadAsync(formFile.OpenReadStream(), true);
 
-        var blobNew = blob.Uri;
+        var user = await context.Users.FindAsync(_currentUser.Id) ?? throw new TwitPosterValidationException($"User {_currentUser.Id} not found");
+        user.PhotoUrl = blob.Uri.ToString();
+        await context.SaveChangesAsync();        
         
         return NoContent();
     }
