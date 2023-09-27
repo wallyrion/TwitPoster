@@ -1,17 +1,13 @@
 ﻿using System.Net.Http.Json;
-using AutoFixture.Xunit2;
 using FluentAssertions;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
-using TwitPoster.DAL;
 using TwitPoster.IntegrationTests.Fixtures;
 using TwitPoster.Web.ViewModels;
-using TwitPoster.Web.ViewModels.Post;
 
 namespace TwitPoster.IntegrationTests.User;
 
-public class UploadUserPhotoTests(IntegrationTestWebFactory factory) : BaseIntegrationTest(factory)
+public class UploadUserPhotoTests(IntegrationTestWebFactory factory) : BaseIntegrationTest(factory), IAsyncLifetime
 {
+
     [Fact]
     public async Task Should_Upload_Photo_And_Download_By_Url()
     {
@@ -34,7 +30,7 @@ public class UploadUserPhotoTests(IntegrationTestWebFactory factory) : BaseInteg
         var uploadPhotoResponse = await response.Content.ReadFromJsonAsync<UploadPhotoResponse>();
         uploadPhotoResponse.Should().NotBeNull();
         
-        var user = await DbContext.Users.SingleAsync(u => u.Id == DefaultUserId);
+        var user = DbContext.Users.ToList().Single(u => u.Id == DefaultUserId);
         user.PhotoUrl.Should().NotBeEmpty().And.Be(uploadPhotoResponse!.Url); 
 
         using var httpClient = new HttpClient();
