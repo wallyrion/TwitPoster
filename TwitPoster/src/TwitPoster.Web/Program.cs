@@ -40,7 +40,7 @@ try
     
     builder.Services.AddAzureClients(clientBuilder =>
     {
-        var options = builder.Configuration.BindOption<StorageOptions>(builder.Services, false);
+        var options = builder.Configuration.BindOption<StorageOptions>(builder.Services);
         clientBuilder.AddBlobServiceClient(new Uri(options.Uri), new StorageSharedKeyCredential(options.AccountName, options.SharedKey));
     });
     
@@ -52,8 +52,7 @@ try
 
     builder.Services.AddApplicationInsightsTelemetry();
     builder.Services.AddFeatureManagement();
-    builder.Services.AddHttpClient<ILocationClient, LocationClient>(client
-        => client.BaseAddress = new Uri(countriesApiOptions.Uri));
+    builder.Services.AddHttpClient<ILocationClient, LocationClient>(client => client.BaseAddress = new Uri(countriesApiOptions.Uri));
     builder.Services
         .AddSwaggerWithAuthorization()
         .AddEndpointsApiExplorer()

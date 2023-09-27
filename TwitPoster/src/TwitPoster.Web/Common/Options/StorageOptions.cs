@@ -8,6 +8,7 @@ public class StorageOptions : ITwitposterOptions<StorageOptions>
     public required string Uri { get; init; }
     public required string SharedKey { get; init; }
     public required string AccountName { get; init; }
+    public required string ContainerName { get; init; }
 
     public static string SectionName => "Storage";
 

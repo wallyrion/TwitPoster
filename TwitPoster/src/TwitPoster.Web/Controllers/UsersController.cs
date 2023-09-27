@@ -5,11 +5,13 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using TwitPoster.BLL.DTOs;
 using TwitPoster.BLL.Exceptions;
 using TwitPoster.BLL.Interfaces;
 using TwitPoster.DAL;
 using TwitPoster.DAL.Models;
+using TwitPoster.Web.Common.Options;
 using TwitPoster.Web.ViewModels;
 
 namespace TwitPoster.Web.Controllers;
@@ -70,7 +72,7 @@ public class UsersController : ControllerBase
     }
     
     [HttpPost("photo")]
-    public async Task<ActionResult> UploadPhoto(IFormFile file, [FromServices] BlobServiceClient blobServiceClient, [FromServices] TwitPosterContext context)
+    public async Task<ActionResult> UploadPhoto(IFormFile file, [FromServices] BlobServiceClient blobServiceClient, [FromServices] TwitPosterContext context, [FromServices] IOptions<StorageOptions> storageOptions)
     {
         if (!Request.Form.Files.Any())
         {
@@ -79,11 +81,9 @@ public class UsersController : ControllerBase
         
         var formFile = Request.Form.Files[0];
         
-        var directoryPath = Path.Combine("uploadImages", _currentUser.Id.ToString(), "profile", formFile.FileName );
-        
-        BlobContainerClient containerClient = 
-            blobServiceClient.GetBlobContainerClient("twitposter2");
+        BlobContainerClient containerClient = blobServiceClient.GetBlobContainerClient(storageOptions.Value.ContainerName);
 
+        var directoryPath = Path.Combine("uploadImages", _currentUser.Id.ToString(), "profile", formFile.FileName );
         await containerClient.CreateIfNotExistsAsync(PublicAccessType.BlobContainer);
 
         var blob = containerClient.GetBlobClient(directoryPath);
