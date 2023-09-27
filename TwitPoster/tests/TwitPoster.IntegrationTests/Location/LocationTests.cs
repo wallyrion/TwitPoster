@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.Configuration;
 using TwitPoster.BLL.DTOs.Location;
 using TwitPoster.IntegrationTests.ExternalApis;
+using TwitPoster.IntegrationTests.Fixtures;
 using TwitPoster.Web;
 
 namespace TwitPoster.IntegrationTests.Location;

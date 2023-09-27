@@ -1,5 +1,6 @@
 ﻿using FluentAssertions;
 using MassTransit.Testing;
+using TwitPoster.IntegrationTests.Fixtures;
 using TwitPoster.Shared.Contracts;
 using TwitPoster.Web.ViewModels;
 

@@ -4,28 +4,21 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using TwitPoster.BLL.Interfaces;
 using TwitPoster.DAL;
+using TwitPoster.IntegrationTests.Fixtures;
 using TwitPoster.IntegrationTests.TestData;
 namespace TwitPoster.IntegrationTests;
 
 [Collection(nameof(SharedTestCollection))]
-public abstract class BaseIntegrationTest : IAsyncLifetime
+public abstract class BaseIntegrationTest(IntegrationTestWebFactory factory) : IAsyncLifetime
 {
-    protected readonly IntegrationTestWebFactory Factory;
-    protected AsyncServiceScope Scope;
-    protected TwitPosterContext DbContext;
-    protected readonly HttpClient ApiClient;
+    protected readonly IntegrationTestWebFactory Factory = factory;
+    protected readonly HttpClient ApiClient = factory.HttpClient;
+    protected AsyncServiceScope Scope { get; private set; }
+    protected TwitPosterContext DbContext { get; private set; } = null!;
     
     protected int DefaultUserId;
 
-    protected readonly IntegrationData Data;
-
-    public BaseIntegrationTest(IntegrationTestWebFactory factory)
-    {
-        Factory = factory;
-        ApiClient = factory.HttpClient;
-        
-        Data = new IntegrationData();
-    }
+    protected readonly IntegrationData Data = new();
 
     protected async Task AddAuthorization()
     {

@@ -3,6 +3,7 @@ using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using TwitPoster.DAL;
+using TwitPoster.IntegrationTests.Fixtures;
 using TwitPoster.Web.ViewModels;
 using TwitPoster.Web.ViewModels.Post;
 

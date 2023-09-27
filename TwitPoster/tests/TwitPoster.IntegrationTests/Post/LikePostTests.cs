@@ -1,6 +1,7 @@
 ﻿using System.Net.Http.Json;
 using AutoFixture.Xunit2;
 using FluentAssertions;
+using TwitPoster.IntegrationTests.Fixtures;
 using TwitPoster.Web.ViewModels;
 using TwitPoster.Web.ViewModels.Post;
 

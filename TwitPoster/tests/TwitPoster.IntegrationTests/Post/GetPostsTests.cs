@@ -1,6 +1,7 @@
 ﻿
 using FluentAssertions;
 using TwitPoster.DAL.Models;
+using TwitPoster.IntegrationTests.Fixtures;
 using TwitPoster.Web.ViewModels.Post;
 
 namespace TwitPoster.IntegrationTests.Post;
