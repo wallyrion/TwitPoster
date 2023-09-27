@@ -12,12 +12,14 @@ using Testcontainers.Redis;
 using TwitPoster.IntegrationTests.ExternalApis;
 using TwitPoster.Web;
 
-namespace TwitPoster.IntegrationTests;
+namespace TwitPoster.IntegrationTests.Fixtures;
 
 public class IntegrationTestWebFactory : WebApplicationFactory<IApiTestMarker>, IAsyncLifetime
 {
     private readonly MsSqlContainer _msSqlContainer = new MsSqlBuilder().Build();
     private readonly RedisContainer _redisContainer = new RedisBuilder().Build();
+    private readonly AzuriteFixture _azure = new();
+    
     private DbConnection _dbConnection = null!;
     private Respawner _respawner = null!;
     
@@ -35,6 +37,7 @@ public class IntegrationTestWebFactory : WebApplicationFactory<IApiTestMarker>, 
     {
         builder.ConfigureHostConfiguration(x =>
         {
+            Console.WriteLine("Actual azure uri: " + _azure.Uri);
             var collection = new[]
             {
                 KeyValuePair.Create("ConnectionStrings:Redis", _redisContainer.GetConnectionString()),
@@ -42,6 +45,9 @@ public class IntegrationTestWebFactory : WebApplicationFactory<IApiTestMarker>, 
                 KeyValuePair.Create("Secrets:UseSecrets", "false"),
                 KeyValuePair.Create("Auth:Secret", "topsecret_secretkey!123_for#TwitPosterApp"),
                 KeyValuePair.Create("CountriesApi:Uri", LocationApiServer.Url),
+                KeyValuePair.Create("Storage:Uri", _azure.Uri),
+                KeyValuePair.Create("Storage:AccountName", AzuriteFixture.AccountName),
+                KeyValuePair.Create("Storage:SharedKey", AzuriteFixture.SharedKey),
             };
             x.AddInMemoryCollection(collection!);
         });
@@ -58,11 +64,17 @@ public class IntegrationTestWebFactory : WebApplicationFactory<IApiTestMarker>, 
     {
         await _msSqlContainer.StartAsync();
         await _redisContainer.StartAsync();
+        await _azure.InitializeAsync();
         _dbConnection = new SqlConnection(_msSqlContainer.GetConnectionString());
+        
+        Console.WriteLine("Ms sql connection string = " + _msSqlContainer.GetConnectionString());
+        Console.WriteLine("Redis connection string = " + _redisContainer.GetConnectionString());
+        Console.WriteLine("Azure connection string = " + _azure.Uri);
         LocationApiServer.Start();
         
         HttpClient = CreateClient();
         await _dbConnection.OpenAsync();
+
         _respawner = await Respawner.CreateAsync(_dbConnection, new RespawnerOptions
         {
             DbAdapter = DbAdapter.SqlServer,

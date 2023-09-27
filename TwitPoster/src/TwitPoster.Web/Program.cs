@@ -1,6 +1,8 @@
 using Azure.Identity;
+using Azure.Storage;
 using MassTransit;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Azure;
 using Microsoft.FeatureManagement;
 using Serilog;
 using TwitPoster.BLL.Authentication;
@@ -35,7 +37,13 @@ try
         .CreateLogger();
 
     builder.Host.UseSerilog(Log.Logger);
-
+    
+    builder.Services.AddAzureClients(clientBuilder =>
+    {
+        var options = builder.Configuration.BindOption<StorageOptions>(builder.Services);
+        clientBuilder.AddBlobServiceClient(new Uri(options.Uri), new StorageSharedKeyCredential(options.AccountName, options.SharedKey));
+    });
+    
     builder.Services.AddControllers();
 
     var authConfig = builder.Configuration.BindOption<AuthOptions>(builder.Services);
@@ -44,8 +52,7 @@ try
 
     builder.Services.AddApplicationInsightsTelemetry();
     builder.Services.AddFeatureManagement();
-    builder.Services.AddHttpClient<ILocationClient, LocationClient>(client
-        => client.BaseAddress = new Uri(countriesApiOptions.Uri));
+    builder.Services.AddHttpClient<ILocationClient, LocationClient>(client => client.BaseAddress = new Uri(countriesApiOptions.Uri));
     builder.Services
         .AddSwaggerWithAuthorization()
         .AddEndpointsApiExplorer()

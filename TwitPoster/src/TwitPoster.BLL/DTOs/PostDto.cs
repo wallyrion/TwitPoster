@@ -6,6 +6,7 @@ public record PostDto(
     DateTime CreatedAt,
     string AuthorFirstName,
     string AuthorLastName,
+    string AuthorPhotoUrl,
     int AuthorId,
     int LikesCount,
     bool IsLikedByCurrentUser,

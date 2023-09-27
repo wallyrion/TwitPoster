@@ -3,5 +3,6 @@
 public record AuthorViewModel(
     int Id,
     string FullName,
-    string Email
+    string Email,
+    string PhotoUrl
 );

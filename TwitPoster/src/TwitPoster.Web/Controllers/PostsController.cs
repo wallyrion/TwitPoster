@@ -53,13 +53,13 @@ public class PostsController : ControllerBase
     
     [HttpGet("{postId:int}/comments")]
     [AllowAnonymous]
-    public async Task<PagedResponse> GetComments(
+    public async Task<PagedResponse<PostCommentViewModel>> GetComments(
         int postId,
         [Range(1, 1000)] int pageSize = 5,
         [Range(1, int.MaxValue)] int pageNumber = 1)
     {
         var comments = await _postService.GetComments(postId, pageSize, pageNumber);
-        return comments.Adapt<PagedResponse>();
+        return comments.Adapt<PagedResponse<PostCommentViewModel>>();
     }
     
     [HttpPut("{postId:int}/like")]

@@ -1,6 +1,7 @@
 ﻿
 using FluentAssertions;
 using TwitPoster.DAL.Models;
+using TwitPoster.IntegrationTests.Fixtures;
 using TwitPoster.Web.ViewModels.Post;
 
 namespace TwitPoster.IntegrationTests.Post;
@@ -10,7 +11,7 @@ public class GetPostsTests(IntegrationTestWebFactory factory) : BaseIntegrationT
     [Fact]
     public async Task Get_Posts_Returns_Posts()
     {
-        var expectedPosts = await Data.AddMany<DAL.Models.Post>();
+        var expectedPosts = await AddMany<DAL.Models.Post>();
 
         var postsResponse = await ApiClient.GetAsync("Posts");
         postsResponse.Should()
@@ -27,7 +28,7 @@ public class GetPostsTests(IntegrationTestWebFactory factory) : BaseIntegrationT
     public async Task Get_Posts_Returns_Posts_With_isLiked()
     {
         await AddAuthorization();
-        var posts = await Data.AddMany<DAL.Models.Post>(10);
+        var posts = await AddMany<DAL.Models.Post>(10);
         var postIds = posts.Select(p => p.Id).ToArray();
 
         var likedPostIds = Random.Shared.GetItems(postIds.ToArray(), 5).Distinct().ToList();
@@ -39,7 +40,7 @@ public class GetPostsTests(IntegrationTestWebFactory factory) : BaseIntegrationT
                 UserId = DefaultUserId
             });
 
-        await Data.AddMany(postLikes.ToList());
+        await AddMany(postLikes.ToList());
 
         var postsResponse = await ApiClient.GetAsync("Posts");
         postsResponse.Should()
