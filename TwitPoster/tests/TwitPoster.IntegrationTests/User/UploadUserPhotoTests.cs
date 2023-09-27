@@ -1,5 +1,8 @@
 ﻿using System.Net.Http.Json;
 using FluentAssertions;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using TwitPoster.DAL;
 using TwitPoster.IntegrationTests.Fixtures;
 using TwitPoster.Web.ViewModels;
 
@@ -29,8 +32,10 @@ public class UploadUserPhotoTests(IntegrationTestWebFactory factory) : BaseInteg
         response.Should().Be200Ok();
         var uploadPhotoResponse = await response.Content.ReadFromJsonAsync<UploadPhotoResponse>();
         uploadPhotoResponse.Should().NotBeNull();
-        
-        var user = DbContext.Users.ToList().Single(u => u.Id == DefaultUserId);
+
+        await using var scope = Factory.Services.CreateAsyncScope();
+        var dbContext = scope.ServiceProvider.GetRequiredService<TwitPosterContext>();
+        var user = await dbContext.Users.SingleAsync(u => u.Id == DefaultUserId);
         user.PhotoUrl.Should().NotBeEmpty().And.Be(uploadPhotoResponse!.Url); 
 
         using var httpClient = new HttpClient();
@@ -40,7 +45,4 @@ public class UploadUserPhotoTests(IntegrationTestWebFactory factory) : BaseInteg
         var fileBytes = await downloadResponse.Content.ReadAsByteArrayAsync();
         fileBytes.Should().NotBeEmpty();
     }
-
-    
-   
 }
