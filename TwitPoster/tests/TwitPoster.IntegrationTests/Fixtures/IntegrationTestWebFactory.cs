@@ -65,6 +65,10 @@ public class IntegrationTestWebFactory : WebApplicationFactory<IApiTestMarker>, 
         await _redisContainer.StartAsync();
         await _azure.InitializeAsync();
         _dbConnection = new SqlConnection(_msSqlContainer.GetConnectionString());
+        
+        Console.WriteLine("Ms sql connection string = " + _msSqlContainer.GetConnectionString());
+        Console.WriteLine("Redis connection string = " + _redisContainer.GetConnectionString());
+        Console.WriteLine("Azure connection string = " + _azure.Uri);
         LocationApiServer.Start();
         
         HttpClient = CreateClient();

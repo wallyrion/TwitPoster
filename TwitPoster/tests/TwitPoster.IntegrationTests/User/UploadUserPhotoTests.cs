@@ -8,7 +8,7 @@ using TwitPoster.Web.ViewModels;
 
 namespace TwitPoster.IntegrationTests.User;
 
-public class UploadUserPhotoTests(IntegrationTestWebFactory factory) : BaseIntegrationTest(factory), IAsyncLifetime
+public class UploadUserPhotoTests(IntegrationTestWebFactory factory) : BaseIntegrationTest(factory)
 {
 
     [Fact]
