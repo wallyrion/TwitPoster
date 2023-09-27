@@ -1,4 +1,5 @@
-﻿using AutoFixture.Xunit2;
+﻿using System.Net.Http.Json;
+using AutoFixture.Xunit2;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -29,17 +30,15 @@ public class UploadUserPhotoTests(IntegrationTestWebFactory factory) : BaseInteg
         multipartContent.Add(fileContent, "file", Path.GetFileName(testFilePath));
 
         var response = await ApiClient.PostAsync("Users/photo", multipartContent);
-        response.Should().Be204NoContent();
-
-        var newContext = Scope.ServiceProvider.CreateAsyncScope();
-        var dbContext = newContext.ServiceProvider.GetRequiredService<TwitPosterContext>();
-        var user = await dbContext.Users.SingleAsync(u => u.Id == DefaultUserId);
-        var photoUrl = user.PhotoUrl;
-
-        photoUrl.Should().NotBeEmpty();
+        response.Should().Be200Ok();
+        var uploadPhotoResponse = await response.Content.ReadFromJsonAsync<UploadPhotoResponse>();
+        uploadPhotoResponse.Should().NotBeNull();
         
+        var user = await DbContext.Users.SingleAsync(u => u.Id == DefaultUserId);
+        user.PhotoUrl.Should().NotBeEmpty().And.Be(uploadPhotoResponse!.Url); 
+
         using var httpClient = new HttpClient();
-        var downloadResponse = await httpClient.GetAsync(photoUrl);
+        var downloadResponse = await httpClient.GetAsync(uploadPhotoResponse.Url);
 
         downloadResponse.Should().Be200Ok();
         var fileBytes = await downloadResponse.Content.ReadAsByteArrayAsync();

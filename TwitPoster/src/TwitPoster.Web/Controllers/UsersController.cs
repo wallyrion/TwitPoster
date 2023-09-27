@@ -72,7 +72,7 @@ public class UsersController : ControllerBase
     }
     
     [HttpPost("photo")]
-    public async Task<ActionResult> UploadPhoto(IFormFile file, [FromServices] BlobServiceClient blobServiceClient, [FromServices] TwitPosterContext context, [FromServices] IOptions<StorageOptions> storageOptions)
+    public async Task<ActionResult<UploadPhotoResponse>> UploadPhoto(IFormFile file, [FromServices] BlobServiceClient blobServiceClient, [FromServices] TwitPosterContext context, [FromServices] IOptions<StorageOptions> storageOptions)
     {
         if (!Request.Form.Files.Any())
         {
@@ -92,8 +92,8 @@ public class UsersController : ControllerBase
         var user = await context.Users.AsTracking().FirstAsync(x => x.Id == _currentUser.Id) ?? throw new TwitPosterValidationException($"User {_currentUser.Id} not found");
         user.PhotoUrl = blob.Uri.ToString();
         await context.SaveChangesAsync();
-        
-        return NoContent();
+
+        return Ok(new UploadPhotoResponse(blob.Uri.ToString()));
     }
     
     [HttpPost("photoOld")]
