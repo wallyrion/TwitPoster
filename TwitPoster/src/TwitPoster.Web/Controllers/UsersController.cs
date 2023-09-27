@@ -4,6 +4,7 @@ using Mapster;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.StaticFiles;
+using Microsoft.EntityFrameworkCore;
 using TwitPoster.BLL.DTOs;
 using TwitPoster.BLL.Exceptions;
 using TwitPoster.BLL.Interfaces;
@@ -86,11 +87,11 @@ public class UsersController : ControllerBase
         await containerClient.CreateIfNotExistsAsync(PublicAccessType.BlobContainer);
 
         var blob = containerClient.GetBlobClient(directoryPath);
-        var response = await blob.UploadAsync(formFile.OpenReadStream(), true);
+        await blob.UploadAsync(formFile.OpenReadStream(), true);
 
-        var user = await context.Users.FindAsync(_currentUser.Id) ?? throw new TwitPosterValidationException($"User {_currentUser.Id} not found");
+        var user = await context.Users.AsTracking().FirstAsync(x => x.Id == _currentUser.Id) ?? throw new TwitPosterValidationException($"User {_currentUser.Id} not found");
         user.PhotoUrl = blob.Uri.ToString();
-        await context.SaveChangesAsync();        
+        await context.SaveChangesAsync();
         
         return NoContent();
     }

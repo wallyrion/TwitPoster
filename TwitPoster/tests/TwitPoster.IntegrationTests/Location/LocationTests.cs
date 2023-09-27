@@ -5,7 +5,7 @@ using TwitPoster.BLL.DTOs.Location;
 using TwitPoster.IntegrationTests.ExternalApis;
 using TwitPoster.Web;
 
-namespace TwitPoster.IntegrationTests.Post;
+namespace TwitPoster.IntegrationTests.Location;
 
 public class LocationTests : BaseIntegrationTest
 {

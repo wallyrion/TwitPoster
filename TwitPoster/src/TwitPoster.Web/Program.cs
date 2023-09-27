@@ -40,9 +40,8 @@ try
     
     builder.Services.AddAzureClients(clientBuilder =>
     {
-        var storageAccount = "storagetwitposter";
-        var storageUrl = $"https://{storageAccount}.blob.core.windows.net";
-        clientBuilder.AddBlobServiceClient(new Uri(storageUrl), new StorageSharedKeyCredential(storageAccount, "+Qo/+2PgcTmNcXMDfgscpPYyjpPkF/pxuMz1QcIes5m0S9EpSvTBN/3Ewii89dM2r5PK6qcmXsmK+AStctnBMw=="));
+        var options = builder.Configuration.BindOption<StorageOptions>(builder.Services, false);
+        clientBuilder.AddBlobServiceClient(new Uri(options.Uri), new StorageSharedKeyCredential(options.AccountName, options.SharedKey));
     });
     
     builder.Services.AddControllers();
