@@ -37,6 +37,7 @@ public class IntegrationTestWebFactory : WebApplicationFactory<IApiTestMarker>, 
     {
         builder.ConfigureHostConfiguration(x =>
         {
+            Console.WriteLine("Actual azure uri: " + _azure.Uri);
             var collection = new[]
             {
                 KeyValuePair.Create("ConnectionStrings:Redis", _redisContainer.GetConnectionString()),
