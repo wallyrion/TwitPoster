@@ -1,4 +1,6 @@
-﻿using Mapster;
+﻿using Dapper;
+using Mapster;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using TwitPoster.BLL.DTOs;
 using TwitPoster.BLL.Exceptions;
@@ -35,6 +37,41 @@ public class PostService : IPostService
         return posts;
     }
 
+    private const string Query =
+        """
+SELECT [t].[Id], [t].[Body], [t].[CreatedAt], [u].[FirstName] as AuthorFirstName, [u].[LastName] as AuthorLastName, [u].[Id] as AuthorId, [t].[LikesCount], CASE
+    WHEN EXISTS (
+        SELECT 1
+        FROM [PostLikes] AS [p0]
+        WHERE [t].[Id] = [p0].[PostId] AND [p0].[UserId] = @CurrentUserId) THEN CAST(1 AS bit)
+    ELSE CAST(0 AS bit)
+END as IsLikedByCurrentUser, (
+    SELECT COUNT(*)
+    FROM [PostComments] AS [p1]
+    WHERE [t].[Id] = [p1].[PostId]) as CommentsCount
+FROM (
+    SELECT [p].[Id], [p].[AuthorId], [p].[Body], [p].[CreatedAt], [p].[LikesCount]
+    FROM [Posts] AS [p]
+    ORDER BY [p].[CreatedAt] DESC
+    OFFSET @Offset ROWS FETCH NEXT @PageSize ROWS ONLY
+) AS [t]
+INNER JOIN [Users] AS [u] ON [t].[AuthorId] = [u].[Id]
+ORDER BY [t].[CreatedAt] DESC
+""";
+    public async Task<List<PostDto>> GetPostsDapper(int pageSize, int pageNumber)
+    {
+        await using var sqlConnection = new SqlConnection("Server=.;Database=TwitPoster;Trusted_Connection=True;Encrypt=False");
+        var query = await sqlConnection.QueryAsync<PostDto>(Query, new
+        {
+            PageSize = pageSize,
+            Offset = pageSize * (pageNumber - 1),
+            CurrentUserId = _currentUser.Id
+        });
+        var result = query.ToList();
+
+        return result;
+    }
+    
     public async Task<PostDto> CreatePost(string body)
     {
         var isBanned = await _context.Users

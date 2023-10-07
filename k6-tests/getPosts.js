@@ -6,6 +6,13 @@ const pageSize = 100;
 const baseUrl = 'https://localhost:7267'
 
 export const options = {
+  vus: 50, // number of virtual users that will send requests
+  duration: '1m'
+  //iterations: 10000
+};
+
+
+/* export const options = {
     stages: [
         { duration: '30s', target: 50 }, 
         { duration: '1m', target: 300 }, // simulate ramp-up of traffic from 1 to 100 users over 5 minutes.
@@ -15,7 +22,7 @@ export const options = {
       thresholds: {
         'http_req_duration': ['p(99)<1500'], // 99% of requests must complete below 1.5s
       },
-  };
+  }; */
 
 export function setup() {
     const res = http.get(`${baseUrl}/posts/count`);
@@ -37,4 +44,6 @@ export default function (pages) {
 
   const query = `${baseUrl}/posts?pageSize=${pageSize}&pageNumber=${page}`;
   http.get(query);
+
+  sleep(1);
 }

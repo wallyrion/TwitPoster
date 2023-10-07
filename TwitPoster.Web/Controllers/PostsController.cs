@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using LanguageExt;
 using Mapster;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -8,6 +9,7 @@ using TwitPoster.Web.ViewModels.Post;
 
 namespace TwitPoster.Web.Controllers;
 
+[TypeFilter(typeof(CustomExceptionFilterAttribute))]
 [Route("[controller]")]
 [ApiController]
 public class PostsController : ControllerBase
@@ -21,9 +23,18 @@ public class PostsController : ControllerBase
         _postService = postService;
     }
 
-    [HttpGet]
+
+[HttpPut("id")]
     [AllowAnonymous]
    // [OutputCache(Duration = 300)]
+    public async Task<IEnumerable<PostViewModel>> TestPost(CreatePostRequest request)
+   {
+       throw new Exception("eqwrwqrqw");
+       return Array.Empty<PostViewModel>();
+   }
+
+    [HttpGet]
+    [AllowAnonymous]
     public async Task<IEnumerable<PostViewModel>> Get(
         [Range(1, 1000)] int pageSize = 25,
         [Range(1, int.MaxValue)] int pageNumber = 1)
@@ -31,6 +42,17 @@ public class PostsController : ControllerBase
         var posts = await _postService.GetPosts(pageSize, pageNumber);
         return posts.Adapt<IEnumerable<PostViewModel>>();
     }
+   
+   [HttpGet("with-dapper")]
+   [AllowAnonymous]
+   // [OutputCache(Duration = 300)]
+   public async Task<IEnumerable<PostViewModel>> GetWithDapper(
+       [Range(1, 1000)] int pageSize = 25,
+       [Range(1, int.MaxValue)] int pageNumber = 1)
+   {
+       var posts = await _postService.GetPostsDapper(pageSize, pageNumber);
+       return posts.Adapt<IEnumerable<PostViewModel>>();
+   }
     
     // Get total count of posts
     [HttpGet("count")]
