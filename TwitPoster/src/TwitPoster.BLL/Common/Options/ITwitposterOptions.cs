@@ -10,5 +10,5 @@ public interface ITwitposterOptions<T> where T : class
     protected InlineValidator<T> Validator { get; }
     
     public ValidationResult Validate()
-        => Validator?.Validate((this as T)!) ?? new();
+        => Validator.Validate((this as T)!) ?? new();
 }
