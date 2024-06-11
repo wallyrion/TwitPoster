@@ -27,4 +27,4 @@ jobs:
       - name: Test - TwitPoster.EmailSender
         env:
           ASPNETCORE_ENVIRONMENT: Production
-        run: dotnet test --no-build --verbosity normal ./TwitPoster.EmailSender - c Release
+        run: dotnet test --no-build --verbosity normal ./TwitPoster.EmailSender -c Release
