@@ -18,7 +18,16 @@ public class EmailCommandConsumer : IConsumer<EmailCommand>
 
     public async Task Consume(ConsumeContext<EmailCommand> context)
     {
-        _logger.LogInformation("Consuming email command {@EmailCommand}", context.Message);
-        await _emailService.SendEmail(context.Message);
+        try
+        {
+            _logger.LogInformation("Consuming email command {@EmailCommand}", context.Message);
+            await _emailService.SendEmail(context.Message);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+
+            throw;
+        }
     }
 }

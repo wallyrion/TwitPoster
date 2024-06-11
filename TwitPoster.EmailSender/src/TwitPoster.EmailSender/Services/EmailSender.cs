@@ -29,9 +29,10 @@ public class EmailService : IEmailService
         email.Body = new TextPart(textFormatType) { Text = command.Body };
 
         using var smtp = new SmtpClient();
-        await smtp.ConnectAsync(_mailOptions.Host, _mailOptions.Port, SecureSocketOptions.StartTls);
+        await smtp.ConnectAsync(_mailOptions.Host, _mailOptions.Port, SecureSocketOptions.Auto);
         await smtp.AuthenticateAsync(_mailOptions.AuthUserName, _mailOptions.AuthPassword);
         await smtp.SendAsync(email);
         await smtp.DisconnectAsync(true);
+        Console.WriteLine("Email sent");
     }
 }

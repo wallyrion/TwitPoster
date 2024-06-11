@@ -19,6 +19,9 @@ public static class ServiceCollectionExtensions
                 .Configure<RabbitMqTransportOptions>(options =>
                 {
                     options.Host = rabbitMqConfig.Host;
+                    options.Port = rabbitMqConfig.Port;
+                    options.User = rabbitMqConfig.User;
+                    options.Pass = rabbitMqConfig.Pass;
                 });
         }
         
