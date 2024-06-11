@@ -1,26 +1,16 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
-    <PropertyGroup>
-        <TargetFramework>net8.0</TargetFramework>
-        <ImplicitUsings>enable</ImplicitUsings>
-        <LangVersion>preview</LangVersion>
-        <Nullable>enable</Nullable>
-    </PropertyGroup>
-
     <ItemGroup>
-      <ProjectReference Include="..\TwitPoster.DAL\TwitPoster.DAL.csproj" />
+        <ProjectReference Include="..\TwitPoster.DAL\TwitPoster.DAL.csproj"/>
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="FluentValidation" Version="11.5.1" />
-      <PackageReference Include="LanguageExt.Core" Version="4.4.4" />
-      <PackageReference Include="Mapster" Version="7.4.0-pre06" />
-      <PackageReference Include="Mapster.DependencyInjection" Version="1.0.1-pre02" />
-      <PackageReference Include="MassTransit.Abstractions" Version="8.1.1-develop.1522" />
-      <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="8.0.0-rc.1.23419.4" />
-      <PackageReference Include="Microsoft.FeatureManagement" Version="2.6.1" />
-      <PackageReference Include="Twitposter.Shared" Version="2.2.1" />
+        <PackageReference Include="FluentValidation"/>
+        <PackageReference Include="LanguageExt.Core"/>
+        <PackageReference Include="Mapster"/>
+        <PackageReference Include="Mapster.DependencyInjection"/>
+        <PackageReference Include="MassTransit.Abstractions"/>
+        <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions"/>
+        <PackageReference Include="Microsoft.FeatureManagement"/>
+        <PackageReference Include="Twitposter.Shared"/>
     </ItemGroup>
-
-
 </Project>
