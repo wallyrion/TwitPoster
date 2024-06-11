@@ -6,7 +6,7 @@ public static class RabbitMqContainerExtensions
 {
     private record RabbitMqQueue(string Name, int Messages);
   
-    public static async Task WaitForQueueToBeReady(this RabbitMqContainer rabbitMqContainer, string queueName, TimeSpan? timeout = null)
+    public static async Task WaitForQueueToBeReady(this RabbitMqContainerFixture rabbitMqContainer, string queueName, TimeSpan? timeout = null)
     {
         timeout ??= TimeSpan.FromSeconds(10);
         
@@ -17,7 +17,7 @@ public static class RabbitMqContainerExtensions
         {
             while (true)
             {
-                var queues = rabbitMqContainer.ListQueuesAsync(cancellationTokenSource.Token).Result;
+                var queues = rabbitMqContainer.Container.ListQueuesAsync(cancellationTokenSource.Token).Result;
                 var queue = queues.FirstOrDefault(x => x.Name == queueName);
 
                 if (queue is not { Messages: 0 })

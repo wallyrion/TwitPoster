@@ -20,7 +20,6 @@ public class EmailCommandConsumer : IConsumer<EmailCommand>
     {
         try
         {
-            Console.WriteLine("Consuming email command");
             _logger.LogInformation("Consuming email command {@EmailCommand}", context.Message);
             await _emailService.SendEmail(context.Message);
         }
