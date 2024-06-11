@@ -1,5 +1,4 @@
-﻿using System.Data.Common;
-using Microsoft.AspNetCore.Mvc.Testing;
+﻿using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Testcontainers.RabbitMq;
@@ -8,7 +7,7 @@ namespace TwitPoster.EmailSender.IntegrationTests.Fixtures;
 
 public class IntegrationTestWebFactory : WebApplicationFactory<IApiTestMarker>, IAsyncLifetime
 {
-    public FakeRabbitMqPublisher rabbitMqPublisher { get; private set; }
+    public FakeRabbitMqPublisher RabbitMqPublisher { get; private set; } = null!;
     public RabbitMqContainer RabbitMqContainer { get; } = new RabbitMqBuilder()
         .WithImage("rabbitmq:3-management")
         .WithPortBinding(15672, true)
@@ -39,14 +38,14 @@ public class IntegrationTestWebFactory : WebApplicationFactory<IApiTestMarker>, 
         
         return base.CreateHost(builder);
     }
-
+    
+    
     public async Task InitializeAsync()
     {
         await RabbitMqContainer.StartAsync();
         await MailHogContainer.InitializeAsync();
         
-        rabbitMqPublisher = new FakeRabbitMqPublisher(RabbitMqContainer);
-
+        RabbitMqPublisher = new FakeRabbitMqPublisher(RabbitMqContainer);
     }
 
     public new async Task DisposeAsync()

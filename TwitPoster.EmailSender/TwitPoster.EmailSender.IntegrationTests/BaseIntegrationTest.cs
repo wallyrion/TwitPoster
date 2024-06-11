@@ -6,12 +6,13 @@ namespace TwitPoster.EmailSender.IntegrationTests;
 [Collection(nameof(IntegrationTestsCollection))]
 public abstract class BaseIntegrationTest(IntegrationTestWebFactory factory) : IAsyncLifetime
 {
-    public AsyncServiceScope Scope { get; private set; }
+    protected AsyncServiceScope Scope { get; private set; }
     
-    public async Task InitializeAsync()
+    public Task InitializeAsync()
     {
-        var client = factory.CreateClient();
         Scope = factory.Services.CreateAsyncScope();
+
+        return Task.CompletedTask;
     }
 
     public async Task DisposeAsync()
