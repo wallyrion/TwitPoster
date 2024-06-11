@@ -2,7 +2,7 @@
 using MailKit.Security;
 using Microsoft.Extensions.Options;
 using MimeKit;
-using MimeKit.Text;
+using TwitPoster.EmailSender.Options;
 using TwitPoster.Shared.Contracts;
 using TextFormat = MimeKit.Text.TextFormat;
 
