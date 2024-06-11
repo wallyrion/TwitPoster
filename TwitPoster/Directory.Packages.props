@@ -1,0 +1,56 @@
+<Project>
+    <ItemGroup>
+        <PackageVersion Include="FluentValidation" Version="11.5.1" />
+        <PackageVersion Include="LanguageExt.Core" Version="4.4.4" />
+        <PackageVersion Include="Mapster" Version="7.4.0-pre06" />
+        <PackageVersion Include="Mapster.DependencyInjection" Version="1.0.1-pre02" />
+        <PackageVersion Include="MassTransit.Abstractions" Version="8.1.1-develop.1522" />
+        <PackageVersion Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="8.0.0-rc.1.23419.4" />
+        <PackageVersion Include="Microsoft.FeatureManagement" Version="2.6.1" />
+        <PackageVersion Include="Twitposter.Shared" Version="2.2.1" />
+        <PackageVersion Include="EntityFrameworkCore.Triggered" Version="3.2.2" />
+        <PackageVersion Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.0-rc.1.23419.6" />
+        <PackageVersion Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.0-rc.1.23419.6" />
+        <PackageVersion Include="Azure.Extensions.AspNetCore.Configuration.Secrets" Version="1.2.2" />
+        <PackageVersion Include="Azure.Messaging.ServiceBus" Version="7.16.1" />
+        <PackageVersion Include="Azure.Storage.Blobs" Version="12.18.0" />
+        <PackageVersion Include="Bogus" Version="34.0.2" />
+        <PackageVersion Include="FluentValidation.AspNetCore" Version="11.3.0" />
+        <PackageVersion Include="MassTransit" Version="8.1.1-develop.1522" />
+        <PackageVersion Include="MassTransit.AspNetCore" Version="7.3.1" />
+        <PackageVersion Include="MassTransit.Azure.ServiceBus.Core" Version="8.1.0" />
+        <PackageVersion Include="MassTransit.RabbitMQ" Version="8.1.1-develop.1522" />
+        <PackageVersion Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.21.0" />
+        <PackageVersion Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.0-preview.7.23375.9" />
+        <PackageVersion Include="Microsoft.AspNetCore.OpenApi" Version="8.0.0-preview.7.23375.9" />
+        <PackageVersion Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.0-rc.1.23419.6" />
+        <PackageVersion Include="Microsoft.Extensions.Azure" Version="1.7.0" />
+        <PackageVersion Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="7.0.10" />
+        <PackageVersion Include="Microsoft.FeatureManagement.AspNetCore" Version="2.6.1" />
+        <PackageVersion Include="Serilog.AspNetCore" Version="7.0.0" />
+        <PackageVersion Include="Serilog.Formatting.Compact" Version="1.1.1-dev-00944" />
+        <PackageVersion Include="Serilog.Sinks.ApplicationInsights" Version="4.0.0" />
+        <PackageVersion Include="Serilog.Sinks.Seq" Version="5.2.3-dev-00262" />
+        <PackageVersion Include="Swashbuckle.AspNetCore" Version="6.5.0" />
+        <PackageVersion Include="Swashbuckle.AspNetCore.Filters" Version="7.0.11" />
+        <PackageVersion Include="AutoFixture.Xunit2" Version="4.18.0" />
+        <PackageVersion Include="FluentAssertions" Version="7.0.0-alpha.1" />
+        <PackageVersion Include="Microsoft.EntityFrameworkCore.InMemory" Version="8.0.0-rc.1.23419.6" />
+        <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.8.0-preview-23424-02" />
+        <PackageVersion Include="Moq" Version="4.20.69" />
+        <PackageVersion Include="xunit" Version="2.5.1-pre.20" />
+        <PackageVersion Include="xunit.runner.visualstudio" Version="2.5.1-pre.10" />
+        <PackageVersion Include="coverlet.collector" Version="6.0.0" />
+        <PackageVersion Include="FluentAssertions.Web" Version="1.2.5" />
+        <PackageVersion Include="Microsoft.AspNetCore.Mvc.Testing" Version="8.0.0-preview.7.23375.9" />
+        <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.7.2" />
+        <PackageVersion Include="Respawn" Version="6.1.0" />
+        <PackageVersion Include="Testcontainers" Version="3.5.0" />
+        <PackageVersion Include="Testcontainers.Azurite" Version="3.5.0" />
+        <PackageVersion Include="Testcontainers.MsSql" Version="3.5.0" />
+        <PackageVersion Include="Testcontainers.Redis" Version="3.5.0" />
+        <PackageVersion Include="WireMock.Net" Version="1.5.36" />
+        <PackageVersion Include="xunit" Version="2.5.0" />
+        <PackageVersion Include="xunit.runner.visualstudio" Version="2.5.0" />
+    </ItemGroup>
+</Project>
