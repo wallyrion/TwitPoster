@@ -25,11 +25,7 @@ public class EmailCommandConsumerTests(IntegrationTestWebFactory factory) : Base
         // Arrange
         
         var publishEndpoint = _factory.RabbitMqPublisher.Provider.GetRequiredService<IPublishEndpoint>();
-        var emailBody = $"""
-                             <h1> You are on the way! </h1>
-                             <h2> Please confirm your email by clicking on the link below </h2>
-                             <a href="https://localhost:7267/Auth/EmailConfirmation?Token={Guid.NewGuid()}">Press to confirm email address</a>
-                         """;
+        var emailBody = $"Hello! Please confirm your email";
         var mailCommand = new EmailCommand("email@gmail.com", "Welcome to TwitPoster! Confirm your email", emailBody, TextFormat.Html);
 
         var newMessageTask = _factory.MailHogContainer.WaitForNewMessage();
