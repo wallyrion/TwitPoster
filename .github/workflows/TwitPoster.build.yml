@@ -17,8 +17,10 @@ jobs:
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '8.x'
+          cache: true
+        
       - name: Restore dependencies - TwitPoster
-        run: dotnet restore ./TwitPoster
+        run: dotnet restore ./TwitPoster --locked-mode
 
       - name: Build - TwitPoster
         run: dotnet build --no-restore ./TwitPoster -c Release

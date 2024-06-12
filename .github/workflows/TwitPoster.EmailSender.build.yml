@@ -19,8 +19,10 @@ jobs:
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '8.x'
+          cache: true
+          
       - name: Restore dependencies - TwitPoster.EmailSender
-        run: dotnet restore ./TwitPoster.EmailSender
+        run: dotnet restore ./TwitPoster.EmailSender --locked-mode
         
       - name: Build - TwitPoster.EmailSender
         run: dotnet build --no-restore ./TwitPoster.EmailSender -c Release
