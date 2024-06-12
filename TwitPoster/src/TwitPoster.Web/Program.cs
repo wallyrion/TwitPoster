@@ -1,3 +1,4 @@
+using AspNetCoreRateLimit;
 using Azure.Identity;
 using Azure.Storage;
 using MassTransit;
@@ -56,6 +57,7 @@ try
     builder.Services.AddFeatureManagement();
     builder.Services.AddHttpClient<ILocationClient, LocationClient>(client => client.BaseAddress = new Uri(countriesApiOptions.Uri));
     builder.Services
+        .AddRateLimiting(builder.Configuration)
         .AddSwaggerWithAuthorization()
         .AddEndpointsApiExplorer()
         .AddFluentValidators()
@@ -102,22 +104,18 @@ try
         }))
 
         .AddHostedService<MigrationHostedService>();
-    //.AddHostedService<TestBackgroundService>()
-
 
     var app = builder.Build();
 
     app.MapGet("/health", () => "OK");
-    app.MapGet("/health2", () => "OK");
 
     app.MapGet(".well-known/acme-challenge/{file}", () => "something");
     app.MapControllers()
         .RequireAuthorization();
 
-    
     app
+        .UseIpRateLimiting()
         .UseSwagger().UseSwaggerUI()
-
         .UseCors(WebConstants.Cors.DefaultPolicy)
         .UseMiddleware<RequestDurationMiddleware>()
         .Use(CustomMiddlewares.ExtendRequestDurationMiddleware)

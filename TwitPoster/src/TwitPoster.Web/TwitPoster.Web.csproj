@@ -7,6 +7,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <PackageReference Include="AspNetCoreRateLimit" />
         <PackageReference Include="Azure.Extensions.AspNetCore.Configuration.Secrets" />
         <PackageReference Include="Azure.Messaging.ServiceBus" />
         <PackageReference Include="Azure.Storage.Blobs" />
