@@ -6,6 +6,7 @@ on:
     paths:
       - "TwitPoster/**"
       - ".github/workflows/TwitPoster.build.yml"
+      - ".github/workflows/TwitPoster.deploy.yml"
 jobs:
   build:
     runs-on: ubuntu-latest
