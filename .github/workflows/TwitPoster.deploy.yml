@@ -10,6 +10,7 @@ on:
     paths:
       - "TwitPoster/**"
       - ".github/workflows/TwitPoster.deploy.yml"
+  workflow_dispatch:
 
 permissions:
   contents: 'read'

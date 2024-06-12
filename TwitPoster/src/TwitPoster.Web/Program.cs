@@ -23,8 +23,10 @@ using TwitPoster.Web.WebHostServices;
 
 try
 {
+    Console.WriteLine("Initializing app builder...");
     var builder = WebApplication.CreateBuilder(args);
-    
+    Console.WriteLine("Created app builder...");
+
     var secrets = builder.Configuration.BindOption<SecretOptions>(builder.Services, false);
 
     if (secrets.UseSecrets)
