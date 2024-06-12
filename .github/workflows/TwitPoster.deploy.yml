@@ -1,4 +1,4 @@
-name: Build & deploy - Docker image
+name: Build & deploy - TwitPoster (main)
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
