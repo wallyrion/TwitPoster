@@ -11,6 +11,7 @@ using TwitPoster.BLL.Exceptions;
 using TwitPoster.BLL.Interfaces;
 using TwitPoster.DAL;
 using TwitPoster.DAL.Models;
+using TwitPoster.Web.Common;
 using TwitPoster.Web.Common.Options;
 using TwitPoster.Web.ViewModels;
 
@@ -74,22 +75,21 @@ public class UsersController : ControllerBase
     [HttpPost("photo")]
     public async Task<ActionResult<UploadPhotoResponse>> UploadPhoto(IFormFile file, [FromServices] BlobServiceClient blobServiceClient, [FromServices] TwitPosterContext context, [FromServices] IOptions<StorageOptions> storageOptions)
     {
-        if (!Request.Form.Files.Any())
-        {
-            return BadRequest("At least one file must be uploaded");
+        var extension = Path.GetExtension(file.FileName);
+
+        if (!WebConstants.ValidProfileImageExtensions.Contains(extension)){
+            return BadRequest("Invalid file type for the image");
         }
-        
-        var formFile = Request.Form.Files[0];
-        
+
         BlobContainerClient containerClient = blobServiceClient.GetBlobContainerClient(storageOptions.Value.ContainerName);
-
-        var directoryPath = Path.Combine("uploadImages", _currentUser.Id.ToString(), "profile", formFile.FileName );
         await containerClient.CreateIfNotExistsAsync(PublicAccessType.BlobContainer);
-
+        
+        var directoryPath = Path.Combine("user", _currentUser.Id.ToString(), "images", "profile", $"main{extension}");
         var blob = containerClient.GetBlobClient(directoryPath);
-        await blob.UploadAsync(formFile.OpenReadStream(), true);
+        
+        await blob.UploadAsync(file.OpenReadStream(), true);
 
-        var user = await context.Users.AsTracking().FirstAsync(x => x.Id == _currentUser.Id) ?? throw new TwitPosterValidationException($"User {_currentUser.Id} not found");
+        var user = await context.Users.FirstAsync(x => x.Id == _currentUser.Id) ?? throw new TwitPosterValidationException($"User {_currentUser.Id} not found");
         user.PhotoUrl = blob.Uri.ToString();
         await context.SaveChangesAsync();
 
