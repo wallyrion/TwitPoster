@@ -84,13 +84,18 @@ public class UsersController : ControllerBase
         BlobContainerClient containerClient = blobServiceClient.GetBlobContainerClient(storageOptions.Value.ContainerName);
         await containerClient.CreateIfNotExistsAsync(PublicAccessType.BlobContainer);
         
-        var directoryPath = Path.Combine("user", _currentUser.Id.ToString(), "images", "profile", $"main{extension}");
+        var directoryPath = Path.Combine("user", _currentUser.Id.ToString(), "images", "profile", "main", $"image{extension}");
         var blob = containerClient.GetBlobClient(directoryPath);
+        
+        var directoryPath2 = Path.Combine("user", _currentUser.Id.ToString(), "images", "profile", "thumbnail", $"image{extension}");
+        var blob2 = containerClient.GetBlobClient(directoryPath2);
+        
+        var url2 = blob2.Uri.ToString();
         
         await blob.UploadAsync(file.OpenReadStream(), true);
 
         var user = await context.Users.FirstAsync(x => x.Id == _currentUser.Id) ?? throw new TwitPosterValidationException($"User {_currentUser.Id} not found");
-        user.PhotoUrl = blob.Uri.ToString();
+        user.PhotoUrl = url2;
         await context.SaveChangesAsync();
 
         return Ok(new UploadPhotoResponse(blob.Uri.ToString()));

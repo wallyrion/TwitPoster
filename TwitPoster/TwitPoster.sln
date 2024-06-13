@@ -18,14 +18,14 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{71875216-1BDA-4582-B6D2-F2084394B3F4}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
-		Directory.Packages.props = Directory.Packages.props
 		Directory.Build.props = Directory.Build.props
+		Directory.Packages.props = Directory.Packages.props
 		nuget.config = nuget.config
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{2A707CE7-1249-4CBB-AEF1-E420C976C354}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TwitPoster.IntegrationTests", "tests\TwitPoster.IntegrationTests\TwitPoster.IntegrationTests.csproj", "{B439BB04-2F4D-4BE0-BAE5-467AEF654F5D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TwitPoster.IntegrationTests", "tests\TwitPoster.IntegrationTests\TwitPoster.IntegrationTests.csproj", "{B439BB04-2F4D-4BE0-BAE5-467AEF654F5D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -62,11 +62,14 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{55E39A8B-14F7-49CB-88BE-D88B59E294A0} = {EE37553A-DE5B-441C-8490-0DFD3767E108}
-		{C09CCE9E-1EE1-44D8-B2A6-020DDE3FE21D} = {EE37553A-DE5B-441C-8490-0DFD3767E108}
-		{77661461-19E0-4B35-9942-9A9A4CD389D6} = {2A707CE7-1249-4CBB-AEF1-E420C976C354}
 		{7AB9B738-95C1-4B3D-8F18-C16A945F42D4} = {2A707CE7-1249-4CBB-AEF1-E420C976C354}
 		{6BB443F2-0574-490B-A583-5DBFE9102095} = {2A707CE7-1249-4CBB-AEF1-E420C976C354}
+		{77661461-19E0-4B35-9942-9A9A4CD389D6} = {2A707CE7-1249-4CBB-AEF1-E420C976C354}
+		{55E39A8B-14F7-49CB-88BE-D88B59E294A0} = {EE37553A-DE5B-441C-8490-0DFD3767E108}
+		{C09CCE9E-1EE1-44D8-B2A6-020DDE3FE21D} = {EE37553A-DE5B-441C-8490-0DFD3767E108}
 		{B439BB04-2F4D-4BE0-BAE5-467AEF654F5D} = {EE37553A-DE5B-441C-8490-0DFD3767E108}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {18E84327-32B6-4374-8801-87E16248BA37}
 	EndGlobalSection
 EndGlobal
