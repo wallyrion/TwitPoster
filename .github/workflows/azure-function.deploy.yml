@@ -34,27 +34,7 @@ jobs:
           pushd '${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}'
           dotnet build --configuration Release --output ./output
           popd
-
-      - name: 'Upload Build Artifacts'
-        uses: actions/upload-artifact@v3
-        with:
-          name: function-app-build
-          path: '${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}/output'
-
-  deploy:
-    runs-on: windows-latest
-    needs: build
-    environment: prod
-    steps:
-      - name: 'Checkout GitHub Action'
-        uses: actions/checkout@v3
-
-      - name: 'Download Build Artifacts'
-        uses: actions/download-artifact@v3
-        with:
-          name: function-app-build
-          path: '${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}/output'
-
+          
       - name: 'Run Azure Functions Action'
         uses: Azure/functions-action@v1
         id: fa
