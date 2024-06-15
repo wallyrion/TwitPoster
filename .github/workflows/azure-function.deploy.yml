@@ -4,7 +4,7 @@ on:
   push:
     branches: ["master"]
     paths:
-      - 'TwitPoster.Functions/**'
+      - "TwitPoster.Functions/**"
       - ".github/workflows/azure-function.deploy.yml"
 
 env:
