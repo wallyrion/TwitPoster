@@ -72,6 +72,7 @@ try
         .AddScoped<ILocationService, LocationService>()
         .AddTwitPosterCaching(builder.Configuration)
         .AddSingleton<IJwtTokenGenerator, JwtTokenGenerator>()
+        .AddTwitPosterRateLimiting(builder.Configuration)
 
         .Configure<RabbitMqTransportOptions>(builder.Configuration.GetRequiredSection("RabbitMq"))
 
@@ -114,6 +115,13 @@ try
     app.MapControllers()
         .RequireAuthorization();
 
+    var features = builder.Configuration.BindOption<FeatureFlagsOptions>(builder.Services, false);
+
+    if (features.UseRateLimiting)
+    {
+        app.UseRateLimiter();    
+    }
+    
     
     app
         .UseSwagger().UseSwaggerUI()
