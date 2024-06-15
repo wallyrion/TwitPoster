@@ -6,7 +6,7 @@ concurrency:
 
 on:
   push:
-    branches: ["master", "azure-function"]
+    branches: ["master"]
     paths:
       - "TwitPoster/**"
       - ".github/workflows/TwitPoster.deploy.yml"
