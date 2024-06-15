@@ -48,6 +48,7 @@ public class IntegrationTestWebFactory : WebApplicationFactory<IApiTestMarker>, 
                 KeyValuePair.Create("Storage:Uri", _azure.Uri),
                 KeyValuePair.Create("Storage:AccountName", AzuriteFixture.AccountName),
                 KeyValuePair.Create("Storage:SharedKey", AzuriteFixture.SharedKey),
+                KeyValuePair.Create("FeatureManagement:UseRateLimiting", "false"),
             };
             x.AddInMemoryCollection(collection!);
         });
