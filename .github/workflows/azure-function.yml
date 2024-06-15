@@ -2,7 +2,7 @@ name: Deploy Azure function
 
 on:
   push:
-  branches: ["master", "azure-function"]
+    branches: ["master", "azure-function"]
 
 # CONFIGURATION
 # For help, go to https://github.com/Azure/Actions
