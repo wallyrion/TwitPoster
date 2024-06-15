@@ -10,7 +10,8 @@ public class Functions(ILoggerFactory loggerFactory, BlobServiceClient blobServi
     private readonly ILogger _logger = loggerFactory.CreateLogger<Functions>();
 
     [Function("CompressImageFunction")]
-    public async Task Run([BlobTrigger("twitposter/user/{userId}/images/profile/main/{name}", Connection = "AzureWebJobsStorage")] Stream blob, int userId, string name)
+    public async Task Run([BlobTrigger("twitposter/user/{userId}/images/profile/main/{name}", Connection = "AzureWebJobsStorage")] Stream blob, int userId,
+        string name)
     {
         try
         {
@@ -19,7 +20,11 @@ public class Functions(ILoggerFactory loggerFactory, BlobServiceClient blobServi
 
             var extension = Path.GetExtension(name);
 
-            var thumbnailBlobClient = blobServiceClient.GetBlobContainerClient("twitposter-local").GetBlobClient($"user/{userId}/images/profile/thumbnail/image{extension}");
+            var container = blobServiceClient.GetBlobContainerClient("twitposter-local");
+
+            await container.CreateIfNotExistsAsync();
+
+            var thumbnailBlobClient = container.GetBlobClient($"user/{userId}/images/profile/thumbnail/image{extension}");
 
             newStream.Position = 0;
             await thumbnailBlobClient.UploadAsync(newStream, overwrite: true);
@@ -27,15 +32,12 @@ public class Functions(ILoggerFactory loggerFactory, BlobServiceClient blobServi
         }
         catch (Exception e)
         {
-            
-            
             _logger.LogError(e, "Error while processing CompressImageFunction");
             Console.WriteLine(e);
+
             throw;
         }
         // Upload the thumbnail to the "profile-thumbnails" container
-
-        
     }
 
     private async Task ResizeImage0(Stream stream, Stream blob)
@@ -50,5 +52,4 @@ public class Functions(ILoggerFactory loggerFactory, BlobServiceClient blobServi
 
         await image.WriteAsync(blob);
     }
-
 }

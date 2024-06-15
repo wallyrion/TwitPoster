@@ -5,6 +5,12 @@ VisualStudioVersion = 17.10.34707.107
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TwitPoster.Functions", "./TwitPoster.Functions/TwitPoster.Functions.csproj", "{A0AB531F-DA37-4B6C-B9C1-CBDBC4654FA8}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "items", "items", "{2B5EE6D3-44B4-4EC3-8119-DA54297D4860}"
+	ProjectSection(SolutionItems) = preProject
+		..\.github\workflows\azure-function.build.yml = ..\.github\workflows\azure-function.build.yml
+		..\.github\workflows\azure-function.deploy.yml = ..\.github\workflows\azure-function.deploy.yml
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
