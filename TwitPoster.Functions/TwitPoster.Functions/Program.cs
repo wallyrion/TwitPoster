@@ -4,6 +4,7 @@ using Microsoft.Extensions.Azure;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using TwitPoster.Functions;
 
 var host = new HostBuilder()
     .ConfigureFunctionsWebApplication()
@@ -14,23 +15,12 @@ var host = new HostBuilder()
         
         services.AddApplicationInsightsTelemetryWorkerService();
         services.ConfigureFunctionsApplicationInsights();
-
-        Console.WriteLine("storage options are  " + storageOptions.Uri + " " + storageOptions.AccountName + " " + storageOptions.SharedKey);
         
         services.AddAzureClients(clientBuilder =>
         {
-            clientBuilder.AddBlobServiceClient(new Uri(storageOptions.Uri), new StorageSharedKeyCredential(storageOptions.AccountName, storageOptions.SharedKey));
+            clientBuilder.AddBlobServiceClient(new Uri(storageOptions!.Uri), new StorageSharedKeyCredential(storageOptions.AccountName, storageOptions.SharedKey));
         });
     })
     .Build();
 
 host.Run();
-
-
-public class StorageOptions
-{
-    public string Uri { get; set; } = null!;
-    public string AccountName { get; set; } = null!;
-    public string SharedKey { get; set; } = null!;
-}
-

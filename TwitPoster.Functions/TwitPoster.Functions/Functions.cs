@@ -5,18 +5,12 @@ using Microsoft.Extensions.Logging;
 
 namespace TwitPoster.Functions;
 
-public class Functions
+public class Functions(ILoggerFactory loggerFactory, BlobServiceClient blobServiceClient)
 {
-    private readonly ILogger _logger;
-    private readonly BlobServiceClient _blobServiceClient;
-    public Functions(ILoggerFactory loggerFactory, BlobServiceClient blobServiceClient)
-    {
-        _blobServiceClient = blobServiceClient;
-        _logger = loggerFactory.CreateLogger<Functions>();
-    }
+    private readonly ILogger _logger = loggerFactory.CreateLogger<Functions>();
 
     [Function("CompressImageFunction")]
-    public async Task Run([BlobTrigger("twitposter-local/user/{userId}/images/profile/main/{name}", Connection = "AzureWebJobsStorage")] Stream blob, int userId, string name)
+    public async Task Run([BlobTrigger("twitposter/user/{userId}/images/profile/main/{name}", Connection = "AzureWebJobsStorage")] Stream blob, int userId, string name)
     {
         // Upload the thumbnail to the "profile-thumbnails" container
 
@@ -25,7 +19,7 @@ public class Functions
 
         var extension = Path.GetExtension(name);
 
-        var thumbnailBlobClient = _blobServiceClient.GetBlobContainerClient("twitposter-local").GetBlobClient($"user/{userId}/images/profile/thumbnail/image{extension}");
+        var thumbnailBlobClient = blobServiceClient.GetBlobContainerClient("twitposter-local").GetBlobClient($"user/{userId}/images/profile/thumbnail/image{extension}");
 
         newStream.Position = 0;
         await thumbnailBlobClient.UploadAsync(newStream, overwrite: true);
