@@ -16,7 +16,7 @@ public class Functions
     }
 
     [Function("CompressImageFunction")]
-    public async Task Run([BlobTrigger("twitposter-local/user/{userId}/images/profile/main/{name}", Connection = "AzureWebJobsStorage")] Stream blob, int userId, string name)
+    public async Task Run([BlobTrigger("twitposter/user/{userId}/images/profile/main/{name}", Connection = "AzureWebJobsStorage")] Stream blob, int userId, string name)
     {
         // Upload the thumbnail to the "profile-thumbnails" container
 
