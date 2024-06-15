@@ -1,16 +1,20 @@
-name: Deploy Azure Function
+name: Build and Deploy Azure Function
 
 on:
   push:
-    branches: ["master", "azure-function"]
+    branches: ["master"]
     paths:
-      - "TwitPoster.Functions/**"
+      - 'TwitPoster.Functions/**'
       - ".github/workflows/azure-function.deploy.yml"
 
 env:
   AZURE_FUNCTIONAPP_NAME: 'windows-oleksii-dev-1'
   AZURE_FUNCTIONAPP_PACKAGE_PATH: './TwitPoster.Functions/TwitPoster.Functions'
   DOTNET_VERSION: '8.x'
+
+concurrency:
+  group: ${{ github.workflow }}-deployment
+  cancel-in-progress: false
 
 jobs:
   build:
