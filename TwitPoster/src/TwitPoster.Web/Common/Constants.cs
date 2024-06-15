@@ -1,4 +1,6 @@
-﻿using System.Collections.Frozen;
+﻿using System.Collections;
+using System.Collections.Frozen;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace TwitPoster.Web.Common;
 
@@ -8,8 +10,9 @@ internal static class WebConstants
     [
         ".jpg",
         ".jpeg",
+        ".png",
         ".bmp"
-    ]).ToFrozenSet();
+    ]).ToFrozenSet(new CaseInsensitiveValueComparer());
 
     internal static class Cors
     {

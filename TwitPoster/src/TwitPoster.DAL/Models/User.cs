@@ -9,5 +9,6 @@ public class User
     public DateTime BirthDate { get; set; }
     public string Email { get; set; } = null!;
     public string? PhotoUrl { get; set; }
+    public string? ThumbnailPhotoUrl { get; set; }
     public UserAccount UserAccount { get; set; } = null!;
 }

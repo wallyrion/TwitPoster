@@ -75,7 +75,7 @@ public class UsersController : ControllerBase
     [HttpPost("photo")]
     public async Task<ActionResult<UploadPhotoResponse>> UploadPhoto(IFormFile file, [FromServices] BlobServiceClient blobServiceClient, [FromServices] TwitPosterContext context, [FromServices] IOptions<StorageOptions> storageOptions)
     {
-        var extension = Path.GetExtension(file.FileName);
+        var extension = Path.GetExtension(file.FileName).ToLowerInvariant();
 
         if (!WebConstants.ValidProfileImageExtensions.Contains(extension)){
             return BadRequest("Invalid file type for the image");
@@ -84,15 +84,18 @@ public class UsersController : ControllerBase
         BlobContainerClient containerClient = blobServiceClient.GetBlobContainerClient(storageOptions.Value.ContainerName);
         await containerClient.CreateIfNotExistsAsync(PublicAccessType.BlobContainer);
         
-        var directoryPath = Path.Combine("user", _currentUser.Id.ToString(), "images", "profile", $"main{extension}");
-        var blob = containerClient.GetBlobClient(directoryPath);
+        var profilePhotosPath = "user/{_currentUser.Id}/images/profile";
         
-        await blob.UploadAsync(file.OpenReadStream(), true);
+        var mainPhotoBlob = containerClient.GetBlobClient($"{profilePhotosPath}/main/image{extension}");
+        var thumbnailPhotoBlob = containerClient.GetBlobClient($"{profilePhotosPath}/thumbnail/image{extension}");
+        
+        await mainPhotoBlob.UploadAsync(file.OpenReadStream(), true);
 
         var user = await context.Users.FirstAsync(x => x.Id == _currentUser.Id) ?? throw new TwitPosterValidationException($"User {_currentUser.Id} not found");
-        user.PhotoUrl = blob.Uri.ToString();
+        user.PhotoUrl = mainPhotoBlob.Uri.ToString();
+        user.ThumbnailPhotoUrl = thumbnailPhotoBlob.Uri.ToString();
         await context.SaveChangesAsync();
 
-        return Ok(new UploadPhotoResponse(blob.Uri.ToString()));
+        return Ok(new UploadPhotoResponse(mainPhotoBlob.Uri.ToString()));
     }
 }
