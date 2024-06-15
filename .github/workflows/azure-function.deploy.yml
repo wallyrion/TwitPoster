@@ -1,25 +1,17 @@
-name: Deploy Azure function
+name: Deploy Azure Function
 
 on:
   push:
     branches: ["master", "azure-function"]
 
-# CONFIGURATION
-# For help, go to https://github.com/Azure/Actions
-#
-# 1. Set up the following secrets in your repository:
-#   AZURE_FUNCTIONAPP_PUBLISH_PROFILE
-#
-# 2. Change these variables for your configuration:
 env:
-  AZURE_FUNCTIONAPP_NAME: 'windows-oleksii-dev-1'   # set this to your function app name on Azure
-  AZURE_FUNCTIONAPP_PACKAGE_PATH: './TwitPoster.Functions/TwitPoster.Functions'       # set this to the path to your function app project, defaults to the repository root
-  DOTNET_VERSION: '8.x'                   # set this to the dotnet version to use (e.g. '2.1.x', '3.1.x', '5.0.x')
+  AZURE_FUNCTIONAPP_NAME: 'windows-oleksii-dev-1'
+  AZURE_FUNCTIONAPP_PACKAGE_PATH: './TwitPoster.Functions/TwitPoster.Functions'
+  DOTNET_VERSION: '8.x'
 
 jobs:
-  build-and-deploy:
+  build:
     runs-on: windows-latest
-    environment: prod
     steps:
       - name: 'Checkout GitHub Action'
         uses: actions/checkout@v3
@@ -36,6 +28,26 @@ jobs:
           dotnet build --configuration Release --output ./output
           popd
 
+      - name: 'Upload Build Artifacts'
+        uses: actions/upload-artifact@v3
+        with:
+          name: function-app-build
+          path: '${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}/output'
+
+  deploy:
+    runs-on: windows-latest
+    needs: build
+    environment: prod
+    steps:
+      - name: 'Checkout GitHub Action'
+        uses: actions/checkout@v3
+
+      - name: 'Download Build Artifacts'
+        uses: actions/download-artifact@v3
+        with:
+          name: function-app-build
+          path: '${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}/output'
+
       - name: 'Run Azure Functions Action'
         uses: Azure/functions-action@v1
         id: fa
@@ -43,5 +55,3 @@ jobs:
           app-name: ${{ env.AZURE_FUNCTIONAPP_NAME }}
           package: '${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}/output'
           publish-profile: ${{ secrets.AZURE_FUNCTIONAPP_PUBLISH_PROFILE }}
-
-# For more samples to get started with GitHub Action workflows to deploy to Azure, refer to https://github.com/Azure/actions-workflow-samples

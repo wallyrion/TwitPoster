@@ -31,8 +31,11 @@
     <Using Include="System.Threading.ExecutionContext" Alias="ExecutionContext" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="..\..\.github\workflows\azure-function.yml">
-      <Link>azure-function.yml</Link>
+    <Content Include="..\..\.github\workflows\azure-function.build.yml">
+      <Link>azure-function.build.yml</Link>
+    </Content>
+    <Content Include="..\..\.github\workflows\azure-function.deploy.yml">
+      <Link>azure-function.deploy.yml</Link>
     </Content>
   </ItemGroup>
 </Project>
