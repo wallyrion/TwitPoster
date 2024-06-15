@@ -2,7 +2,7 @@ name: Build and Deploy Azure Function
 
 on:
   push:
-    branches: ["master"]
+    branches: ["master", "azure-function"]
     paths:
       - "TwitPoster.Functions/**"
       - ".github/workflows/azure-function.deploy.yml"
