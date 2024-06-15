@@ -29,8 +29,8 @@ host.Run();
 
 public class StorageOptions
 {
-    public string Uri { get; set; }
-    public string AccountName { get; set; }
-    public string SharedKey { get; set; }
+    public string Uri { get; set; } = null!;
+    public string AccountName { get; set; } = null!;
+    public string SharedKey { get; set; } = null!;
 }
 
