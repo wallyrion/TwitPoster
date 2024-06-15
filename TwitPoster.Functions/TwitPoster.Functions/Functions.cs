@@ -20,10 +20,8 @@ public class Functions(ILoggerFactory loggerFactory, BlobServiceClient blobServi
 
             var extension = Path.GetExtension(name);
 
-            var container = blobServiceClient.GetBlobContainerClient("twitposter-local");
-
-            await container.CreateIfNotExistsAsync();
-
+            var container = blobServiceClient.GetBlobContainerClient("twitposter");
+            
             var thumbnailBlobClient = container.GetBlobClient($"user/{userId}/images/profile/thumbnail/image{extension}");
 
             newStream.Position = 0;
