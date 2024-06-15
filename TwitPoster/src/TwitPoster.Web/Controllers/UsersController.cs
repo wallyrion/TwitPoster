@@ -95,7 +95,7 @@ public class UsersController : ControllerBase
         await blob.UploadAsync(file.OpenReadStream(), true);
 
         var user = await context.Users.FirstAsync(x => x.Id == _currentUser.Id) ?? throw new TwitPosterValidationException($"User {_currentUser.Id} not found");
-        user.PhotoUrl = directoryPath;
+        user.PhotoUrl = blob.Uri.ToString();
         await context.SaveChangesAsync();
 
         return Ok(new UploadPhotoResponse(blob.Uri.ToString()));
