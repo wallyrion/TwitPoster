@@ -3,6 +3,10 @@ name: Build Azure Function
 on:
   pull_request:
     branches: ["master"]
+    paths:
+      - "TwitPoster.Functions/**"
+      - ".github/workflows/azure-function.build.yml"
+      - ".github/workflows/azure-function.deploy.yml"
 
 env:
   AZURE_FUNCTIONAPP_PACKAGE_PATH: './TwitPoster.Functions/TwitPoster.Functions'
