@@ -12,7 +12,7 @@ internal static class WebConstants
         ".jpeg",
         ".png",
         ".bmp"
-    ], new CaseInsensitiveValueComparer()).ToFrozenSet(new CaseInsensitiveValueComparer());
+    ]).ToFrozenSet(new CaseInsensitiveValueComparer());
 
     internal static class Cors
     {
