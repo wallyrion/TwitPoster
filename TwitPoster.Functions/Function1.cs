@@ -10,7 +10,7 @@ using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
 using static Microsoft.ApplicationInsights.MetricDimensionNames.TelemetryContext;
 
-namespace FunctionApp5
+namespace TwitPoster.Functions
 {
     public class Function1
     {
