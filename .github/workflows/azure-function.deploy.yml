@@ -7,7 +7,6 @@ on:
       - "TwitPoster.Functions/**"
       - ".github/workflows/azure-function.deploy.yml"
 
-
 env:
   AZURE_FUNCTIONAPP_NAME: 'windows-oleksii-dev-1'
   AZURE_FUNCTIONAPP_PACKAGE_PATH: './TwitPoster.Functions/TwitPoster.Functions'
