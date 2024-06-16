@@ -4,5 +4,6 @@ public record AuthorViewModel(
     int Id,
     string FullName,
     string Email,
-    string PhotoUrl
+    string? PhotoUrl,
+    string? ThumbnailPhotoUrl
 );
