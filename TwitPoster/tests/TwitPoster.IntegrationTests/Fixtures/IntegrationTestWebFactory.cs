@@ -16,7 +16,7 @@ namespace TwitPoster.IntegrationTests.Fixtures;
 
 public class IntegrationTestWebFactory : WebApplicationFactory<IApiTestMarker>, IAsyncLifetime
 {
-    private readonly MsSqlContainer _msSqlContainer = new MsSqlBuilder().Build();
+    private readonly MsSqlContainer _msSqlContainer = new MsSqlBuilder().WithImage("mcr.microsoft.com/mssql/server:2022-latest").Build();
     public readonly RedisContainer RedisContainer = new RedisBuilder().Build();
     private readonly AzuriteFixture _azure = new();
     
