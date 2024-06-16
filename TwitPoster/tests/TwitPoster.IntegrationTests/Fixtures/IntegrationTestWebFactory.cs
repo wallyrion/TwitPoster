@@ -17,7 +17,7 @@ namespace TwitPoster.IntegrationTests.Fixtures;
 public class IntegrationTestWebFactory : WebApplicationFactory<IApiTestMarker>, IAsyncLifetime
 {
     private readonly MsSqlContainer _msSqlContainer = new MsSqlBuilder().Build();
-    private readonly RedisContainer _redisContainer = new RedisBuilder().Build();
+    public readonly RedisContainer RedisContainer = new RedisBuilder().Build();
     private readonly AzuriteFixture _azure = new();
     
     private DbConnection _dbConnection = null!;
@@ -40,7 +40,7 @@ public class IntegrationTestWebFactory : WebApplicationFactory<IApiTestMarker>, 
             Console.WriteLine("Actual azure uri: " + _azure.Uri);
             var collection = new[]
             {
-                KeyValuePair.Create("ConnectionStrings:Redis", _redisContainer.GetConnectionString()),
+                KeyValuePair.Create("ConnectionStrings:Redis", RedisContainer.GetConnectionString()),
                 KeyValuePair.Create("ConnectionStrings:DbConnection", _msSqlContainer.GetConnectionString()),
                 KeyValuePair.Create("Secrets:UseSecrets", "false"),
                 KeyValuePair.Create("Auth:Secret", "topsecret_secretkey!123_for#TwitPosterApp"),
@@ -64,14 +64,13 @@ public class IntegrationTestWebFactory : WebApplicationFactory<IApiTestMarker>, 
     public async Task InitializeAsync()
     {
         await _msSqlContainer.StartAsync();
-        await _redisContainer.StartAsync();
+        await RedisContainer.StartAsync();
         await _azure.InitializeAsync();
         _dbConnection = new SqlConnection(_msSqlContainer.GetConnectionString());
         
         Console.WriteLine("Ms sql connection string = " + _msSqlContainer.GetConnectionString());
-        Console.WriteLine("Redis connection string = " + _redisContainer.GetConnectionString());
+        Console.WriteLine("Redis connection string = " + RedisContainer.GetConnectionString());
         Console.WriteLine("Azure connection string = " + _azure.Uri);
-        LocationApiServer.Start();
         
         HttpClient = CreateClient();
         await _dbConnection.OpenAsync();
@@ -79,8 +78,8 @@ public class IntegrationTestWebFactory : WebApplicationFactory<IApiTestMarker>, 
         _respawner = await Respawner.CreateAsync(_dbConnection, new RespawnerOptions
         {
             DbAdapter = DbAdapter.SqlServer,
-            SchemasToInclude = new []{ "dbo" },
-            TablesToIgnore = new []{new Table("__EFMigrationsHistory")}
+            SchemasToInclude = ["dbo"],
+            TablesToIgnore = [new Table("__EFMigrationsHistory")]
         });
     }
 

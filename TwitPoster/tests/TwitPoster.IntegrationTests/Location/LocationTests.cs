@@ -1,14 +1,16 @@
-﻿using FluentAssertions;
+﻿using System.Net.Http.Json;
+using FluentAssertions;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.Configuration;
 using TwitPoster.BLL.DTOs.Location;
+using TwitPoster.IntegrationTests.Extensions;
 using TwitPoster.IntegrationTests.ExternalApis;
 using TwitPoster.IntegrationTests.Fixtures;
 using TwitPoster.Web;
 
 namespace TwitPoster.IntegrationTests.Location;
 
-public class LocationTests : BaseIntegrationTest
+public class LocationTests : BaseIntegrationTest, IAsyncLifetime
 {
     private readonly LocationApiServer _locationApiServer;
     private readonly IntegrationTestWebFactory _baseFactory;
@@ -17,8 +19,15 @@ public class LocationTests : BaseIntegrationTest
     {
         _baseFactory = factory;
         _locationApiServer = factory.LocationApiServer;
+        _locationApiServer.Server.Reset();
         _locationApiServer.SetupCountries();
-        _locationApiServer.Server.ResetLogEntries();
+    }
+
+    public new async Task DisposeAsync()
+    {
+        await base.DisposeAsync();
+
+        await Factory.RedisContainer.ResetAsync();
     }
 
     [Theory]
@@ -35,7 +44,9 @@ public class LocationTests : BaseIntegrationTest
             .And
             .Satisfy<IReadOnlyList<Country>>(list => 
                 list.Should().NotBeEmpty());
-        
+        _locationApiServer.Server.LogEntries.Should().ContainSingle()
+            .Which.RequestMessage.Path.Should().Be("/api/v0.1/countries/flag/unicode");
+
         _locationApiServer.Server.ResetLogEntries();
         
         var countriesResponseFromCache = await client.GetAsync("/Location/countries");
@@ -46,8 +57,14 @@ public class LocationTests : BaseIntegrationTest
                 list.Should().NotBeEmpty());
 
         _locationApiServer.Server.LogEntries.Should().BeEmpty("Countries should be retrieved from cache");
-    }
 
+        var countriesOriginal = await countriesResponse.Content.ReadFromJsonAsync<IReadOnlyList<Country>>();
+        var countriesFromCache = await countriesResponseFromCache.Content.ReadFromJsonAsync<IReadOnlyList<Country>>();
+
+        countriesFromCache.Should().BeEquivalentTo(countriesOriginal);
+    }
+    
+    
     private WebApplicationFactory<IApiTestMarker> CreateFactory(bool useDistributedCache)
     {
         var factoryWithCache = _baseFactory
