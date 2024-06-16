@@ -18,8 +18,7 @@ public class AzuriteFixture : IAsyncLifetime
     public async Task InitializeAsync()
     {
         await _azuriteContainer.StartAsync();
-        var publicPort = _azuriteContainer.GetMappedPublicPort(BlobPort);
-        _blobPublicPort = publicPort;
+        _blobPublicPort = _azuriteContainer.GetMappedPublicPort(BlobPort);
     }
 
     public async Task DisposeAsync()
