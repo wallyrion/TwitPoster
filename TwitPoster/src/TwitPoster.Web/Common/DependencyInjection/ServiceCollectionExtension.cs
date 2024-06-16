@@ -47,7 +47,7 @@ public static class ServiceCollectionExtension
                         clientIP ?? "static", _ => new FixedWindowRateLimiterOptions
                         {
                             AutoReplenishment = true,
-                            PermitLimit = 5,
+                            PermitLimit = 1000,
                             Window = TimeSpan.FromSeconds(30)
                         });
                 });
