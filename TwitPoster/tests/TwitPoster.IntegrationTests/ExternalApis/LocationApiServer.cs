@@ -7,7 +7,7 @@ namespace TwitPoster.IntegrationTests.ExternalApis;
 
 public class LocationApiServer : IDisposable
 {
-    public WireMockServer Server = null!;
+    public readonly WireMockServer Server = WireMockServer.Start();
     public string Url => Server.Url!;
 
     public void SetupCountries()
@@ -19,11 +19,6 @@ public class LocationApiServer : IDisposable
             .RespondWith(Response.Create()
                 .WithBody(CountriesResponseJson.All)
                 .WithHeader("content-type", "application/json; charset=utf-8"));
-    }
-    
-    public void Start()
-    {
-        Server = WireMockServer.Start();
     }
     
     public void Dispose()
