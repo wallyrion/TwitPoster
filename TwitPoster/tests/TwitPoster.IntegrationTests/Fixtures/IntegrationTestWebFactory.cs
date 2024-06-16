@@ -85,6 +85,10 @@ public class IntegrationTestWebFactory : WebApplicationFactory<IApiTestMarker>, 
 
     public new async Task DisposeAsync()
     {
+        await base.DisposeAsync();
         await _msSqlContainer.DisposeAsync();
+        await _azure.DisposeAsync();
+        await RedisContainer.DisposeAsync();
+        await _dbConnection.DisposeAsync();
     }
 }

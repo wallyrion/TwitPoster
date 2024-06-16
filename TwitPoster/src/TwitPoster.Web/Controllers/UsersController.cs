@@ -84,7 +84,7 @@ public class UsersController : ControllerBase
         BlobContainerClient containerClient = blobServiceClient.GetBlobContainerClient(storageOptions.Value.ContainerName);
         await containerClient.CreateIfNotExistsAsync(PublicAccessType.BlobContainer);
         
-        var profilePhotosPath = "user/{_currentUser.Id}/images/profile";
+        var profilePhotosPath = $"user/{_currentUser.Id}/images/profile";
         
         var mainPhotoBlob = containerClient.GetBlobClient($"{profilePhotosPath}/main/image{extension}");
         var thumbnailPhotoBlob = containerClient.GetBlobClient($"{profilePhotosPath}/thumbnail/image{extension}");

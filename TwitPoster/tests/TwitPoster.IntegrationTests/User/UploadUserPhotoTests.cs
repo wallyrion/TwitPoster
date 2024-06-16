@@ -1,8 +1,5 @@
-﻿using System.Net.Http.Json;
-using FluentAssertions;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
-using TwitPoster.DAL;
+﻿using FluentAssertions;
+using TwitPoster.IntegrationTests.Extensions;
 using TwitPoster.IntegrationTests.Fixtures;
 using TwitPoster.Web.ViewModels;
 
@@ -15,33 +12,29 @@ public class UploadUserPhotoTests(IntegrationTestWebFactory factory) : BaseInteg
     {
         await AddAuthorization();
 
-        var testFilePath = "TestData/Files/photo.jpg";
+        const string testFilePath = "TestData/Files/photo.jpg";
+        var expectedFileBytes = await File.ReadAllBytesAsync(testFilePath);
 
         // Create multipart content
         var multipartContent = new MultipartFormDataContent();
-
-        await using var fileStream = new FileStream(testFilePath, FileMode.Open);
-
-        // Add file to multipart content
-        var fileContent = new StreamContent(fileStream);
+        using var fileContent = new StreamContent(new MemoryStream(expectedFileBytes));
         fileContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("image/jpeg");
         multipartContent.Add(fileContent, "file", Path.GetFileName(testFilePath));
 
         var response = await ApiClient.PostAsync("Users/photo", multipartContent);
-        response.Should().Be200Ok();
-        var uploadPhotoResponse = await response.Content.ReadFromJsonAsync<UploadPhotoResponse>();
-        uploadPhotoResponse.Should().NotBeNull();
 
-        await using var scope = Factory.Services.CreateAsyncScope();
-        var dbContext = scope.ServiceProvider.GetRequiredService<TwitPosterContext>();
-        var user = await dbContext.Users.SingleAsync(u => u.Id == DefaultUserId);
-        user.PhotoUrl.Should().NotBeEmpty().And.Be(uploadPhotoResponse!.Url); 
-
+        var uploadPhotoResponse = await response
+            .Should()
+            .Be200Ok()
+            .And.Satisfy<UploadPhotoResponse>(r => r.Url.Should().NotBeEmpty())
+            .GetJsonResponse<UploadPhotoResponse>();
+        
         using var httpClient = new HttpClient();
-        var downloadResponse = await httpClient.GetAsync(uploadPhotoResponse.Url);
-
+        var downloadResponse = await httpClient.GetAsync(uploadPhotoResponse!.Url);
         downloadResponse.Should().Be200Ok();
-        var fileBytes = await downloadResponse.Content.ReadAsByteArrayAsync();
-        fileBytes.Should().NotBeEmpty();
+
+        var actualFileBytes = await downloadResponse.Content.ReadAsByteArrayAsync();
+        actualFileBytes.Should().NotBeEmpty();
+        actualFileBytes.Should().BeEquivalentTo(expectedFileBytes);
     }
 }
