@@ -10,7 +10,6 @@ namespace TwitPoster.IntegrationTests.User;
 
 public class UploadUserPhotoTests(IntegrationTestWebFactory factory) : BaseIntegrationTest(factory)
 {
-
     [Fact]
     public async Task Should_Upload_Photo_And_Download_By_Url()
     {
