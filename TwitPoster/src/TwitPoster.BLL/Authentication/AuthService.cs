@@ -1,6 +1,8 @@
 ﻿using LanguageExt.Common;
 using MassTransit;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
+using TwitPoster.BLL.Common.Options;
 using TwitPoster.BLL.Exceptions;
 using TwitPoster.BLL.Interfaces;
 using TwitPoster.DAL;
@@ -14,12 +16,14 @@ public class AuthService : IAuthService
     private readonly TwitPosterContext _context;
     private readonly IJwtTokenGenerator _tokenGenerator;
     private readonly IPublishEndpoint _publishEndpoint;
+    private readonly IOptions<ApplicationOptions> _appOptions;
 
-    public AuthService(IJwtTokenGenerator tokenGenerator, TwitPosterContext context, IPublishEndpoint publishEndpoint)
+    public AuthService(IJwtTokenGenerator tokenGenerator, TwitPosterContext context, IPublishEndpoint publishEndpoint, IOptions<ApplicationOptions> appOptions)
     {
         _tokenGenerator = tokenGenerator;
         _context = context;
         _publishEndpoint = publishEndpoint;
+        _appOptions = appOptions;
     }
 
     public async Task<string> Login(string email, string password)
@@ -69,10 +73,12 @@ public class AuthService : IAuthService
 
         await _context.SaveChangesAsync();
 
+        var confirmationUrl = $"{_appOptions.Value.TwitPosterUrl}/Auth/EmailConfirmation?Token={user.UserAccount.EmailConfirmationToken}";
+        
         var emailBody = $"""
             <h1> You are on the way! </h1>
             <h2> Please confirm your email by clicking on the link below </h2>
-            <a href="https://localhost:7267/Auth/EmailConfirmation?Token={user.UserAccount.EmailConfirmationToken}">Press to confirm email address</a>
+            <a href="{confirmationUrl}">Press to confirm email address</a>
         """;
 
         var mailCommand = new EmailCommand(email, "Welcome to TwitPoster! Confirm your email", emailBody, TextFormat.Html);

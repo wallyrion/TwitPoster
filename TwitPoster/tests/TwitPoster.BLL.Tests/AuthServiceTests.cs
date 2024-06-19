@@ -2,8 +2,10 @@ using AutoFixture;
 using FluentAssertions;
 using MassTransit;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using Moq;
 using TwitPoster.BLL.Authentication;
+using TwitPoster.BLL.Common.Options;
 using TwitPoster.BLL.Exceptions;
 using TwitPoster.BLL.Interfaces;
 using TwitPoster.DAL;
@@ -24,7 +26,10 @@ public class AuthServiceTests
             .UseInMemoryDatabase($"DB{Guid.NewGuid()}")
             .Options;
         _context = new TwitPosterContext(options);
-        _sut = new AuthService(_jwtTokenGeneratorMock.Object, _context, Mock.Of<IPublishEndpoint>());
+        _sut = new AuthService(_jwtTokenGeneratorMock.Object, _context, Mock.Of<IPublishEndpoint>(), Options.Create(new ApplicationOptions
+        {
+            TwitPosterUrl = "http://localhost:5000"
+        }));
     }
     
     [Fact]

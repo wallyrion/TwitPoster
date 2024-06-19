@@ -56,6 +56,8 @@ try
     
     builder.Services.AddControllers();
 
+    builder.Configuration.BindOption<ApplicationOptions>(builder.Services);
+    
     var authConfig = builder.Configuration.BindOption<AuthOptions>(builder.Services);
     var connectionStrings = builder.Configuration.BindOption<ConnectionStringsOptions>(builder.Services);
     var countriesApiOptions = builder.Configuration.BindOption<CountriesApiOptions>(builder.Services);
