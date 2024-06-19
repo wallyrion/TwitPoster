@@ -12,9 +12,11 @@
         <PackageReference Include="MassTransit"/>
         <PackageReference Include="MassTransit.Azure.ServiceBus.Core"/>
         <PackageReference Include="MassTransit.RabbitMQ"/>
+        <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" />
         <PackageReference Include="Microsoft.AspNetCore.OpenApi"/>
         <PackageReference Include="Serilog.AspNetCore"/>
         <PackageReference Include="Serilog.Extensions.Hosting"/>
+        <PackageReference Include="Serilog.Sinks.ApplicationInsights" />
         <PackageReference Include="Serilog.Sinks.Seq"/>
         <PackageReference Include="Swashbuckle.AspNetCore"/>
         <PackageReference Include="Twitposter.Shared"/>
