@@ -1,21 +1,45 @@
+using Microsoft.ApplicationInsights.Extensibility;
 using Serilog;
 using TwitPoster.EmailSender.Extensions;
 using TwitPoster.EmailSender.Options;
 using TwitPoster.EmailSender.Services;
 
-var builder = WebApplication.CreateBuilder(args);
-builder.Host.UseSerilog((ctx, lc) => lc
-    .ReadFrom.Configuration(ctx.Configuration)
-    .Enrich.FromLogContext());
+try
+{
+    var builder = WebApplication.CreateBuilder(args);
 
-builder.Configuration.BindOption<MailOptions>(builder.Services);
+    Log.Logger = new LoggerConfiguration()
+        .ReadFrom.Configuration(builder.Configuration)
+        .CreateBootstrapLogger();
+    
+    builder.Host.UseSerilog((context, provider, logger) =>
+    {
+        logger.ReadFrom.Configuration(context.Configuration);
 
-builder.Services
-    .AddScoped<IEmailService, EmailService>()
-    .AddMessaging(builder.Configuration);
+        logger.WriteTo.ApplicationInsights(
+            provider.GetRequiredService<TelemetryConfiguration>(),
+            TelemetryConverter.Traces);
+    });
 
-var app = builder.Build();
+    builder.Services.AddApplicationInsightsTelemetry();
+    builder.Configuration.BindOption<MailOptions>(builder.Services);
 
-app.MapGet("/health", () => "OK");
+    builder.Services
+        .AddScoped<IEmailService, EmailService>()
+        .AddMessaging(builder.Configuration);
 
-app.Run();
+    var app = builder.Build();
+
+    app.MapGet("/health", () => "OK");
+
+    app.Run();
+}
+catch (Exception ex)
+{
+    Log.Fatal(ex, "An error occurred while processing the request");
+}
+finally
+{
+    Log.Information("Shutting down the application...");
+}
+

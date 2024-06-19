@@ -1,6 +1,7 @@
 using Azure.Identity;
 using Azure.Storage;
 using MassTransit;
+using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Azure;
 using Microsoft.FeatureManagement;
@@ -36,9 +37,16 @@ try
     
     Log.Logger = new LoggerConfiguration()
         .ReadFrom.Configuration(builder.Configuration)
-        .CreateLogger();
+        .CreateBootstrapLogger();
+    
+    builder.Host.UseSerilog((context, provider, logger) =>
+    {
+        logger.ReadFrom.Configuration(context.Configuration);
 
-    builder.Host.UseSerilog(Log.Logger);
+        logger.WriteTo.ApplicationInsights(
+            provider.GetRequiredService<TelemetryConfiguration>(),
+            TelemetryConverter.Traces);
+    });
     
     builder.Services.AddAzureClients(clientBuilder =>
     {
