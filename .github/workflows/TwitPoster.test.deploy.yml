@@ -9,7 +9,7 @@ on:
     branches: ["master", "terraform-init"]
     paths:
       - "TwitPoster/**"
-      - ".github/workflows/TwitPoster.deploy.yml"
+      - ".github/workflows/TwitPoster.test.deploy.yml"
   workflow_dispatch:
 
 permissions:
