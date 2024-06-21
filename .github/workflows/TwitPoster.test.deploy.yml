@@ -1,4 +1,4 @@
-name: Build & deploy - TwitPoster (main)
+name: TEST APP DEPLOY
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
