@@ -2,13 +2,19 @@
   features {}
 }
 
+resource "random_string" "unique" {
+  length  = 6
+  special = false
+  upper   = false
+}
+
 resource "azurerm_resource_group" "rg" {
-  name     = "twitposter-rg"
+  name     = "twitposter-rg-${random_string.unique.result}"
   location = "East US"
 }
 
 resource "azurerm_storage_account" "storage" {
-  name                     = "twitposterstorageacc"
+  name                     = "twitpostersa${random_string.unique.result}"
   resource_group_name      = azurerm_resource_group.rg.name
   location                 = azurerm_resource_group.rg.location
   account_tier             = "Standard"
@@ -16,21 +22,21 @@ resource "azurerm_storage_account" "storage" {
 }
 
 resource "azurerm_servicebus_namespace" "sbnamespace" {
-  name                     = "twitposter-sbnamespace"
+  name                     = "twitposter-sb${random_string.unique.result}"
   resource_group_name      = azurerm_resource_group.rg.name
   location                 = azurerm_resource_group.rg.location
   sku                      = "Standard"
 }
 
 resource "azurerm_application_insights" "appinsights" {
-  name                = "twitposter-appinsights"
+  name                = "twitposter-ai-${random_string.unique.result}"
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
   application_type    = "web"
 }
 
 resource "azurerm_mssql_server" "sqlserver" {
-  name                         = "twitposter-sqlserver"
+  name                         = "twitpostersql${random_string.unique.result}"
   resource_group_name          = azurerm_resource_group.rg.name
   location                     = azurerm_resource_group.rg.location
   version                      = "12.0"
@@ -44,13 +50,13 @@ resource "azurerm_mssql_server" "sqlserver" {
 }
 
 resource "azurerm_mssql_database" "sqldatabase" {
-  name      = "twitposter-db"
+  name      = "twitposterdb${random_string.unique.result}"
   server_id = azurerm_mssql_server.sqlserver.id
   sku_name  = "S0"
 }
 
 resource "azurerm_service_plan" "asp" {
-  name                = "twitposter-asp"
+  name                = "twitposter-asp-${random_string.unique.result}"
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
   os_type             = "Linux"
@@ -64,13 +70,13 @@ EOF
 }
 
 resource "azurerm_linux_web_app" "appservice" {
-  name                = "twitposter-appservice"
+  name                = "twitposter-appservice-${random_string.unique.result}"
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
   service_plan_id     = azurerm_service_plan.asp.id
 
   site_config {
-    always_on        = false
+    always_on = false
   }
 
   app_settings = {
@@ -97,4 +103,8 @@ output "app_service_name" {
 
 output "app_service_default_hostname" {
   value = azurerm_linux_web_app.appservice.default_hostname
+}
+
+output "sql_server_name" {
+  value = azurerm_mssql_server.sqlserver.name
 }
