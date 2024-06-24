@@ -122,6 +122,7 @@ output "app_service_default_hostname" {
   value = azurerm_linux_web_app.appservice.default_hostname
 }
 
-output "publish_profile" {
-  value = trimspace(data.local_file.publish_profile.content)
+output "publish_profile_command" {
+  value = "az webapp deployment list-publishing-profiles --name ${azurerm_linux_web_app.appservice.name} --resource-group ${azurerm_resource_group.rg.name} --xml"
+  description = "Run this command in your shell to retrieve the Azure Web App's publishing profile."
 }
