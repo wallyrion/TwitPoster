@@ -103,7 +103,7 @@ resource "null_resource" "fetch_publish_profile" {
 
   provisioner "local-exec" {
     command = <<EOT
-      az webapp deployment list-publishing-profiles --name ${azurerm_linux_web_app.appservice.name} --resource-group ${azurerm_resource_group.rg.name} --xml > publish_profile.xml
+      az webapp deployment list-publishing-profiles --name ${azurerm_linux_web_app.appservice.name} --resource-group ${azurerm_resource_group.rg.name} --xml > .terraform/publish_profile.xml
     EOT
   }
 }
@@ -111,7 +111,7 @@ resource "null_resource" "fetch_publish_profile" {
 # Data source to read the content of the publish profile
 data "local_file" "publish_profile" {
   depends_on = [null_resource.fetch_publish_profile]
-  filename   = "${path.module}/publish_profile.xml"
+  filename   = "${path.module}/.terraform/publish_profile.xml"
 }
 
 output "app_service_name" {
