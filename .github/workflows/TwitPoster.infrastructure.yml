@@ -45,16 +45,16 @@ jobs:
         working-directory: ./terraform
 
       - name: 'Output App Service Name'
-        run:
+        run: |
           echo "App Service Name: $(terraform output -raw app_service_name)"
         working-directory: ./terraform
 
       - name: 'Output App Service Default Hostname'
-        run:
+        run: |
           echo "App Service Default Hostname: $(terraform output -raw app_service_default_hostname)"
         working-directory: ./terraform
 
       - name: 'Output Publish Profile'
-        run:
+        run: |
           echo "Publish Profile: $(terraform output -raw publish_profile)"
         working-directory: ./terraform
