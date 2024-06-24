@@ -44,17 +44,16 @@ jobs:
         run: terraform apply -auto-approve tfplan
         working-directory: ./terraform
 
-      - name: 'Output App Service Name'
+      - name: 'Fetch Publish Profile Command'
+        id: fetch_publish_profile
         run: |
-          echo "App Service Name: $(terraform output -raw app_service_name)"
+          eval $(terraform output -raw publish_profile_command) > publish_profile.xml
+          echo "::add-mask::$(cat publish_profile.xml)"
+          echo "TEST_APP_PUBLISH_PROFILE=$(cat publish_profile.xml)" >> $GITHUB_ENV
         working-directory: ./terraform
 
-      - name: 'Output App Service Default Hostname'
+      - name: 'Set GitHub Secret'
         run: |
-          echo "App Service Default Hostname: $(terraform output -raw app_service_default_hostname)"
-        working-directory: ./terraform
-
-      - name: 'Output Publish Profile'
-        run: |
-          echo "Publish Profile: $(terraform output -raw publish_profile)"
-        working-directory: ./terraform
+          echo "${{ env.TEST_APP_PUBLISH_PROFILE }}" | gh secret set TEST_APP_PUBLISH_PROFILE
+        env:
+          TEST_APP_PUBLISH_PROFILE: ${{ env.TEST_APP_PUBLISH_PROFILE }}
