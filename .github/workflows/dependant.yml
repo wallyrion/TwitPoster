@@ -2,8 +2,8 @@ name: Dependent Workflow
 
 on:
   workflow_run:
-    workflows: ["Terraform Deploy", "terraform"]
-    types: [requested]
+    workflows: terraform
+    types: completed
     branches:
       - 'terraform-init'
 
