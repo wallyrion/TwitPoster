@@ -2,7 +2,7 @@ name: Dependent Workflow
 
 on:
   workflow_run:
-    workflows: ["Terraform Deploy"]
+    workflows: ["TTerraform Apply"]
     types:
       - completed
 
