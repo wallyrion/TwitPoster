@@ -22,7 +22,7 @@ jobs:
         
         
   dependent_job:
-    needs: deploy
+    needs: terraform
     runs-on: ubuntu-latest
     environment: prod  # Specify the environment here
       
