@@ -94,14 +94,15 @@ jobs:
           echo "PUBLISH_PROFILE_CONTENT=$(cat publish_profile.xml)" >> $GITHUB_ENV
         working-directory: ./terraform
 
-      - name: Install GitHub CLI
+      - name: 'Install GitHub CLI'
         run: sudo apt-get install -y gh
-
-      - name: Set GitHub Secret
+    
+      - name: 'Set GitHub Secret'
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN_SECRETS_MANIPULATOR }}
         run: |
-          cat publish_profile.xml | gh secret set TEST_APP_PUBLISH_PROFILE --env prod
+          echo "Setting GitHub Secret TEST_APP_PUBLISH_PROFILE"
+          gh secret set TEST_APP_PUBLISH_PROFILE --body "$(cat ./terraform/publish_profile.xml
         
         
   build:
