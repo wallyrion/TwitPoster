@@ -34,6 +34,27 @@ jobs:
           inlineScript: |
             az account show
 
+      - name: 'Initialize Terraform'
+        run: terraform init
+        working-directory: ./terraform
+
+      - name: 'Plan Terraform'
+        id: plan
+        run: terraform plan -out=tfplan
+        working-directory: ./terraform
+
+      - name: 'Apply Terraform'
+        run: terraform apply -auto-approve tfplan
+        working-directory: ./terraform
+
+      - name: 'Fetch Publish Profile Command'
+        id: fetch_publish_profile
+        run: |
+          eval $(terraform output -raw publish_profile_command) > publish_profile.xml
+          echo "::add-mask::$(cat publish_profile.xml)"
+          echo "TEST_APP_PUBLISH_PROFILE=$(cat publish_profile.xml)" >> $GITHUB_ENV
+        working-directory: ./terraform
+
       - name: Install GitHub CLI
         run: sudo apt-get install -y gh
 
@@ -41,4 +62,4 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN_SECRETS_MANIPULATOR }}
         run: |
-          echo "hardcoded_publish_profile_value" | gh secret set TEST_APP_PUBLISH_PROFILE --env prod
+          cat publish_profile.xml | gh secret set TEST_APP_PUBLISH_PROFILE --env prod
