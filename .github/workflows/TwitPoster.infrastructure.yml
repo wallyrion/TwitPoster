@@ -63,10 +63,3 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN_SECRETS_MANIPULATOR }}
         run: |
           cat publish_profile.xml | gh secret set TEST_APP_PUBLISH_PROFILE --env prod
-          
-      - name: Get and Print GitHub Secret (for debugging, remove later)
-        env:
-          GITHUB_TOKEN: ${{ secrets.GH_TOKEN_SECRETS_MANIPULATOR }}
-        run: |
-          gh secret list --env prod
-          gh secret view TEST_APP_PUBLISH_PROFILE --env prod
