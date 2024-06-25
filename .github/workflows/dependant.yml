@@ -2,9 +2,10 @@ name: Dependent Workflow
 
 on:
   workflow_run:
-    workflows: ["Terraform Apply"]
-    types:
-      - completed
+    workflows: ["Terraform Deploy"]
+    types: [requested]
+    branches:
+      - 'terraform-init'
 
 permissions:
   contents: read
