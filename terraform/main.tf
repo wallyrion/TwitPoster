@@ -121,7 +121,7 @@ resource "azurerm_linux_web_app" "emailsender" {
   app_settings = {
     "APPLICATIONINSIGHTS_CONNECTION_STRING" = azurerm_application_insights.appinsights_emailsender.connection_string
     "ConnectionStrings__ServiceBus"          = azurerm_servicebus_namespace.sbnamespace.default_primary_connection_string
-    "Mail__AuthPassword"          = bbwpcbswnsbupbmw
+    "Mail__AuthPassword"          =       "bbwpcbswnsbupbmw"
   }
 
   identity {
