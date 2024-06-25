@@ -4,8 +4,6 @@ on:
   workflow_run:
     workflows: terraform
     types: completed
-    branches:
-      - 'terraform-init'
 
 permissions:
   contents: read
