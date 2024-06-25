@@ -9,6 +9,7 @@
 
 provider "azurerm" {
   features {}
+  use_cli = true
 }
 
 resource "azurerm_resource_group" "rg" {
