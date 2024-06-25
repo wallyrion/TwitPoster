@@ -165,7 +165,7 @@ jobs:
           images: ${{ env.twitposter_image }}
 
       - name: Trigger Azure WebHook
-        if: ${{ secrets.AZURE_WEBHOOK_URL_TWITPOSTER }}
+        if: env.WEBHOOK_URL != ''
         run: |
           curl -X POST $WEBHOOK_URL
         env:
