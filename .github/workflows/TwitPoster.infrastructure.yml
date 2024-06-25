@@ -52,16 +52,6 @@ jobs:
             -backend-config="tenant_id=${{ secrets.ARM_TENANT_ID }}" \
         working-directory: ./terraform
 
-
-      - name: 'Check and Import Existing Resource Group'
-        id: import_rg
-        run: |
-          if az group show --name twitposter-dev-rg; then
-            terraform import azurerm_resource_group.rg /subscriptions/73774bc1-ae0f-4e4f-bd61-a35d913721fe/resourceGroups/twitposter-dev-rg
-          fi
-        working-directory: ./terraform
-
-
       - name: 'Plan Terraform'
         id: plan
         run: terraform plan -out=tfplan
