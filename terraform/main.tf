@@ -118,6 +118,12 @@ resource "azurerm_linux_function_app" "functionapp" {
   }
 
   https_only = true
+
+  lifecycle {
+    ignore_changes = [
+      app_settings["AzureWebJobsStorage"],
+    ]
+  }
 }
 
 resource "azurerm_linux_web_app" "appservice" {
@@ -146,6 +152,11 @@ resource "azurerm_linux_web_app" "appservice" {
 
   client_affinity_enabled = false
   https_only              = true
+  lifecycle {
+    ignore_changes = [
+      app_settings["ConnectionStrings__DbConnection"],
+    ]
+  }
 }
 
 resource "azurerm_linux_web_app" "emailsender" {
