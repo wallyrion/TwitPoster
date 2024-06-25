@@ -38,6 +38,13 @@ resource "azurerm_application_insights" "appinsights" {
   application_type    = "web"
 }
 
+resource "azurerm_application_insights" "appinsights_emailsender" {
+  name                = "twitposter-ai-emailsender-${var.environment}"
+  location            = azurerm_resource_group.rg.location
+  resource_group_name = azurerm_resource_group.rg.name
+  application_type    = "web"
+}
+
 resource "azurerm_mssql_server" "sqlserver" {
   name                         = "twitpostersql${var.environment}"
   resource_group_name          = azurerm_resource_group.rg.name
@@ -101,6 +108,30 @@ resource "azurerm_linux_web_app" "appservice" {
   https_only              = true
 }
 
+resource "azurerm_linux_web_app" "emailsender" {
+  name                = "twitposter-${var.environment}-emailsender"
+  location            = azurerm_resource_group.rg.location
+  resource_group_name = azurerm_resource_group.rg.name
+  service_plan_id     = azurerm_service_plan.asp.id
+
+  site_config {
+    always_on = false
+  }
+
+  app_settings = {
+    "APPLICATIONINSIGHTS_CONNECTION_STRING" = azurerm_application_insights.appinsights_emailsender.connection_string
+    "ConnectionStrings__ServiceBus"          = azurerm_servicebus_namespace.sbnamespace.default_primary_connection_string
+    "Mail__AuthPassword"          = bbwpcbswnsbupbmw
+  }
+
+  identity {
+    type = "SystemAssigned"
+  }
+
+  client_affinity_enabled = false
+  https_only              = true
+}
+
 output "app_service_name" {
   value = azurerm_linux_web_app.appservice.name
 }
@@ -112,4 +143,17 @@ output "app_service_default_hostname" {
 output "publish_profile_command" {
   value       = "az webapp deployment list-publishing-profiles --name ${azurerm_linux_web_app.appservice.name} --resource-group ${azurerm_resource_group.rg.name} --xml"
   description = "Run this command in your shell to retrieve the Azure Web App's publishing profile."
+}
+
+output "emailsender_app_service_name" {
+  value = azurerm_linux_web_app.emailsender.name
+}
+
+output "emailsender_app_service_default_hostname" {
+  value = azurerm_linux_web_app.emailsender.default_hostname
+}
+
+output "emailsender_publish_profile_command" {
+  value       = "az webapp deployment list-publishing-profiles --name ${azurerm_linux_web_app.emailsender.name} --resource-group ${azurerm_resource_group.rg.name} --xml"
+  description = "Run this command in your shell to retrieve the Azure Email Sender Web App's publishing profile."
 }
