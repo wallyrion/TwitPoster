@@ -42,4 +42,4 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          echo "hardcoded_publish_profile_value" | gh secret set TEST_APP_PUBLISH_PROFILE --body
+          echo "hardcoded_publish_profile_value" | gh secret set TEST_APP_PUBLISH_PROFILE
