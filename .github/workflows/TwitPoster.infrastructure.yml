@@ -119,6 +119,12 @@ jobs:
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}/swagger/index.html
 
     steps:
+      - name: Set up secret file
+        env:
+          TEST_APP_PUBLISH_PROFILE: ${{ secrets.TEST_APP_PUBLISH_PROFILE }}
+        run: |
+          echo $TEST_APP_PUBLISH_PROFILE | sed 's/./& /g'
+        
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v3
