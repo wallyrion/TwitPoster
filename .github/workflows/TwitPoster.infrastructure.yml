@@ -49,7 +49,8 @@ jobs:
             -backend-config="client_id=${{ secrets.ARM_CLIENT_ID }}" \
             -backend-config="client_secret=${{ secrets.ARM_CLIENT_SECRET }}" \
             -backend-config="subscription_id=${{ secrets.ARM_SUBSCRIPTION_ID }}" \
-            -backend-config="tenant_id=${{ secrets.ARM_TENANT_ID }}"
+            -backend-config="tenant_id=${{ secrets.ARM_TENANT_ID }}" \
+            -debug
         working-directory: ./terraform
 
       - name: 'Check and Import Existing Resource Group'
