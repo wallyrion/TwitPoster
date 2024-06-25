@@ -40,6 +40,6 @@ jobs:
 
       - name: Set GitHub Secret
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN_SECRETS_MANIPULATOR }}
         run: |
           echo "hardcoded_publish_profile_value" | gh secret set TEST_APP_PUBLISH_PROFILE
