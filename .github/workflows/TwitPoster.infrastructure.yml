@@ -59,9 +59,10 @@ jobs:
       - name: 'Fetch Publish Profile Command'
         id: fetch_publish_profile
         run: |
-          eval $(terraform output -raw publish_profile_command) > publish_profile.xml
+          PUBLISH_PROFILE_COMMAND=$(terraform output -raw publish_profile_command)
+          $PUBLISH_PROFILE_COMMAND > publish_profile.xml
           echo "::add-mask::$(cat publish_profile.xml)"
-          echo "TEST_APP_PUBLISH_PROFILE=$(cat publish_profile.xml)" >> $GITHUB_ENV
+          echo "PUBLISH_PROFILE_CONTENT=$(cat publish_profile.xml)" >> $GITHUB_ENV
         working-directory: ./terraform
 
       - name: Install GitHub CLI
