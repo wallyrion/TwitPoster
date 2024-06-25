@@ -14,7 +14,8 @@ jobs:
   terraform:
     name: 'Terraform Deploy'
     runs-on: ubuntu-latest
-
+    environment: prod  # Specify the environment here
+    
     steps:
       - name: 'Checkout GitHub Actions'
         uses: actions/checkout@v4
@@ -23,8 +24,8 @@ jobs:
   dependent_job:
     needs: deploy
     runs-on: ubuntu-latest
-    env: prod
-
+    environment: prod  # Specify the environment here
+      
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
