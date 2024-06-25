@@ -9,7 +9,7 @@ on:
   workflow_dispatch:
 
 env:
-  AZURE_FUNCTIONAPP_NAME: 'twitposter-local-functionapp'
+  AZURE_FUNCTIONAPP_NAME: 'twitposter-lambda'
   AZURE_FUNCTIONAPP_PACKAGE_PATH: './TwitPoster.Functions/TwitPoster.Functions'
   DOTNET_VERSION: '8.x'
 
@@ -43,4 +43,4 @@ jobs:
         with:
           app-name: ${{ env.AZURE_FUNCTIONAPP_NAME }}
           package: '${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}/output'
-          publish-profile: ${{ secrets.AZURE_PUBLISH_PROFILE_FUNCTIONAPP_LOCAL}}
+          publish-profile: ${{ secrets.AZURE_PUBLISH_PROFILE_FUNCTIONAPP}}

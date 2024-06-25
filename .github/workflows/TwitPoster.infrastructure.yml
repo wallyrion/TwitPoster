@@ -12,6 +12,10 @@ permissions:
 env:
   twitposter_image: 'ghcr.io/wallyrion/twitposter:latest'
 
+concurrency:
+  group: ${{ github.workflow }}-infra
+  cancel-in-progress: false
+
 
 jobs:
   terraform:
@@ -53,12 +57,12 @@ jobs:
 
       - name: Select Terraform Workspace
         run: |
-          terraform workspace select dev || terraform workspace new dev
+          terraform workspace select qa || terraform workspace new qa
         working-directory: ./terraform
 
       - name: Plan Terraform
         id: plan
-        run: terraform plan -var="environment=dev" -out=tfplan
+        run: terraform plan -var="environment=qa" -out=tfplan
         working-directory: ./terraform
       
       - name: 'Apply Terraform'
