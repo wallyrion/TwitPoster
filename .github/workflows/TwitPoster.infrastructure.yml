@@ -6,10 +6,9 @@ on:
   workflow_dispatch:
 
 permissions:
-  id-token: write
   contents: read
-  secrets: write  # Allows setting secrets
-
+  id-token: write  # Allows using the OpenID Connect (OIDC) token
+  actions: write
 
 jobs:
   terraform:
@@ -35,30 +34,12 @@ jobs:
           inlineScript: |
             az account show
 
-      - name: 'Initialize Terraform'
-        run: terraform init
-        working-directory: ./terraform
-
-      - name: 'Plan Terraform'
-        id: plan
-        run: terraform plan -out=tfplan
-        working-directory: ./terraform
+      - name: Install GitHub CLI
+        run: sudo apt-get install -y gh
 
 
-      - name: 'Apply Terraform'
-        run: terraform apply -auto-approve tfplan
-        working-directory: ./terraform
-
-      - name: 'Fetch Publish Profile Command'
-        id: fetch_publish_profile
-        run: |
-          eval $(terraform output -raw publish_profile_command) > publish_profile.xml
-          echo "::add-mask::$(cat publish_profile.xml)"
-          echo "TEST_APP_PUBLISH_PROFILE=$(cat publish_profile.xml)" >> $GITHUB_ENV
-        working-directory: ./terraform
-
-      - name: 'Set GitHub Secret'
-        run: |
-          echo "${{ env.TEST_APP_PUBLISH_PROFILE }}" | gh secret set TEST_APP_PUBLISH_PROFILE
+      - name: Set GitHub Secret
         env:
-          TEST_APP_PUBLISH_PROFILE: ${{ env.TEST_APP_PUBLISH_PROFILE }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "hardcoded_publish_profile_value" | gh secret set TEST_APP_PUBLISH_PROFILE --body
