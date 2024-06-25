@@ -38,6 +38,10 @@ jobs:
           inlineScript: |
             az account show
 
+      - name: 'Initialize Terraform'
+        run: terraform init
+        working-directory: ./terraform
+
       - name: 'Check and Import Existing Resource Group'
         id: import_rg
         run: |
@@ -46,9 +50,6 @@ jobs:
           fi
         working-directory: ./terraform
 
-      - name: 'Initialize Terraform'
-        run: terraform init
-        working-directory: ./terraform
 
       - name: 'Plan Terraform'
         id: plan
