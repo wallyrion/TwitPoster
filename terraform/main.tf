@@ -1,9 +1,4 @@
-﻿provider "azurerm" {
-  features {}
-  use_cli = true
-}
-
-terraform {
+﻿terraform {
   backend "azurerm" {
     resource_group_name   = "tfstate-rg"
     storage_account_name  = "tfstate12345"
@@ -11,6 +6,12 @@ terraform {
     key                   = "terraform.tfstate"
   }
 }
+
+provider "azurerm" {
+  features {}
+  use_cli = true
+}
+
 
 resource "azurerm_resource_group" "rg" {
   name     = "twitposter-${var.environment}-rg"

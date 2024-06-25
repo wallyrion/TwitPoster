@@ -39,7 +39,16 @@ jobs:
             az account show
 
       - name: 'Initialize Terraform'
-        run: terraform init
+        run: |
+          terraform init \
+            -backend-config="resource_group_name=tfstate-rg" \
+            -backend-config="storage_account_name=tfstate12345" \
+            -backend-config="container_name=tfstate" \
+            -backend-config="key=terraform.tfstate" \
+            -backend-config="client_id=${{ secrets.ARM_CLIENT_ID }}" \
+            -backend-config="client_secret=${{ secrets.ARM_CLIENT_SECRET }}" \
+            -backend-config="subscription_id=${{ secrets.ARM_SUBSCRIPTION_ID }}" \
+            -backend-config="tenant_id=${{ secrets.ARM_TENANT_ID }}"
         working-directory: ./terraform
 
       - name: 'Check and Import Existing Resource Group'
