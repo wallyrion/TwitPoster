@@ -130,6 +130,7 @@ jobs:
           path: ./terraform
           
           
+          
   deploy_dev_infa:
     name: 'Deploy Terraform'
     needs: build_infra
@@ -137,4 +138,14 @@ jobs:
     with:
       workspace: dev
       environment: dev
+    secrets: inherit
+    
+  deploy_dev_twitposter:
+    name: 'Deploy Terraform'
+    needs: [deploy_dev_infa, build_twitposter]
+    uses: ./.github/workflows/shared-twitposter-deploy.yml
+    with:
+      environment: dev
+      twitposter_image: ${{ env.twitposter_image }}
+      APP_SERVICE_NAME: ${{ deploy_dev_infa.outputs.APP_SERVICE_NAME }}
     secrets: inherit

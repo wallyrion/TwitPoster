@@ -11,6 +11,10 @@ on:
         description: 'The Terraform workspace'
         required: true
         type: string
+    outputs:
+      APP_SERVICE_NAME:
+        description: 'APP_SERVICE_NAME'
+        value: ${{ jobs.infra.outputs.APP_SERVICE_NAME }}
 
 permissions:
   contents: 'read'
@@ -19,6 +23,8 @@ permissions:
 
 jobs:
   infra:
+    outputs:
+      APP_SERVICE_NAME: ${{ steps.fetch_app_service_name.outputs.APP_SERVICE_NAME }}
     environment: ${{ inputs.workspace }}
     runs-on: ubuntu-latest
     steps:
@@ -61,12 +67,62 @@ jobs:
             -backend-config="subscription_id=${{ secrets.ARM_SUBSCRIPTION_ID }}" \
             -backend-config="tenant_id=${{ secrets.ARM_TENANT_ID }}" \
         working-directory:  ./terraform
+
+      - name: Select Terraform Workspace
+        run: |
+          terraform workspace select ${{ inputs.workspace }}" || terraform workspace new ${{ inputs.workspace }}"
+        working-directory: ./terraform
         
       - name: Plan Terraform
         id: plan
-        run: terraform plan -var="environment=qa" -out=tfplan
+        run: terraform plan -var="environment=${{ inputs.environment }}"" -out=tfplan
         working-directory: ./terraform
 
-    
+      - name: 'Apply Terraform'
+        run: terraform apply -auto-approve tfplan
+        working-directory: ./terraform
+        
+      - name: 'Fetch App Service Name'
+        id: fetch_app_service_name
+        run: echo "APP_SERVICE_NAME=$(terraform output -raw app_service_name)" >> $GITHUB_OUTPUT
+        working-directory: ./terraform
 
+      - name: 'Fetch Publish Profile Command'
+        id: fetch_publish_profile
+        run: |
+          # Debugging output to see the command being run
+          echo "Running terraform output command"
+          terraform output -raw publish_profile_command
+
+          # Fetch the publish profile command from Terraform output
+          PUBLISH_PROFILE_COMMAND=$(terraform output -raw publish_profile_command)
+
+          # Debugging output to see the command fetched from Terraform
+          echo "Fetched Publish Profile Command: $PUBLISH_PROFILE_COMMAND"
+
+          # Execute the fetched command and save the output to a file
+          echo "Executing Publish Profile Command"
+          eval $PUBLISH_PROFILE_COMMAND > publish_profile.xml
+
+          # Debugging output to check the contents of the publish profile file
+          echo "Contents of publish_profile.xml:"
+          cat publish_profile.xml
+
+          # Mask the contents of the publish profile file
+          echo "::add-mask::$(cat publish_profile.xml)"
+
+          # Set the environment variable with the contents of the publish profile file
+          echo "PUBLISH_PROFILE_CONTENT=$(cat publish_profile.xml)" >> $GITHUB_ENV
+        working-directory: ./terraform
+
+      - name: 'Install GitHub CLI'
+        run: sudo apt-get install -y gh
+
+      - name: 'Set GitHub Secret'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN_SECRETS_MANIPULATOR }}
+        run: |
+          echo "Setting GitHub Secret TEST_APP_PUBLISH_PROFILE"
+          SECRET_CONTENT=$(cat ./terraform/publish_profile.xml)
+          gh secret set TEST_APP_PUBLISH_PROFILE --body "$SECRET_CONTENT" --env ${{ inputs.environment }}
     
