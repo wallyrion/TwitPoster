@@ -189,11 +189,23 @@ jobs:
     
   deploy_qa_full:
     name: 'Full qa deployment'
-    needs: [ deploy_dev_full ]
+    needs: [detect_changes, deploy_dev_full ]
     uses: ./.github/workflows/shared.deployment.yml
     with:
       workspace: qa
       environment: qa
+      deploy_twitposter: ${{ needs.detect_changes.outputs.build_twitposter}}
+      deploy_email_sender: ${{ needs.detect_changes.outputs.build_email_sender}}
+      deploy_functions: ${{ needs.detect_changes.outputs.build_functions }}
+    secrets: inherit
+    
+  deploy_prod_full:
+    name: 'Full prod deployment'
+    needs: [detect_changes, deploy_qa_full ]
+    uses: ./.github/workflows/shared.deployment.yml
+    with:
+      workspace: production
+      environment: production
       deploy_twitposter: ${{ needs.detect_changes.outputs.build_twitposter}}
       deploy_email_sender: ${{ needs.detect_changes.outputs.build_email_sender}}
       deploy_functions: ${{ needs.detect_changes.outputs.build_functions }}
