@@ -165,6 +165,9 @@ jobs:
         with:
           gh-token: ${{ secrets.GITHUB_TOKEN }}
           ignore-skipped: 'true'
+          interval: '3000'
+          no-max-ttl: 'true'
+          ttl: '60'
           jobs: |
             build_twitposter
             build_email_sender

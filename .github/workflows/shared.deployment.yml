@@ -53,7 +53,7 @@ jobs:
     secrets: inherit
   
   deploy_twitposter:
-    if: ${{ inputs.deploy_twitposter == 'true' }}
+    if: ${{ inputs.deploy_twitposter }}
     name: 'Twitposter [${{ inputs.environment }}]'
     needs: [ infra ]
     uses: ./.github/workflows/shared-twitposter-deploy.yml
