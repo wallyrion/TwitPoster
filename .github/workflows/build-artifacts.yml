@@ -113,3 +113,28 @@ jobs:
 
       - name: Docker Push
         run: docker push ${{ env.twitposter_emailsender_image }}
+        
+  build_infra:
+    name: 'Terraform copy artifacts'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 'Checkout GitHub Actions'
+        uses: actions/checkout@v4
+        
+      - name: Upload terraform artifacts
+        id: upload-artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: terraform-artifacts
+          path: ./terraform
+          
+          
+  deploy_dev_infa:
+    name: 'Deploy Terraform'
+    needs: build_infra
+    uses: ./.github/workflows/shared-deploy.yml
+    with:
+      workspace: dev
+      environment: dev
+    secrets: inherit
