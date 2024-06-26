@@ -42,5 +42,5 @@ jobs:
         run: |
           curl -X POST $WEBHOOK_URL
         env:
-          WEBHOOK_URL: ${{ secrets.AZURE_WEBHOOK_URL_TWITPOSTER }}
+          WEBHOOK_URL: ${{ secrets.TEST_APP_PUBLISH_PROFILE }}
         shell: bashraform@v3
