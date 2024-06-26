@@ -37,7 +37,7 @@ public class Functions(ILoggerFactory loggerFactory, BlobServiceClient blobServi
         }
     }
 
-    private async Task ResizeImage0(Stream stream, Stream blob)
+    private static async Task ResizeImage0(Stream stream, Stream blob)
     {
         const int size = 200;
         const int quality = 20;
