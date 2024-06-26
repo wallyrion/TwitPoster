@@ -1,4 +1,4 @@
-name: Build artifacts
+name: Full deployment Infra + Apps
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -162,12 +162,6 @@ jobs:
     needs: [detect_changes]
     runs-on: ubuntu-latest
     steps:
-      - name: 'print outputs'
-        run: |
-            echo "build_twitposter: ${{ needs.detect_changes.outputs.build_twitposter }}"
-            echo "build_email_sender: ${{ needs.detect_changes.outputs.build_email_sender }}"
-            echo "build_functions: ${{ needs.detect_changes.outputs.build_functions }}"
-      
       - name: 'Wait for build'
         uses: yogeshlonkar/wait-for-jobs@v0
         with:
