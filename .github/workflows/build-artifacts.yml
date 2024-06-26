@@ -136,8 +136,8 @@ jobs:
     needs: build_infra
     uses: ./.github/workflows/shared-deploy.yml
     with:
-      workspace: first
-      environment: first
+      workspace: dev
+      environment: dev
     secrets: inherit
     
   deploy_dev_twitposter:
@@ -145,7 +145,7 @@ jobs:
     needs: [deploy_dev_infa, build_twitposter]
     uses: ./.github/workflows/shared-twitposter-deploy.yml
     with:
-      environment: first
+      environment: dev
       twitposter_image: 'ghcr.io/wallyrion/twitposter:${{github.sha}}'
       APP_SERVICE_NAME: ${{ needs.deploy_dev_infa.outputs.APP_SERVICE_NAME }}
     secrets: inherit
@@ -155,7 +155,7 @@ jobs:
     needs: [ deploy_dev_infa, build_email_sender ]
     uses: ./.github/workflows/shared-twitposter-emailsender-deploy.yml
     with:
-      environment: first
+      environment: dev
       image: 'ghcr.io/wallyrion/twitposter-emailsender:${{github.sha}}'
       APP_SERVICE_NAME: ${{ needs.deploy_dev_infa.outputs.APP_SERVICE_NAME_EMAIL_SENDER }}
     secrets: inherit
@@ -165,8 +165,8 @@ jobs:
     needs: deploy_dev_infa
     uses: ./.github/workflows/shared-deploy.yml
     with:
-      workspace: second
-      environment: second
+      workspace: prod
+      environment: prod
     secrets: inherit
 
   deploy_qa_twitposter:
@@ -174,7 +174,7 @@ jobs:
     needs: [ deploy_dev_twitposter, deploy_qa_infra ]
     uses: ./.github/workflows/shared-twitposter-deploy.yml
     with:
-      environment: second
+      environment: prod
       twitposter_image: 'ghcr.io/wallyrion/twitposter:${{github.sha}}'
       APP_SERVICE_NAME: ${{ needs.deploy_qa_infra.outputs.APP_SERVICE_NAME }}
     secrets: inherit
