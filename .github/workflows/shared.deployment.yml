@@ -46,7 +46,6 @@ permissions:
 jobs:
   infra:
     name: 'Terraform [${{ inputs.environment }}]'
-    needs: build_infra
     uses: ./.github/workflows/shared-deploy.yml
     with:
       workspace: ${{ inputs.workspace }}
