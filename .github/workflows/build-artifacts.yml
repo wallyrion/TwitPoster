@@ -18,6 +18,7 @@ env:
   twitposter_image: 'ghcr.io/wallyrion/twitposter:${{github.sha}}'
   twitposter_emailsender_image: 'ghcr.io/wallyrion/twitposter-emailsender:${{github.sha}}'
 
+
 jobs:
   detect_changes:
     outputs:
