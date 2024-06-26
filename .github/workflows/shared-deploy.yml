@@ -85,9 +85,9 @@ jobs:
         
       - name: 'Fetch App Service Name'
         id: fetch_app_service_name
-        run: echo |
-          "APP_SERVICE_NAME=$(terraform output -raw app_service_name)" >> $GITHUB_OUTPUT
-          "APP_SERVICE_NAME_EMAIL_SENDER=$(terraform output -raw emailsender_app_service_name)" >> $GITHUB_OUTPUT
+        run: |
+          echo "APP_SERVICE_NAME=$(terraform output -raw app_service_name)" >> $GITHUB_OUTPUT
+          echo "APP_SERVICE_NAME_EMAIL_SENDER=$(terraform output -raw emailsender_app_service_name)" >> $GITHUB_OUTPUT
         working-directory: ./terraform
 
       - name: 'Fetch Publish Profile Command'
