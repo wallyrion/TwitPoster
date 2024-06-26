@@ -34,7 +34,6 @@ jobs:
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v3
         with:
-          app-name: ${{ inputs.APP_SERVICE_NAME }}
           publish-profile: ${{ secrets.TEST_APP_PUBLISH_PROFILE }}
           images: ${{ inputs.twitposter_image }}
 
