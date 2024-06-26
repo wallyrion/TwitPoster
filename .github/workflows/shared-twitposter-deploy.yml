@@ -35,7 +35,7 @@ jobs:
         uses: azure/webapps-deploy@v3
         with:
           app-name: ${{ inputs.APP_SERVICE_NAME }}
-          publish-profile: ${{ secrets.TEST_AZURE_PUBLISH_PROFILE_TWITPOSTER }}
+          publish-profile: ${{ secrets.TEST_APP_PUBLISH_PROFILE }}
           images: ${{ inputs.twitposter_image }}
 
       - name: Trigger Azure WebHook
