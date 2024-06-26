@@ -192,7 +192,7 @@ jobs:
     needs: [detect_changes, deploy_dev_full ]
     uses: ./.github/workflows/shared.deployment.yml
     with:
-      workspace: stage1
+      workspace: s2
       environment: stage
       deploy_twitposter: ${{ needs.detect_changes.outputs.build_twitposter}}
       deploy_email_sender: ${{ needs.detect_changes.outputs.build_email_sender}}
