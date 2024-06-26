@@ -1,0 +1,52 @@
+name: Terraform build
+
+on:
+  pull_request:
+    branches: ["master"]
+    paths:
+      - "terraform/**"
+      - ".github/workflows/infrastructure.deploy.yml"
+      - ".github/workflows/infrastructure.build.yml"
+
+permissions:
+  contents: 'read'
+  packages: 'write'
+
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 'Checkout Code'
+        uses: actions/checkout@v4
+
+      - name: 'Setup Terraform'
+        uses: hashicorp/setup-terraform@v3
+
+      - name: 'Login to Azure'
+        uses: azure/login@v2
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: 'Initialize Terraform'
+        run: |
+          terraform init \
+            -backend-config="resource_group_name=tfstate-rg" \
+            -backend-config="storage_account_name=tfstate12345" \
+            -backend-config="container_name=tfstate" \
+            -backend-config="key=terraform.tfstate" \
+            -backend-config="client_id=${{ secrets.ARM_CLIENT_ID }}" \
+            -backend-config="client_secret=${{ secrets.ARM_CLIENT_SECRET }}" \
+            -backend-config="subscription_id=${{ secrets.ARM_SUBSCRIPTION_ID }}" \
+            -backend-config="tenant_id=${{ secrets.ARM_TENANT_ID }}" \
+        working-directory:  ./terraform
+
+      - name: Select Terraform Workspace
+        run: |
+          terraform workspace select dev || terraform workspace new dev
+        working-directory: ./terraform
+        
+      - name: Plan Terraform
+        id: plan
+        run: terraform plan -var="environment=dev" -out=tfplan
+        working-directory: ./terraform

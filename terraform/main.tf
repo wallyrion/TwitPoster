@@ -18,6 +18,14 @@ resource "azurerm_resource_group" "rg" {
   location = "East US"
 }
 
+resource "azurerm_service_plan" "function_app_plan" {
+  name                = "twitposter-${var.environment}-function-app-plan"
+  location            = azurerm_resource_group.rg.location
+  resource_group_name = azurerm_resource_group.rg.name
+  os_type             = "Linux"
+  sku_name            = "Y1"
+}
+
 resource "azurerm_storage_account" "storage" {
   name                     = "twitpostersa${var.environment}"
   resource_group_name      = azurerm_resource_group.rg.name
@@ -85,14 +93,6 @@ resource "azurerm_service_plan" "asp" {
 }
 
 
-
-resource "azurerm_service_plan" "function_app_plan" {
-  name                = "twitposter-${var.environment}-function-app-plan"
-  location            = azurerm_resource_group.rg.location
-  resource_group_name = azurerm_resource_group.rg.name
-  os_type             = "Linux"
-  sku_name            = "Y1"
-}
 
 # Define Application Insights
 resource "azurerm_application_insights" "function_app_insights" {
