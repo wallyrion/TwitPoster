@@ -25,7 +25,6 @@ permissions:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    needs: build
     environment:
       name: ${{ inputs.environment }}
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}/swagger/index.html
