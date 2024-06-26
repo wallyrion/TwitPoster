@@ -16,6 +16,8 @@ permissions:
 env:
   twitposter_image: 'ghcr.io/wallyrion/twitposter:${{github.sha}}'
   twitposter_emailsender_image: 'ghcr.io/wallyrion/twitposter-emailsender:${{github.sha}}'
+  dev_env_name: 'development'
+  prod_env_name: 'production'
 
 jobs:
   detect_changes:
@@ -136,8 +138,8 @@ jobs:
     needs: build_infra
     uses: ./.github/workflows/shared-deploy.yml
     with:
-      workspace: dev
-      environment: dev
+      workspace: ${{env.dev_env_name}}
+      environment: ${{env.dev_env_name}}
     secrets: inherit
     
   deploy_dev_twitposter:
@@ -145,7 +147,7 @@ jobs:
     needs: [deploy_dev_infa, build_twitposter]
     uses: ./.github/workflows/shared-twitposter-deploy.yml
     with:
-      environment: dev
+      environment: ${{env.dev_env_name}}
       twitposter_image: 'ghcr.io/wallyrion/twitposter:${{github.sha}}'
       APP_SERVICE_NAME: ${{ needs.deploy_dev_infa.outputs.APP_SERVICE_NAME }}
     secrets: inherit
@@ -155,26 +157,36 @@ jobs:
     needs: [ deploy_dev_infa, build_email_sender ]
     uses: ./.github/workflows/shared-twitposter-emailsender-deploy.yml
     with:
-      environment: dev
+      environment: ${{env.dev_env_name}}
       image: 'ghcr.io/wallyrion/twitposter-emailsender:${{github.sha}}'
       APP_SERVICE_NAME: ${{ needs.deploy_dev_infa.outputs.APP_SERVICE_NAME_EMAIL_SENDER }}
     secrets: inherit
     
-  deploy_qa_infra:
-    name: 'Terraform QA deployment'
+  deploy_prod_infra:
+    name: 'Terraform prod deployment'
     needs: deploy_dev_infa
     uses: ./.github/workflows/shared-deploy.yml
     with:
-      workspace: prod
-      environment: prod
+      workspace: ${{env.prod_env_name}}
+      environment: ${{env.prod_env_name}}
     secrets: inherit
 
-  deploy_qa_twitposter:
-    name: 'Twitposter app qa deployment'
-    needs: [ deploy_dev_twitposter, deploy_qa_infra ]
+  deploy_prod_twitposter:
+    name: 'Twitposter app prod deployment'
+    needs: [ deploy_dev_twitposter, deploy_prod_infra ]
     uses: ./.github/workflows/shared-twitposter-deploy.yml
     with:
-      environment: prod
+      environment: ${{env.prod_env_name}}
       twitposter_image: 'ghcr.io/wallyrion/twitposter:${{github.sha}}'
-      APP_SERVICE_NAME: ${{ needs.deploy_qa_infra.outputs.APP_SERVICE_NAME }}
+      APP_SERVICE_NAME: ${{ needs.deploy_prod_infra.outputs.APP_SERVICE_NAME }}
+    secrets: inherit
+    
+  deploy_prod_email_sender:
+    name: 'EmailSender app prod deployment'
+    needs: [ deploy_prod_infra, deploy_dev_email_sender ]
+    uses: ./.github/workflows/shared-twitposter-emailsender-deploy.yml
+    with:
+      environment: ${{env.prod_env_name}}
+      image: 'ghcr.io/wallyrion/twitposter-emailsender:${{github.sha}}'
+      APP_SERVICE_NAME: ${{ needs.deploy_prod_infra.outputs.APP_SERVICE_NAME_EMAIL_SENDER }}
     secrets: inherit

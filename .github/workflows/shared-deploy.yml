@@ -79,7 +79,7 @@ jobs:
         
       - name: Plan Terraform
         id: plan
-        run: terraform plan -var="environment=${{ inputs.environment }}" -out=tfplan
+        run: terraform plan -var="environment=${{ inputs.workspace }}" -out=tfplan
         working-directory: ./terraform
 
       - name: 'Apply Terraform'
