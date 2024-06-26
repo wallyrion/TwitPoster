@@ -90,6 +90,11 @@ resource "azurerm_service_plan" "asp" {
   resource_group_name = azurerm_resource_group.rg.name
   os_type             = "Linux"
   sku_name            = "F1"
+
+  depends_on = [
+    azurerm_service_plan.function_app_plan,
+    azurerm_linux_function_app.functionapp
+  ]
 }
 
 
