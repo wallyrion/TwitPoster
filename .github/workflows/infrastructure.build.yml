@@ -15,8 +15,6 @@ permissions:
 
 jobs:
   build:
-    outputs:
-
     runs-on: ubuntu-latest
     steps:
       - name: 'Checkout Code'
