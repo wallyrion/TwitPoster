@@ -27,7 +27,6 @@ permissions:
   contents: 'read'
   packages: 'write'
 
-
 jobs:
   infra:
     outputs:
