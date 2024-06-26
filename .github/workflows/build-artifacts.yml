@@ -6,7 +6,7 @@ concurrency:
 
 on:
   push:
-    branches: ["master", "feature/terraform-env"]
+    branches: ["master", "feature/actions-refactor-1"]
   workflow_dispatch:
 
 permissions:
