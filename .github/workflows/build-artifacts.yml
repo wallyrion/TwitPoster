@@ -162,6 +162,12 @@ jobs:
     needs: [detect_changes]
     runs-on: ubuntu-latest
     steps:
+      - name: 'print outputs'
+        run: |
+            echo "build_twitposter: ${{ needs.detect_changes.outputs.build_twitposter }}"
+            echo "build_email_sender: ${{ needs.detect_changes.outputs.build_email_sender }}"
+            echo "build_functions: ${{ needs.detect_changes.outputs.build_functions }}"
+      
       - name: 'Wait for build'
         uses: yogeshlonkar/wait-for-jobs@v0
         with:
@@ -182,9 +188,9 @@ jobs:
     with:
       workspace: development
       environment: dev
-      deploy_twitposter: ${{ needs.detect_changes.outputs.build_twitposter == true}}
-      deploy_email_sender: ${{ needs.detect_changes.outputs.build_email_sender == 'true'}}
-      deploy_functions: ${{ needs.detect_changes.outputs.build_functions == 'true'}}
+      deploy_twitposter: ${{ needs.detect_changes.outputs.build_twitposter }}
+      deploy_email_sender: ${{ needs.detect_changes.outputs.build_email_sender}}
+      deploy_functions: ${{ needs.detect_changes.outputs.build_functions}}
     secrets: inherit
     
   deploy_qa_full:
@@ -194,7 +200,7 @@ jobs:
     with:
       workspace: qa
       environment: qa
-      deploy_twitposter: ${{ needs.detect_changes.outputs.build_twitposter == 'true'}}
-      deploy_email_sender: ${{ needs.detect_changes.outputs.build_email_sender == 'true'}}
-      deploy_functions: ${{ needs.detect_changes.outputs.build_functions == 'true'}}
+      deploy_twitposter: ${{ needs.detect_changes.outputs.build_twitposter}}
+      deploy_email_sender: ${{ needs.detect_changes.outputs.build_email_sender}}
+      deploy_functions: ${{ needs.detect_changes.outputs.build_functions }}
     secrets: inherit

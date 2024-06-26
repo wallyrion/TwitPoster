@@ -6,17 +6,17 @@ on:
       deploy_twitposter:
         description: 'Indicates if the Twitposter app should be deployed'
         required: false
-        type: boolean
+        type: string
         
       deploy_email_sender:
         description: 'Indicates if the Email sender app should be deployed'
         required: false
-        type: boolean
+        type: string
         
       deploy_functions:
         description: 'Indicates if the functions app should be deployed'
         required: false
-        type: boolean
+        type: string
       
       environment:
         description: 'The environment to deploy to'
