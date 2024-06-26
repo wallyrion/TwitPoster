@@ -166,6 +166,7 @@ jobs:
     secrets: inherit
   
   deploy_dev_infa:
+    if: false
     name: 'Terraform dev deployment'
     needs: build_infra
     uses: ./.github/workflows/shared-deploy.yml
