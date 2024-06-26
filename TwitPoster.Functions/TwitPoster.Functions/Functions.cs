@@ -35,7 +35,6 @@ public class Functions(ILoggerFactory loggerFactory, BlobServiceClient blobServi
 
             throw;
         }
-        // Upload the thumbnail to the "profile-thumbnails" container
     }
 
     private async Task ResizeImage0(Stream stream, Stream blob)
