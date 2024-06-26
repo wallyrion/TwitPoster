@@ -1,21 +1,23 @@
-name: Build artifacts
+name: Full deployment Infra + Apps
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 on:
   push:
-    branches: ["master", "feature/terraform-env"]
+    branches: ["master", "feature/actions-refactor-1"]
   workflow_dispatch:
 
 permissions:
   contents: 'read'
   packages: 'write'
+  actions: read
 
 env:
   twitposter_image: 'ghcr.io/wallyrion/twitposter:${{github.sha}}'
   twitposter_emailsender_image: 'ghcr.io/wallyrion/twitposter-emailsender:${{github.sha}}'
+
 
 jobs:
   detect_changes:
@@ -76,7 +78,7 @@ jobs:
         run: docker push ${{ env.twitposter_image }}
         
   build_email_sender:
-    if: ${{ needs.detect_changes.outputs.build_email_sender == 'true' }}
+    if: ${{ needs.detect_changes.outputs.build_email_sender == 'true'}}
     needs: detect_changes
     runs-on: ubuntu-latest
     steps:
@@ -155,78 +157,56 @@ jobs:
           name: terraform-artifacts
           path: ./terraform    
           
-  deploy_dev_infa:
-    name: 'Terraform dev deployment'
-    needs: build_infra
-    uses: ./.github/workflows/shared-deploy.yml
+  
+  wait_for_build:
+    needs: [detect_changes]
+    runs-on: ubuntu-latest
+    steps:
+      - name: 'Wait for build'
+        uses: yogeshlonkar/wait-for-jobs@v0
+        with:
+          gh-token: ${{ secrets.GITHUB_TOKEN }}
+          ignore-skipped: 'true'
+          interval: '3000'
+          no-max-ttl: 'true'
+          ttl: '60'
+          jobs: |
+            build_twitposter
+            build_email_sender
+            build_functions
+  
+  deploy_dev_full:
+    name: 'Full dev deployment'
+    needs: [detect_changes, build_infra, wait_for_build]
+    uses: ./.github/workflows/shared.deployment.yml
     with:
       workspace: development
       environment: dev
+      deploy_twitposter: ${{ needs.detect_changes.outputs.build_twitposter }}
+      deploy_email_sender: ${{ needs.detect_changes.outputs.build_email_sender}}
+      deploy_functions: ${{ needs.detect_changes.outputs.build_functions}}
     secrets: inherit
     
-  deploy_dev_twitposter:
-    name: 'Twitposter app dev deployment'
-    needs: [deploy_dev_infa, build_twitposter]
-    uses: ./.github/workflows/shared-twitposter-deploy.yml
+  deploy_qa_full:
+    name: 'Full qa deployment'
+    needs: [detect_changes, deploy_dev_full ]
+    uses: ./.github/workflows/shared.deployment.yml
     with:
-      environment: dev
-      twitposter_image: 'ghcr.io/wallyrion/twitposter:${{github.sha}}'
-      APP_SERVICE_NAME: ${{ needs.deploy_dev_infa.outputs.APP_SERVICE_NAME }}
+      workspace: stage
+      environment: stage
+      deploy_twitposter: ${{ needs.detect_changes.outputs.build_twitposter}}
+      deploy_email_sender: ${{ needs.detect_changes.outputs.build_email_sender}}
+      deploy_functions: ${{ needs.detect_changes.outputs.build_functions }}
     secrets: inherit
     
-  deploy_dev_email_sender:
-    name: 'EmailSender app dev deployment'
-    needs: [ deploy_dev_infa, build_email_sender ]
-    uses: ./.github/workflows/shared-twitposter-emailsender-deploy.yml
-    with:
-      environment: dev
-      image: 'ghcr.io/wallyrion/twitposter-emailsender:${{github.sha}}'
-      APP_SERVICE_NAME: ${{ needs.deploy_dev_infa.outputs.APP_SERVICE_NAME_EMAIL_SENDER }}
-    secrets: inherit
-    
-  deploy_dev_functions:
-    name: 'Functions app dev deployment'
-    needs: [ deploy_dev_infa, build_functions ]
-    uses: ./.github/workflows/shared-functions-deploy.yml
-    with:
-      environment: dev
-      APP_SERVICE_NAME: ${{ needs.deploy_dev_infa.outputs.APP_SERVICE_NAME_FUNCTIONS }}
-    secrets: inherit
-    
-  deploy_prod_infra:
-    name: 'Terraform prod deployment'
-    needs: deploy_dev_infa
-    uses: ./.github/workflows/shared-deploy.yml
+  deploy_prod_full:
+    name: 'Full prod deployment'
+    needs: [detect_changes, deploy_qa_full ]
+    uses: ./.github/workflows/shared.deployment.yml
     with:
       workspace: production
-      environment: prod
-    secrets: inherit
-
-  deploy_prod_twitposter:
-    name: 'Twitposter app prod deployment'
-    needs: [ deploy_dev_twitposter, deploy_prod_infra ]
-    uses: ./.github/workflows/shared-twitposter-deploy.yml
-    with:
-      environment: prod
-      twitposter_image: 'ghcr.io/wallyrion/twitposter:${{github.sha}}'
-      APP_SERVICE_NAME: ${{ needs.deploy_prod_infra.outputs.APP_SERVICE_NAME }}
-    secrets: inherit
-    
-  deploy_prod_email_sender:
-    name: 'EmailSender app prod deployment'
-    needs: [ deploy_prod_infra, deploy_dev_email_sender ]
-    uses: ./.github/workflows/shared-twitposter-emailsender-deploy.yml
-    with:
-      environment: prod
-      image: 'ghcr.io/wallyrion/twitposter-emailsender:${{github.sha}}'
-      APP_SERVICE_NAME: ${{ needs.deploy_prod_infra.outputs.APP_SERVICE_NAME_EMAIL_SENDER }}
-    secrets: inherit
-    
-  deploy_prod_functions:
-    name: 'Functions app prod deployment'
-    needs: [ deploy_prod_infra, build_functions ]
-    uses: ./.github/workflows/shared-functions-deploy.yml
-    with:
-      environment: dev
-      APP_SERVICE_NAME: ${{ needs.deploy_prod_infra.outputs.APP_SERVICE_NAME_FUNCTIONS }}
+      environment: production
+      deploy_twitposter: ${{ needs.detect_changes.outputs.build_twitposter}}
+      deploy_email_sender: ${{ needs.detect_changes.outputs.build_email_sender}}
+      deploy_functions: ${{ needs.detect_changes.outputs.build_functions }}
     secrets: inherit

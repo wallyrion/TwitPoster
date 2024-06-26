@@ -1,0 +1,74 @@
+name: Deploy environment
+
+on:
+  workflow_call:
+    inputs:
+      deploy_twitposter:
+        description: 'Indicates if the Twitposter app should be deployed'
+        required: false
+        type: string
+        
+      deploy_email_sender:
+        description: 'Indicates if the Email sender app should be deployed'
+        required: false
+        type: string
+        
+      deploy_functions:
+        description: 'Indicates if the functions app should be deployed'
+        required: false
+        type: string
+      
+      environment:
+        description: 'The environment to deploy to'
+        required: true
+        type: string
+      workspace:
+        description: 'The Terraform workspace'
+        required: true
+        type: string
+
+permissions:
+  contents: 'read'
+  packages: 'write'
+
+
+jobs:
+  infra:
+    name: 'Terraform [${{ inputs.environment }}]'
+    uses: ./.github/workflows/infrastructure.deploy.yml
+    with:
+      workspace: ${{ inputs.workspace }}
+      environment: ${{ inputs.environment }}
+    secrets: inherit
+  
+  deploy_twitposter:
+    if: ${{ inputs.deploy_twitposter == 'true' }}
+    name: 'Twitposter [${{ inputs.environment }}]'
+    needs: [ infra ]
+    uses: ./.github/workflows/shared-twitposter-deploy.yml
+    with:
+      environment: ${{ inputs.environment }}
+      twitposter_image: 'ghcr.io/wallyrion/twitposter:${{github.sha}}'
+      APP_SERVICE_NAME: ${{ needs.infra.outputs.APP_SERVICE_NAME }}
+    secrets: inherit
+    
+  deploy_email_sender:
+    if: ${{ inputs.deploy_email_sender == 'true' }}
+    name: 'EmailSender [${{ inputs.environment }}]'
+    needs: [ infra ]
+    uses: ./.github/workflows/shared-twitposter-emailsender-deploy.yml
+    with:
+      environment: ${{ inputs.environment }}
+      image: 'ghcr.io/wallyrion/twitposter-emailsender:${{github.sha}}'
+      APP_SERVICE_NAME: ${{ needs.infra.outputs.APP_SERVICE_NAME_EMAIL_SENDER }}
+    secrets: inherit
+
+  deploy_dev_functions:
+    if: ${{ inputs.deploy_functions == 'true' }}
+    name: 'Functions app [${{ inputs.environment }}]'
+    needs: [ infra ]
+    uses: ./.github/workflows/shared-functions-deploy.yml
+    with:
+      environment: ${{ inputs.environment }}
+      APP_SERVICE_NAME: ${{ needs.infra.outputs.APP_SERVICE_NAME_FUNCTIONS }}
+    secrets: inherit
