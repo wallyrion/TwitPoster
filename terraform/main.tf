@@ -56,6 +56,13 @@ resource "azurerm_mssql_server" "sqlserver" {
   minimum_tls_version          = "1.2"
 }
 
+resource "azurerm_mssql_firewall_rule" "appServiceIP" {
+  name                = "AllowAccessFromAzure"
+  server_id           = azurerm_mssql_server.sqlserver.id
+  start_ip_address    = "0.0.0.0"
+  end_ip_address      = "0.0.0.0"
+}
+
 resource "azurerm_mssql_database" "sqldatabase" {
   name      = "twitposterdb${var.environment}"
   server_id = azurerm_mssql_server.sqlserver.id
