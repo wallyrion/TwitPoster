@@ -158,15 +158,16 @@ jobs:
           
   
   wait_for_build:
-    name: 'Wait for build'
-    uses: yogeshlonkar/wait-for-jobs@v0
-    with:
-      gh-token: ${{ secrets.GITHUB_TOKEN }}
-      ignore-skipped: 'true'
-      jobs: |
-        build_twitposter
-        build_email_sender
-        build_functions
+    steps:
+      - name: 'Wait for build'
+        uses: yogeshlonkar/wait-for-jobs@v0
+        with:
+          gh-token: ${{ secrets.GITHUB_TOKEN }}
+          ignore-skipped: 'true'
+          jobs: |
+            build_twitposter
+            build_email_sender
+            build_functions
                
   
   deploy_dev_full:
