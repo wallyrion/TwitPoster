@@ -22,6 +22,7 @@ jobs:
     outputs:
       build_twitposter: ${{ steps.changes.outputs.twitposter }}
       build_email_sender: ${{ steps.changes.outputs.email_sender }}
+      build_functions: ${{ steps.changes.outputs.functions }}
     runs-on: ubuntu-latest
 
     steps:
@@ -34,10 +35,8 @@ jobs:
               - './TwitPoster/**'
             email_sender:
               - './TwitPoster.EmailSender/**'
-
-      - if: steps.changes.outputs.temp == 'true'
-        run: |
-          echo "Changes were detected in 'temp/', running the step."
+            functions:
+              - './TwitPoster.Functions/**'
   
   build_twitposter:
     needs: detect_changes
@@ -114,6 +113,30 @@ jobs:
       - name: Docker Push
         run: docker push ${{ env.twitposter_emailsender_image }}
         
+  build_functions:
+    if: ${{ needs.detect_changes.outputs.build_functions == 'true' }}
+    needs: detect_changes
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.x
+
+      - name: Restore dependencies - TwitPoster.EmailSender
+        run: dotnet restore ./TwitPoster.EmailSender
+
+      - name: Build - TwitPoster.EmailSender
+        run: dotnet build --no-restore ./TwitPoster.EmailSender -c Release --output ./functions-output
+
+      - name: Upload terraform artifacts
+        id: upload-artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: functions-artifacts
+          path: ./functions-output
+        
   build_infra:
     name: 'Terraform copy artifacts'
     runs-on: ubuntu-latest
@@ -158,6 +181,14 @@ jobs:
       environment: dev
       image: 'ghcr.io/wallyrion/twitposter-emailsender:${{github.sha}}'
       APP_SERVICE_NAME: ${{ needs.deploy_dev_infa.outputs.APP_SERVICE_NAME_EMAIL_SENDER }}
+    secrets: inherit
+    
+  deploy_dev_functions:
+    name: 'Functions app dev deployment'
+    needs: [ deploy_dev_infa, build_functions ]
+    uses: ./.github/workflows/shared-functions-deploy.yml
+    with:
+      environment: dev
     secrets: inherit
     
   deploy_prod_infra:
