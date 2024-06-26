@@ -163,6 +163,7 @@ jobs:
     with:
       workspace: development
       environment: dev
+      deploy_twitposter: true
     secrets: inherit
   
   deploy_dev_infa:
