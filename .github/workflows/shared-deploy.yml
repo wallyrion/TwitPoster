@@ -32,7 +32,7 @@ jobs:
       - name: Download Artifact
         uses: actions/download-artifact@v4
         with:
-          name: ./terraform
+          name: terraform-artifacts
 
       - name: 'Setup Terraform'
         uses: hashicorp/setup-terraform@v3
@@ -60,7 +60,7 @@ jobs:
             -backend-config="client_secret=${{ secrets.ARM_CLIENT_SECRET }}" \
             -backend-config="subscription_id=${{ secrets.ARM_SUBSCRIPTION_ID }}" \
             -backend-config="tenant_id=${{ secrets.ARM_TENANT_ID }}" \
-        working-directory:  ${{ github.workspace }}/terraform-artifacts
+        working-directory:  ./terraform
 
     
 
