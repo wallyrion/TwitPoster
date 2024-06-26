@@ -124,11 +124,8 @@ jobs:
         with:
           dotnet-version: 8.x
 
-      - name: Restore dependencies - TwitPoster.EmailSender
-        run: dotnet restore ./TwitPoster.Functions
-
-      - name: Build - TwitPoster.EmailSender
-        run: dotnet build '/TwitPoster.Functions/TwitPoster.Functions/TwitPoster.Functions.csproj' --no-restore -c Release --output ./functions-output
+      - name: Build - TwitPoster.Functions
+        run: dotnet build '/TwitPoster.Functions/TwitPoster.Functions/TwitPoster.Functions.csproj' -c Release --output ./functions-output
 
       - name: Upload terraform artifacts
         id: upload-artifact
