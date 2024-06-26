@@ -132,7 +132,7 @@ jobs:
           
           
   deploy_dev_infa:
-    name: 'Deploy Terraform'
+    name: 'Terraform dev deployment'
     needs: build_infra
     uses: ./.github/workflows/shared-deploy.yml
     with:
@@ -141,7 +141,7 @@ jobs:
     secrets: inherit
     
   deploy_dev_twitposter:
-    name: 'Deploy twitposter to dev'
+    name: 'Twitposter app dev deployment'
     needs: [deploy_dev_infa, build_twitposter]
     uses: ./.github/workflows/shared-twitposter-deploy.yml
     with:
@@ -151,7 +151,7 @@ jobs:
     secrets: inherit
     
   deploy_qa_infra:
-    name: 'Deploy Terraform'
+    name: 'Terraform QA deployment'
     needs: deploy_dev_infa
     uses: ./.github/workflows/shared-deploy.yml
     with:
@@ -160,7 +160,7 @@ jobs:
     secrets: inherit
 
   deploy_qa_twitposter:
-    name: 'Deploy twitposter to qa'
+    name: 'Twitposter app qa deployment'
     needs: [ deploy_dev_twitposter, deploy_qa_infra ]
     uses: ./.github/workflows/shared-twitposter-deploy.yml
     with:
