@@ -165,7 +165,7 @@ jobs:
     needs: deploy_dev_infa
     uses: ./.github/workflows/shared-deploy.yml
     with:
-      workspace: prod
+      workspace: production
       environment: prod
     secrets: inherit
 
