@@ -1,4 +1,4 @@
-name: Deploy environment
+name: Deploy terraform infrastructure
 
 on:
   workflow_call:
@@ -39,10 +39,6 @@ jobs:
       - name: 'Checkout Code'
         uses: actions/checkout@v4
 
-      - name: 'Print Current Workspace'
-        run: |
-          echo "Current Workspace: ${{ inputs.workspace }}"
-
       - name: Download Artifact
         uses: actions/download-artifact@v4
         with:
@@ -55,13 +51,6 @@ jobs:
         uses: azure/login@v2
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
-
-      - name: Azure CLI script
-        uses: azure/cli@v2
-        with:
-          azcliversion: latest
-          inlineScript: |
-            az account show
 
       - name: 'Initialize Terraform'
         run: |
@@ -78,7 +67,7 @@ jobs:
 
       - name: Select Terraform Workspace
         run: |
-          terraform workspace select ${{ inputs.workspace }} || terraform workspace new ${{ inputs.workspace }}
+          terraform workspace select -or-create ${{ inputs.workspace }}
         working-directory: ./terraform
         
       - name: Plan Terraform
@@ -106,28 +95,15 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN_SECRETS_MANIPULATOR }}
         run: |
-          # Debugging output to see the command being run
-          echo "Running terraform output command"
           PUBLISH_PROFILE_COMMAND=$(terraform output -raw publish_profile_command)
           PUBLISH_PROFILE_COMMAND_EMAIL_SENDER=$(terraform output -raw emailsender_publish_profile_command)
           PUBLISH_PROFILE_COMMAND_FUNCTIONS=$(terraform output -raw function_app_publish_profile_command)
-          
-          # Debugging output to see the command fetched from Terraform
-          echo "Fetched Publish Profile Command: $PUBLISH_PROFILE_COMMAND"
-          echo "Fetched Publish Profile Command email sender: $PUBLISH_PROFILE_COMMAND_EMAIL_SENDER"
-      
+    
           # Execute the fetched command and capture the output directly into a variable
           PUBLISH_PROFILE_CONTENT=$(eval "$PUBLISH_PROFILE_COMMAND")
           PUBLISH_PROFILE_CONTENT_EMAIL_SENDER=$(eval "$PUBLISH_PROFILE_COMMAND_EMAIL_SENDER")
           PUBLISH_PROFILE_CONTENT_FUNCTIONS=$(eval "$PUBLISH_PROFILE_COMMAND_FUNCTIONS")
-          
-          # Debugging output to check the content captured
-          echo "Contents of Publish Profile:"
-          echo "$PUBLISH_PROFILE_CONTENT"
-          
-          echo "Contents of Publish Profile: emailsender"
-          echo "$PUBLISH_PROFILE_CONTENT_EMAIL_SENDER"
-          
+
           gh secret set TEST_APP_PUBLISH_PROFILE --body "$PUBLISH_PROFILE_CONTENT" --env ${{ inputs.environment }}
           gh secret set TEST_APP_PUBLISH_PROFILE_EMAIL_SENDER --body "$PUBLISH_PROFILE_CONTENT_EMAIL_SENDER" --env ${{ inputs.environment }}
           gh secret set TEST_APP_PUBLISH_PROFILE_FUNCTIONS --body "$PUBLISH_PROFILE_CONTENT_FUNCTIONS" --env ${{ inputs.environment }}

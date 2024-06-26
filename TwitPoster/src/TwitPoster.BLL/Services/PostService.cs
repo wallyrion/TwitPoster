@@ -117,6 +117,7 @@ public class PostService : IPostService
         return _context.PostLikes.Count(like => like.PostId == postId);
     }
 
+    
     public async Task<int> UnlikePost(int postId)
     {
         var post = await _context.Posts.FindAsync(postId);
