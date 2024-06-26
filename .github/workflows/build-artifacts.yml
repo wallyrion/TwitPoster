@@ -223,3 +223,12 @@ jobs:
       image: 'ghcr.io/wallyrion/twitposter-emailsender:${{github.sha}}'
       APP_SERVICE_NAME: ${{ needs.deploy_prod_infra.outputs.APP_SERVICE_NAME_EMAIL_SENDER }}
     secrets: inherit
+    
+  deploy_prod_functions:
+    name: 'Functions app prod deployment'
+    needs: [ deploy_prod_infra, build_functions ]
+    uses: ./.github/workflows/shared-functions-deploy.yml
+    with:
+      environment: dev
+      APP_SERVICE_NAME: ${{ needs.deploy_prod_infra.outputs.APP_SERVICE_NAME_FUNCTIONS }}
+    secrets: inherit

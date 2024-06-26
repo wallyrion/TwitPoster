@@ -1,114 +1,114 @@
-name: terraform
-
-on:
-  push:
-    branches: ["master", "terraform-init"]
-  workflow_dispatch:
-
-permissions:
-  contents: 'read'
-  packages: 'write'
-
-env:
-  twitposter_image: 'ghcr.io/wallyrion/twitposter:latest'
-
-concurrency:
-  group: ${{ github.workflow }}-infra
-  cancel-in-progress: false
-
-
-jobs:
-  terraform:
-    name: 'Terraform Deploy'
-    runs-on: ubuntu-latest
-    environment: dev
-  
-    steps:
-      - name: 'Checkout GitHub Actions'
-        uses: actions/checkout@v4
-
-      - name: 'Setup Terraform'
-        uses: hashicorp/setup-terraform@v3
-
-      - name: 'Login to Azure'
-        uses: azure/login@v2
-        with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }}
-
-      - name: Azure CLI script
-        uses: azure/cli@v2
-        with:
-          azcliversion: latest
-          inlineScript: |
-            az account show
-
-      - name: 'Initialize Terraform'
-        run: |
-          terraform init \
-            -backend-config="resource_group_name=tfstate-rg" \
-            -backend-config="storage_account_name=tfstate12345" \
-            -backend-config="container_name=tfstate" \
-            -backend-config="key=terraform.tfstate" \
-            -backend-config="client_id=${{ secrets.ARM_CLIENT_ID }}" \
-            -backend-config="client_secret=${{ secrets.ARM_CLIENT_SECRET }}" \
-            -backend-config="subscription_id=${{ secrets.ARM_SUBSCRIPTION_ID }}" \
-            -backend-config="tenant_id=${{ secrets.ARM_TENANT_ID }}" \
-        working-directory: ./terraform
-
-      - name: Select Terraform Workspace
-        run: |
-          terraform workspace select qa || terraform workspace new qa
-        working-directory: ./terraform
-
-      - name: Plan Terraform
-        id: plan
-        run: terraform plan -var="environment=qa" -out=tfplan
-        working-directory: ./terraform
-      
-      - name: 'Apply Terraform'
-        run: terraform apply -auto-approve tfplan
-        working-directory: ./terraform
-
-      - name: 'Fetch App Service Name'
-        id: fetch_app_service_name
-        run: echo "APP_SERVICE_NAME=$(terraform output -raw app_service_name)" >> $GITHUB_ENV
-        working-directory: ./terraform
-
-      - name: 'Fetch Publish Profile Command'
-        id: fetch_publish_profile
-        run: |
-          # Debugging output to see the command being run
-          echo "Running terraform output command"
-          terraform output -raw publish_profile_command
-          
-          # Fetch the publish profile command from Terraform output
-          PUBLISH_PROFILE_COMMAND=$(terraform output -raw publish_profile_command)
-          
-          # Debugging output to see the command fetched from Terraform
-          echo "Fetched Publish Profile Command: $PUBLISH_PROFILE_COMMAND"
-          
-          # Execute the fetched command and save the output to a file
-          echo "Executing Publish Profile Command"
-          eval $PUBLISH_PROFILE_COMMAND > publish_profile.xml
-          
-          # Debugging output to check the contents of the publish profile file
-          echo "Contents of publish_profile.xml:"
-          cat publish_profile.xml
-          
-          # Mask the contents of the publish profile file
-          echo "::add-mask::$(cat publish_profile.xml)"
-          
-          # Set the environment variable with the contents of the publish profile file
-          echo "PUBLISH_PROFILE_CONTENT=$(cat publish_profile.xml)" >> $GITHUB_ENV
-        working-directory: ./terraform
-
-      - name: 'Install GitHub CLI'
-        run: sudo apt-get install -y gh
-    
-      - name: 'Set GitHub Secret'
-        env:
-          GITHUB_TOKEN: ${{ secrets.GH_TOKEN_SECRETS_MANIPULATOR }}
-        run: |
-          echo "Setting GitHub Secret TEST_APP_PUBLISH_PROFILE"
-          SECRET_CONTENT=$(cat ./terraform/publish_profile.xml)
-          gh secret set TEST_APP_PUBLISH_PROFILE --body "$SECRET_CONTENT" --env dev
+#name: terraform
+#
+#on:
+#  push:
+#    branches: ["master", "terraform-init"]
+#  workflow_dispatch:
+#
+#permissions:
+#  contents: 'read'
+#  packages: 'write'
+#
+#env:
+#  twitposter_image: 'ghcr.io/wallyrion/twitposter:latest'
+#
+#concurrency:
+#  group: ${{ github.workflow }}-infra
+#  cancel-in-progress: false
+#
+#
+#jobs:
+#  terraform:
+#    name: 'Terraform Deploy'
+#    runs-on: ubuntu-latest
+#    environment: dev
+#  
+#    steps:
+#      - name: 'Checkout GitHub Actions'
+#        uses: actions/checkout@v4
+#
+#      - name: 'Setup Terraform'
+#        uses: hashicorp/setup-terraform@v3
+#
+#      - name: 'Login to Azure'
+#        uses: azure/login@v2
+#        with:
+#          creds: ${{ secrets.AZURE_CREDENTIALS }}
+#
+#      - name: Azure CLI script
+#        uses: azure/cli@v2
+#        with:
+#          azcliversion: latest
+#          inlineScript: |
+#            az account show
+#
+#      - name: 'Initialize Terraform'
+#        run: |
+#          terraform init \
+#            -backend-config="resource_group_name=tfstate-rg" \
+#            -backend-config="storage_account_name=tfstate12345" \
+#            -backend-config="container_name=tfstate" \
+#            -backend-config="key=terraform.tfstate" \
+#            -backend-config="client_id=${{ secrets.ARM_CLIENT_ID }}" \
+#            -backend-config="client_secret=${{ secrets.ARM_CLIENT_SECRET }}" \
+#            -backend-config="subscription_id=${{ secrets.ARM_SUBSCRIPTION_ID }}" \
+#            -backend-config="tenant_id=${{ secrets.ARM_TENANT_ID }}" \
+#        working-directory: ./terraform
+#
+#      - name: Select Terraform Workspace
+#        run: |
+#          terraform workspace select qa || terraform workspace new qa
+#        working-directory: ./terraform
+#
+#      - name: Plan Terraform
+#        id: plan
+#        run: terraform plan -var="environment=qa" -out=tfplan
+#        working-directory: ./terraform
+#      
+#      - name: 'Apply Terraform'
+#        run: terraform apply -auto-approve tfplan
+#        working-directory: ./terraform
+#
+#      - name: 'Fetch App Service Name'
+#        id: fetch_app_service_name
+#        run: echo "APP_SERVICE_NAME=$(terraform output -raw app_service_name)" >> $GITHUB_ENV
+#        working-directory: ./terraform
+#
+#      - name: 'Fetch Publish Profile Command'
+#        id: fetch_publish_profile
+#        run: |
+#          # Debugging output to see the command being run
+#          echo "Running terraform output command"
+#          terraform output -raw publish_profile_command
+#          
+#          # Fetch the publish profile command from Terraform output
+#          PUBLISH_PROFILE_COMMAND=$(terraform output -raw publish_profile_command)
+#          
+#          # Debugging output to see the command fetched from Terraform
+#          echo "Fetched Publish Profile Command: $PUBLISH_PROFILE_COMMAND"
+#          
+#          # Execute the fetched command and save the output to a file
+#          echo "Executing Publish Profile Command"
+#          eval $PUBLISH_PROFILE_COMMAND > publish_profile.xml
+#          
+#          # Debugging output to check the contents of the publish profile file
+#          echo "Contents of publish_profile.xml:"
+#          cat publish_profile.xml
+#          
+#          # Mask the contents of the publish profile file
+#          echo "::add-mask::$(cat publish_profile.xml)"
+#          
+#          # Set the environment variable with the contents of the publish profile file
+#          echo "PUBLISH_PROFILE_CONTENT=$(cat publish_profile.xml)" >> $GITHUB_ENV
+#        working-directory: ./terraform
+#
+#      - name: 'Install GitHub CLI'
+#        run: sudo apt-get install -y gh
+#    
+#      - name: 'Set GitHub Secret'
+#        env:
+#          GITHUB_TOKEN: ${{ secrets.GH_TOKEN_SECRETS_MANIPULATOR }}
+#        run: |
+#          echo "Setting GitHub Secret TEST_APP_PUBLISH_PROFILE"
+#          SECRET_CONTENT=$(cat ./terraform/publish_profile.xml)
+#          gh secret set TEST_APP_PUBLISH_PROFILE --body "$SECRET_CONTENT" --env dev
