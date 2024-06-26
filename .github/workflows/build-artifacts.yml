@@ -14,13 +14,16 @@ permissions:
   packages: 'write'
 
 env:
-  twitposter_image: 'ghcr.io/wallyrion/twitposter:${{github.ref}}'
+  twitposter_image: 'ghcr.io/wallyrion/twitposter:${{github.sha}}'
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
+
+      - uses: actions/checkout@v4
+        
       - name: Check for changes in specific directory
         id: check_changes
         run: |
@@ -39,7 +42,7 @@ jobs:
         run: |
           echo "Changes were detected in 'some-directory/', running the step."
           # Add your specific commands here
-      - uses: actions/checkout@v4
+     
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
