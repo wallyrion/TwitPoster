@@ -24,24 +24,16 @@ jobs:
 
       - uses: actions/checkout@v4
         
-      - name: Check for changes in specific directory
-        id: check_changes
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            temp:
+              - 'temp/**'
+
+      - if: steps.changes.outputs.temp == 'true'
         run: |
-          echo "Checking for changes in 'some-directory/'"
-          # Set default base ref if not available (for new branches)
-          BASE_REF=${{ github.event.before }} || echo "main"
-          CHANGES_FOUND=false
-          # Check for changes in the directory between commits
-          if git diff --name-only $BASE_REF ${{ github.event.after }} | grep 'some-directory/'; then
-            CHANGES_FOUND=true
-          fi
-          echo "CHANGES_FOUND=$CHANGES_FOUND" >> $GITHUB_ENV
-  
-      - name: Conditional step based on directory changes
-        if: env.CHANGES_FOUND == 'true'
-        run: |
-          echo "Changes were detected in 'some-directory/', running the step."
-          # Add your specific commands here
+          echo "Changes were detected in 'temp/', running the step."
      
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
