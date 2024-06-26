@@ -117,6 +117,8 @@ jobs:
     if: ${{ needs.detect_changes.outputs.build_functions == 'true' }}
     needs: detect_changes
     runs-on: ubuntu-latest
+    env:
+      AZURE_FUNCTIONAPP_PACKAGE_PATH: './TwitPoster.Functions/TwitPoster.Functions'
     steps:
       - uses: actions/checkout@v4
       - name: Setup .NET
@@ -124,15 +126,19 @@ jobs:
         with:
           dotnet-version: 8.x
 
-      - name: Build - TwitPoster.Functions
-        run: dotnet build '/TwitPoster.Functions/TwitPoster.Functions/TwitPoster.Functions.csproj' -c Release --output ./functions-output
-
+      - name: 'Resolve Project Dependencies Using Dotnet'
+        shell: bash
+        run: |
+          pushd './${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}'
+          dotnet build --configuration Release --output ./output
+          popd
+          
       - name: Upload terraform artifacts
         id: upload-artifact
         uses: actions/upload-artifact@v4
         with:
           name: functions-artifacts
-          path: ./functions-output
+          path: './${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}'
         
   build_infra:
     name: 'Terraform copy artifacts'
