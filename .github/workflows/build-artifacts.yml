@@ -7,8 +7,6 @@ concurrency:
 on:
   push:
     branches: ["master", "feature/terraform-env"]
-    paths:
-      - ".github/workflows/TwitPoster.deploy.yml"
   workflow_dispatch:
 
 permissions:
