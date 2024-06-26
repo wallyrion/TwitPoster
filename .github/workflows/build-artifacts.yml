@@ -18,6 +18,8 @@ env:
 
 jobs:
   detect_changes:
+    outputs:
+      build_twitposter: ${{ steps.changes.outputs.temp }}
     runs-on: ubuntu-latest
 
     steps:
@@ -35,7 +37,7 @@ jobs:
   
   build_twitposter:
     needs: detect_changes
-    if: ${{ needs.detect_changes.outputs.temp == 'true' }}
+    if: ${{ needs.detect_changes.outputs.build_twitposter == 'true' }}
     runs-on: ubuntu-latest
     steps:
       - name: Setup .NET
