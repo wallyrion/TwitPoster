@@ -123,27 +123,17 @@ jobs:
         run: |
           # Debugging output to see the command being run
           echo "Running terraform output command"
-          terraform output -raw emailsender_publish_profile_command
-
-          # Fetch the publish profile command from Terraform output
-          PUBLISH_PROFILE_COMMAND=$(terraform output -raw emailsender_publish_profile_command)
-
+          PUBLISH_PROFILE_COMMAND=$(terraform output -raw publish_profile_command)
+          
           # Debugging output to see the command fetched from Terraform
           echo "Fetched Publish Profile Command: $PUBLISH_PROFILE_COMMAND"
-
-          # Execute the fetched command and save the output to a file
-          echo "Executing Publish Profile Command"
-          eval $PUBLISH_PROFILE_COMMAND > publish_profile.emailsender.xml
-
-          # Debugging output to check the contents of the publish profile file
-          echo "Contents of publish_profile.xml:"
-          cat publish_profile.emailsender.xml
-
-          # Mask the contents of the publish profile file
-          echo "::add-mask::$(cat publish_profile.emailsender.xml)"
-
-          # Set the environment variable with the contents of the publish profile file
-          echo "PUBLISH_PROFILE_CONTENT=$(cat publish_profile.xml)" >> $GITHUB_ENV
+      
+          # Execute the fetched command and capture the output directly into a variable
+          PUBLISH_PROFILE_CONTENT=$(eval "$PUBLISH_PROFILE_COMMAND")
+          
+          # Debugging output to check the content captured
+          echo "Contents of Publish Profile:"
+          echo "$PUBLISH_PROFILE_CONTENT"
         working-directory: ./terraform
 
       - name: 'Install GitHub CLI'
