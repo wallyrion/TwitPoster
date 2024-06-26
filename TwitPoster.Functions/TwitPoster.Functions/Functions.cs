@@ -41,7 +41,6 @@ public class Functions(ILoggerFactory loggerFactory, BlobServiceClient blobServi
     {
         const int size = 200;
         const int quality = 20;
-
         using var image = new MagickImage(stream);
 
         image.Resize(size, size);

@@ -26,17 +26,6 @@ on:
         description: 'The Terraform workspace'
         required: true
         type: string
-    outputs:
-      APP_SERVICE_NAME:
-        description: 'APP_SERVICE_NAME'
-        value: ${{ jobs.infra.outputs.APP_SERVICE_NAME }}
-      APP_SERVICE_NAME_EMAIL_SENDER:
-        description: 'APP_SERVICE_NAME_EMAIL_SENDER'
-        value: ${{ jobs.infra.outputs.APP_SERVICE_NAME_EMAIL_SENDER }}
-        
-      APP_SERVICE_NAME_FUNCTIONS:
-        description: 'APP_SERVICE_NAME_EMAIL_SENDER'
-        value: ${{ jobs.infra.outputs.APP_SERVICE_NAME_FUNCTIONS }}
 
 permissions:
   contents: 'read'
@@ -75,6 +64,7 @@ jobs:
     secrets: inherit
 
   deploy_dev_functions:
+    if: ${{ inputs.deploy_functions == 'true' }}
     name: 'Functions app [${{ inputs.environment }}]'
     needs: [ infra ]
     uses: ./.github/workflows/shared-functions-deploy.yml
