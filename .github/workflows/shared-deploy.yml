@@ -29,6 +29,7 @@ jobs:
     outputs:
       APP_SERVICE_NAME: ${{ steps.fetch_app_service_name.outputs.APP_SERVICE_NAME }}
       APP_SERVICE_NAME_EMAIL_SENDER: ${{ steps.fetch_app_service_name.outputs.APP_SERVICE_NAME_EMAIL_SENDER }}
+      APP_SERVICE_NAME_FUNCTIONS: ${{ steps.fetch_app_service_name.outputs.APP_SERVICE_NAME_FUNCTIONS }}
     environment: ${{ inputs.environment }}
     runs-on: ubuntu-latest
     steps:
@@ -91,6 +92,7 @@ jobs:
         run: |
           echo "APP_SERVICE_NAME=$(terraform output -raw app_service_name)" >> $GITHUB_OUTPUT
           echo "APP_SERVICE_NAME_EMAIL_SENDER=$(terraform output -raw emailsender_app_service_name)" >> $GITHUB_OUTPUT
+          echo "APP_SERVICE_NAME_FUNCTIONS=$(terraform output -raw functions_app_service_name)" >> $GITHUB_OUTPUT
         working-directory: ./terraform
 
       - name: 'Install GitHub CLI'

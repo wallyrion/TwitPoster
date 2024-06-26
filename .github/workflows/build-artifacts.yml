@@ -192,6 +192,7 @@ jobs:
     uses: ./.github/workflows/shared-functions-deploy.yml
     with:
       environment: dev
+      APP_SERVICE_NAME: ${{ needs.deploy_dev_infa.outputs.APP_SERVICE_NAME_FUNCTIONS }}
     secrets: inherit
     
   deploy_prod_infra:

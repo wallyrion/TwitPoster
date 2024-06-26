@@ -195,6 +195,10 @@ output "app_service_name" {
   value = azurerm_linux_web_app.appservice.name
 }
 
+output "functions_app_service_name" {
+  value = azurerm_linux_function_app.functionapp.name
+}
+
 output "app_service_default_hostname" {
   value = azurerm_linux_web_app.appservice.default_hostname
 }
