@@ -158,6 +158,7 @@ jobs:
           
   
   wait_for_build:
+    runs-on: ubuntu-latest
     steps:
       - name: 'Wait for build'
         uses: yogeshlonkar/wait-for-jobs@v0
