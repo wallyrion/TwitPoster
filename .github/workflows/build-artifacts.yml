@@ -196,3 +196,4 @@ jobs:
       deploy_twitposter: ${{ needs.detect_changes.outputs.build_twitposter == true}}
       deploy_email_sender: ${{ needs.detect_changes.outputs.build_email_sender == true}}
       deploy_functions: ${{ needs.detect_changes.outputs.build_functions == true}}
+    secrets: inherit
