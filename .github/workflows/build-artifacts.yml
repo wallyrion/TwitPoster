@@ -147,5 +147,5 @@ jobs:
     with:
       environment: dev
       twitposter_image: ${{ env.twitposter_image }}
-      APP_SERVICE_NAME: ${{ deploy_dev_infa.outputs.APP_SERVICE_NAME }}
+      APP_SERVICE_NAME: ${{ jobs.deploy_dev_infa.outputs.APP_SERVICE_NAME }}
     secrets: inherit
