@@ -21,9 +21,9 @@ env:
 jobs:
   detect_changes:
     outputs:
-      build_twitposter: ${{ steps.changes.outputs.twitposter == 'true' }}
-      build_email_sender: ${{ steps.changes.outputs.email_sender  == 'true' }}
-      build_functions: ${{ steps.changes.outputs.functions  == 'true' }}
+      build_twitposter: ${{ steps.changes.outputs.twitposter }}
+      build_email_sender: ${{ steps.changes.outputs.email_sender }}
+      build_functions: ${{ steps.changes.outputs.functions }}
     runs-on: ubuntu-latest
 
     steps:
@@ -41,7 +41,7 @@ jobs:
   
   build_twitposter:
     needs: detect_changes
-    if: ${{ needs.detect_changes.outputs.build_twitposter == true }}
+    if: ${{ needs.detect_changes.outputs.build_twitposter == 'true' }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -77,7 +77,7 @@ jobs:
         run: docker push ${{ env.twitposter_image }}
         
   build_email_sender:
-    if: ${{ needs.detect_changes.outputs.build_email_sender  == true }}
+    if: ${{ needs.detect_changes.outputs.build_email_sender == 'true'}}
     needs: detect_changes
     runs-on: ubuntu-latest
     steps:
@@ -115,7 +115,7 @@ jobs:
         run: docker push ${{ env.twitposter_emailsender_image }}
         
   build_functions:
-    if: ${{ needs.detect_changes.outputs.build_functions  == true }}
+    if: ${{ needs.detect_changes.outputs.build_functions == 'true' }}
     needs: detect_changes
     runs-on: ubuntu-latest
     env:
@@ -181,9 +181,9 @@ jobs:
     with:
       workspace: development
       environment: dev
-      deploy_twitposter: ${{ needs.detect_changes.outputs.build_twitposter == true }}
-      deploy_email_sender: ${{ needs.detect_changes.outputs.build_email_sender == true}}
-      deploy_functions: ${{ needs.detect_changes.outputs.build_functions == true}}
+      deploy_twitposter: ${{ needs.detect_changes.outputs.build_twitposter == 'true' }}
+      deploy_email_sender: ${{ needs.detect_changes.outputs.build_email_sender == 'true'}}
+      deploy_functions: ${{ needs.detect_changes.outputs.build_functions == 'true'}}
     secrets: inherit
     
   deploy_qa_full:
@@ -193,7 +193,7 @@ jobs:
     with:
       workspace: qa
       environment: qa
-      deploy_twitposter: ${{ needs.detect_changes.outputs.build_twitposter == true}}
-      deploy_email_sender: ${{ needs.detect_changes.outputs.build_email_sender == true}}
-      deploy_functions: ${{ needs.detect_changes.outputs.build_functions == true}}
+      deploy_twitposter: ${{ needs.detect_changes.outputs.build_twitposter == 'true'}}
+      deploy_email_sender: ${{ needs.detect_changes.outputs.build_email_sender == 'true'}}
+      deploy_functions: ${{ needs.detect_changes.outputs.build_functions == 'true'}}
     secrets: inherit
