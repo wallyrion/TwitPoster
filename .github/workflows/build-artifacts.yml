@@ -150,6 +150,16 @@ jobs:
       APP_SERVICE_NAME: ${{ needs.deploy_dev_infa.outputs.APP_SERVICE_NAME }}
     secrets: inherit
     
+  deploy_dev_email_sender:
+    name: 'EmailSender app dev deployment'
+    needs: [ deploy_dev_infa, build_email_sender ]
+    uses: ./.github/workflows/shared-twitposter-emailsender-deploy.yml
+    with:
+      environment: first
+      image: 'ghcr.io/wallyrion/twitposter-emailsender:${{github.sha}}'
+      APP_SERVICE_NAME: ${{ needs.deploy_dev_infa.outputs.APP_SERVICE_NAME_EMAIL_SENDER }}
+    secrets: inherit
+    
   deploy_qa_infra:
     name: 'Terraform QA deployment'
     needs: deploy_dev_infa

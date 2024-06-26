@@ -7,7 +7,7 @@ on:
         description: 'The environment to deploy to'
         required: true
         type: string
-      twitposter_image:
+      image:
         description: 'The image to deploy to'
         required: true
         type: string
@@ -35,13 +35,13 @@ jobs:
         uses: azure/webapps-deploy@v3
         with:
           app-name: ${{ inputs.APP_SERVICE_NAME }}
-          publish-profile: ${{ secrets.TEST_APP_PUBLISH_PROFILE }}
-          images: ${{ inputs.twitposter_image }}
+          publish-profile: ${{ secrets.TEST_APP_PUBLISH_PROFILE_EMAIL_SENDER }}
+          images: ${{ inputs.image }}
 
       - name: Trigger Azure WebHook
         if: env.WEBHOOK_URL != ''
         run: |
           curl -X POST $WEBHOOK_URL
         env:
-          WEBHOOK_URL: ${{ secrets.AZURE_WEBHOOK_URL_TWITPOSTER }}
+          WEBHOOK_URL: ${{ secrets.AZURE_WEBHOOK_URL_TWITPOSTER_EMAIL_SENDER }}
         shell: bashraform@v3

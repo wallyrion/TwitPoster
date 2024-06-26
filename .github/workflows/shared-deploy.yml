@@ -15,6 +15,9 @@ on:
       APP_SERVICE_NAME:
         description: 'APP_SERVICE_NAME'
         value: ${{ jobs.infra.outputs.APP_SERVICE_NAME }}
+      APP_SERVICE_NAME_EMAIL_SENDER:
+        description: 'APP_SERVICE_NAME_EMAIL_SENDER'
+        value: ${{ jobs.infra.outputs.APP_SERVICE_NAME_EMAIL_SENDER }}
 
 permissions:
   contents: 'read'
