@@ -34,5 +34,5 @@ jobs:
         id: fa
         with:
           app-name: ${{ inputs.APP_SERVICE_NAME }}
-          package: './output'
+          package: '.'
           publish-profile: ${{ secrets.TEST_APP_PUBLISH_PROFILE_FUNCTIONS}}
