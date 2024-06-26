@@ -70,7 +70,7 @@ jobs:
 
       - name: Select Terraform Workspace
         run: |
-          terraform workspace select ${{ inputs.workspace }}" || terraform workspace new ${{ inputs.workspace }}"
+          terraform workspace select ${{ inputs.workspace }} || terraform workspace new ${{ inputs.workspace }}
         working-directory: ./terraform
         
       - name: Plan Terraform
