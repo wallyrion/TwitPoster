@@ -53,7 +53,7 @@ jobs:
     secrets: inherit
     
   deploy_email_sender:
-    if: ${{ inputs.deploy_email_sender }}
+    if: ${{ inputs.deploy_email_sender == 'true' }}
     name: 'EmailSender [${{ inputs.environment }}]'
     needs: [ infra ]
     uses: ./.github/workflows/shared-twitposter-emailsender-deploy.yml
