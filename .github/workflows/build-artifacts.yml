@@ -41,7 +41,7 @@ jobs:
   
   build_twitposter:
     needs: detect_changes
-    if: ${{ needs.detect_changes.outputs.build_twitposter }}
+    if: ${{ needs.detect_changes.outputs.build_twitposter == true }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -77,7 +77,7 @@ jobs:
         run: docker push ${{ env.twitposter_image }}
         
   build_email_sender:
-    if: ${{ needs.detect_changes.outputs.build_email_sender }}
+    if: ${{ needs.detect_changes.outputs.build_email_sender  == true }}
     needs: detect_changes
     runs-on: ubuntu-latest
     steps:
@@ -115,7 +115,7 @@ jobs:
         run: docker push ${{ env.twitposter_emailsender_image }}
         
   build_functions:
-    if: ${{ needs.detect_changes.outputs.build_functions }}
+    if: ${{ needs.detect_changes.outputs.build_functions  == true }}
     needs: detect_changes
     runs-on: ubuntu-latest
     env:
@@ -188,7 +188,7 @@ jobs:
     
   deploy_qa_full:
     name: 'Full qa deployment'
-    needs: [ build_infra, wait_for_build ]
+    needs: [ deploy_dev_full ]
     uses: ./.github/workflows/shared.deployment.yml
     with:
       workspace: qa
