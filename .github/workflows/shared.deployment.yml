@@ -1,0 +1,77 @@
+name: Deploy environment
+
+on:
+  workflow_call:
+    inputs:
+      deploy_twitposter:
+        description: 'Indicates if the Twitposter app should be deployed'
+        required: false
+        type: boolean
+        
+      deploy_email_sender:
+        description: 'Indicates if the Email sender app should be deployed'
+        required: false
+        type: boolean
+        
+      deploy_functions:
+        description: 'Indicates if the functions app should be deployed'
+        required: false
+        type: boolean
+      
+      environment:
+        description: 'The environment to deploy to'
+        required: true
+        type: string
+      workspace:
+        description: 'The Terraform workspace'
+        required: true
+        type: string
+    outputs:
+      APP_SERVICE_NAME:
+        description: 'APP_SERVICE_NAME'
+        value: ${{ jobs.infra.outputs.APP_SERVICE_NAME }}
+      APP_SERVICE_NAME_EMAIL_SENDER:
+        description: 'APP_SERVICE_NAME_EMAIL_SENDER'
+        value: ${{ jobs.infra.outputs.APP_SERVICE_NAME_EMAIL_SENDER }}
+        
+      APP_SERVICE_NAME_FUNCTIONS:
+        description: 'APP_SERVICE_NAME_EMAIL_SENDER'
+        value: ${{ jobs.infra.outputs.APP_SERVICE_NAME_FUNCTIONS }}
+
+permissions:
+  contents: 'read'
+  packages: 'write'
+
+
+jobs:
+  infra:
+    name: 'Terraform [${{ inputs.environment }}]'
+    needs: build_infra
+    uses: ./.github/workflows/shared-deploy.yml
+    with:
+      workspace: ${{ inputs.workspace }}
+      environment: ${{ inputs.environment }}
+    secrets: inherit
+  
+  deploy_twitposter:
+    if: ${{ inputs.deploy_twitposter == 'true' }}
+    name: 'Twitposter [${{ inputs.environment }}]'
+    needs: [ infra ]
+    uses: ./.github/workflows/shared-twitposter-deploy.yml
+    with:
+      environment: ${{ inputs.environment }}
+      twitposter_image: 'ghcr.io/wallyrion/twitposter:${{github.sha}}'
+      APP_SERVICE_NAME: ${{ needs.infra.outputs.APP_SERVICE_NAME }}
+    secrets: inherit
+    
+  
+  deploy_email_sender:
+    if: ${{ inputs.deploy_email_sender == 'true' }}
+    name: 'EmailSender [${{ inputs.environment }}]'
+    needs: [ infra ]
+    uses: ./.github/workflows/shared-twitposter-emailsender-deploy.yml
+    with:
+      environment: ${{ inputs.environment }}
+      image: 'ghcr.io/wallyrion/twitposter-emailsender:${{github.sha}}'
+      APP_SERVICE_NAME: ${{ needs.infra.outputs.APP_SERVICE_NAME_EMAIL_SENDER }}
+    secrets: inherit
