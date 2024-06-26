@@ -146,6 +146,6 @@ jobs:
     uses: ./.github/workflows/shared-twitposter-deploy.yml
     with:
       environment: dev
-      twitposter_image: ${{ env.twitposter_image }}
-      APP_SERVICE_NAME: ${{ jobs.deploy_dev_infa.outputs.APP_SERVICE_NAME }}
+      twitposter_image: 'ghcr.io/wallyrion/twitposter:${{github.sha}}'
+      APP_SERVICE_NAME: ${{ needs.deploy_dev_infa.outputs.APP_SERVICE_NAME }}
     secrets: inherit
