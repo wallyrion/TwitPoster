@@ -1,0 +1,232 @@
+name: Build artifacts
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+on:
+  push:
+    branches: ["master", "feature/terraform-env"]
+  workflow_dispatch:
+
+permissions:
+  contents: 'read'
+  packages: 'write'
+
+env:
+  twitposter_image: 'ghcr.io/wallyrion/twitposter:${{github.sha}}'
+  twitposter_emailsender_image: 'ghcr.io/wallyrion/twitposter-emailsender:${{github.sha}}'
+
+jobs:
+  detect_changes:
+    outputs:
+      build_twitposter: ${{ steps.changes.outputs.twitposter }}
+      build_email_sender: ${{ steps.changes.outputs.email_sender }}
+      build_functions: ${{ steps.changes.outputs.functions }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dorny/paths-filter@v3
+        id: changes
+        with:
+          filters: |
+            twitposter:
+              - './TwitPoster/**'
+            email_sender:
+              - './TwitPoster.EmailSender/**'
+            functions:
+              - './TwitPoster.Functions/**'
+  
+  build_twitposter:
+    needs: detect_changes
+    if: ${{ needs.detect_changes.outputs.build_twitposter == 'true' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.x'
+      - name: Restore dependencies - TwitPoster
+        run: dotnet restore ./TwitPoster
+  
+      - name: Build - TwitPoster
+        run: dotnet build --no-restore ./TwitPoster -c Release
+  
+      - name: Test - TwitPoster
+        env:
+          ASPNETCORE_ENVIRONMENT: Production
+        run: dotnet test --no-build --verbosity normal ./TwitPoster -c Release
+  
+      - name: Log in to GitHub container registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+  
+      - name: publish image
+        run: dotnet publish ./TwitPoster/src/TwitPoster.Web/TwitPoster.Web.csproj /t:PublishContainer -r linux-x64
+  
+      - name: change image tag
+        run: docker tag twitposter ${{ env.twitposter_image }}
+  
+      - name: Docker Push
+        run: docker push ${{ env.twitposter_image }}
+        
+  build_email_sender:
+    if: ${{ needs.detect_changes.outputs.build_email_sender == 'true' }}
+    needs: detect_changes
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.x
+
+      - name: Restore dependencies - TwitPoster.EmailSender
+        run: dotnet restore ./TwitPoster.EmailSender
+
+      - name: Build - TwitPoster.EmailSender
+        run: dotnet build --no-restore ./TwitPoster.EmailSender -c Release
+
+      - name: Test - TwitPoster.EmailSender
+        env:
+          ASPNETCORE_ENVIRONMENT: Production
+        run: dotnet test --no-build --verbosity normal ./TwitPoster.EmailSender -c Release
+
+      - name: Log in to GitHub container registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: publish image
+        run: dotnet publish ./TwitPoster.EmailSender/src/TwitPoster.EmailSender/TwitPoster.EmailSender.csproj /t:PublishContainer -r linux-x64
+
+      - name: change image tag
+        run: docker tag twitposter-emailsender ${{ env.twitposter_emailsender_image }}
+
+      - name: Docker Push
+        run: docker push ${{ env.twitposter_emailsender_image }}
+        
+  build_functions:
+    if: ${{ needs.detect_changes.outputs.build_functions == 'true' }}
+    needs: detect_changes
+    runs-on: ubuntu-latest
+    env:
+      AZURE_FUNCTIONAPP_PACKAGE_PATH: './TwitPoster.Functions/TwitPoster.Functions'
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.x
+
+      - name: 'Resolve Project Dependencies Using Dotnet'
+        shell: bash
+        run: |
+          pushd ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
+          dotnet build --configuration Release --output ./output
+          popd
+          
+      - name: Upload terraform artifacts
+        id: upload-artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: functions-artifacts
+          path: '${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}/output'
+        
+  build_infra:
+    name: 'Terraform copy artifacts'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 'Checkout GitHub Actions'
+        uses: actions/checkout@v4
+        
+      - name: Upload terraform artifacts
+        id: upload-artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: terraform-artifacts
+          path: ./terraform    
+          
+  deploy_dev_infa:
+    name: 'Terraform dev deployment'
+    needs: build_infra
+    uses: ./.github/workflows/shared-deploy.yml
+    with:
+      workspace: development
+      environment: dev
+    secrets: inherit
+    
+  deploy_dev_twitposter:
+    name: 'Twitposter app dev deployment'
+    needs: [deploy_dev_infa, build_twitposter]
+    uses: ./.github/workflows/shared-twitposter-deploy.yml
+    with:
+      environment: dev
+      twitposter_image: 'ghcr.io/wallyrion/twitposter:${{github.sha}}'
+      APP_SERVICE_NAME: ${{ needs.deploy_dev_infa.outputs.APP_SERVICE_NAME }}
+    secrets: inherit
+    
+  deploy_dev_email_sender:
+    name: 'EmailSender app dev deployment'
+    needs: [ deploy_dev_infa, build_email_sender ]
+    uses: ./.github/workflows/shared-twitposter-emailsender-deploy.yml
+    with:
+      environment: dev
+      image: 'ghcr.io/wallyrion/twitposter-emailsender:${{github.sha}}'
+      APP_SERVICE_NAME: ${{ needs.deploy_dev_infa.outputs.APP_SERVICE_NAME_EMAIL_SENDER }}
+    secrets: inherit
+    
+  deploy_dev_functions:
+    name: 'Functions app dev deployment'
+    needs: [ deploy_dev_infa, build_functions ]
+    uses: ./.github/workflows/shared-functions-deploy.yml
+    with:
+      environment: dev
+      APP_SERVICE_NAME: ${{ needs.deploy_dev_infa.outputs.APP_SERVICE_NAME_FUNCTIONS }}
+    secrets: inherit
+    
+  deploy_prod_infra:
+    name: 'Terraform prod deployment'
+    needs: deploy_dev_infa
+    uses: ./.github/workflows/shared-deploy.yml
+    with:
+      workspace: production
+      environment: prod
+    secrets: inherit
+
+  deploy_prod_twitposter:
+    name: 'Twitposter app prod deployment'
+    needs: [ deploy_dev_twitposter, deploy_prod_infra ]
+    uses: ./.github/workflows/shared-twitposter-deploy.yml
+    with:
+      environment: prod
+      twitposter_image: 'ghcr.io/wallyrion/twitposter:${{github.sha}}'
+      APP_SERVICE_NAME: ${{ needs.deploy_prod_infra.outputs.APP_SERVICE_NAME }}
+    secrets: inherit
+    
+  deploy_prod_email_sender:
+    name: 'EmailSender app prod deployment'
+    needs: [ deploy_prod_infra, deploy_dev_email_sender ]
+    uses: ./.github/workflows/shared-twitposter-emailsender-deploy.yml
+    with:
+      environment: prod
+      image: 'ghcr.io/wallyrion/twitposter-emailsender:${{github.sha}}'
+      APP_SERVICE_NAME: ${{ needs.deploy_prod_infra.outputs.APP_SERVICE_NAME_EMAIL_SENDER }}
+    secrets: inherit
+    
+  deploy_prod_functions:
+    name: 'Functions app prod deployment'
+    needs: [ deploy_prod_infra, build_functions ]
+    uses: ./.github/workflows/shared-functions-deploy.yml
+    with:
+      environment: dev
+      APP_SERVICE_NAME: ${{ needs.deploy_prod_infra.outputs.APP_SERVICE_NAME_FUNCTIONS }}
+    secrets: inherit

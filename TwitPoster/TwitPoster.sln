@@ -22,8 +22,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		Directory.Packages.props = Directory.Packages.props
 		nuget.config = nuget.config
 		..\.github\workflows\TwitPoster.build.yml = ..\.github\workflows\TwitPoster.build.yml
-		..\.github\workflows\TwitPoster.deploy.yml = ..\.github\workflows\TwitPoster.deploy.yml
-		..\.github\workflows\TwitPoster.infrastructure.yml = ..\.github\workflows\TwitPoster.infrastructure.yml
+		..\.github\workflows\build-artifacts.yml = ..\.github\workflows\build-artifacts.yml
+		..\.github\workflows\shared-deploy.yml = ..\.github\workflows\shared-deploy.yml
+		..\.github\workflows\shared-twitposter-deploy.yml = ..\.github\workflows\shared-twitposter-deploy.yml
+		..\.github\workflows\shared-twitposter-emailsender-deploy.yml = ..\.github\workflows\shared-twitposter-emailsender-deploy.yml
+		..\.github\workflows\shared-functions-deploy.yml = ..\.github\workflows\shared-functions-deploy.yml
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{2A707CE7-1249-4CBB-AEF1-E420C976C354}"

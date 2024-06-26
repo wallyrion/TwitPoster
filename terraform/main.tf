@@ -1,12 +1,13 @@
 ﻿
 terraform {
   backend "azurerm" {
-    resource_group_name   = "tfstate-rg"
-    storage_account_name  = "tfstate12345"
-    container_name        = "tfstate"
-    key                   = "terraform.tfstate"
+    resource_group_name  = "tfstate-rg"
+    storage_account_name = "tfstate12345"
+    container_name       = "tfstate"
+    key                  = "terraform.tfstate"
   }
 }
+
 
 provider "azurerm" {
   features {}
@@ -54,6 +55,13 @@ resource "azurerm_mssql_server" "sqlserver" {
   administrator_login          = "sqladmin"
   administrator_login_password = "P@ssw0rd1234!"
   minimum_tls_version          = "1.2"
+}
+
+resource "azurerm_mssql_firewall_rule" "appServiceIP" {
+  name                = "AllowAccessFromAzure"
+  server_id           = azurerm_mssql_server.sqlserver.id
+  start_ip_address    = "0.0.0.0"
+  end_ip_address      = "0.0.0.0"
 }
 
 resource "azurerm_mssql_database" "sqldatabase" {
@@ -185,6 +193,10 @@ resource "azurerm_linux_web_app" "emailsender" {
 
 output "app_service_name" {
   value = azurerm_linux_web_app.appservice.name
+}
+
+output "functions_app_service_name" {
+  value = azurerm_linux_function_app.functionapp.name
 }
 
 output "app_service_default_hostname" {

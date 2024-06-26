@@ -1,0 +1,38 @@
+name: Deploy environment
+
+on:
+  workflow_call:
+    inputs:
+      environment:
+        description: 'The environment to deploy to'
+        required: true
+        type: string
+      APP_SERVICE_NAME:
+        description: 'name of the function app'
+        required: true
+        type: string
+
+
+permissions:
+  contents: 'read'
+  packages: 'write'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: ${{ inputs.environment }}
+    
+    steps:
+      - name: Download Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: functions-artifacts
+          
+      - name: 'Run Azure Functions Action'
+        uses: Azure/functions-action@v1
+        id: fa
+        with:
+          app-name: ${{ inputs.APP_SERVICE_NAME }}
+          package: '.'
+          publish-profile: ${{ secrets.TEST_APP_PUBLISH_PROFILE_FUNCTIONS}}
