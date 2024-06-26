@@ -129,7 +129,7 @@ jobs:
       - name: 'Resolve Project Dependencies Using Dotnet'
         shell: bash
         run: |
-          pushd './${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}'
+          pushd ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
           dotnet build --configuration Release --output ./output
           popd
           
@@ -138,7 +138,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: functions-artifacts
-          path: './${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}'
+          path: ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
         
   build_infra:
     name: 'Terraform copy artifacts'
