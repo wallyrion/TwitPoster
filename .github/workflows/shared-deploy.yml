@@ -18,6 +18,10 @@ on:
       APP_SERVICE_NAME_EMAIL_SENDER:
         description: 'APP_SERVICE_NAME_EMAIL_SENDER'
         value: ${{ jobs.infra.outputs.APP_SERVICE_NAME_EMAIL_SENDER }}
+        
+      APP_SERVICE_NAME_FUNCTIONS:
+        description: 'APP_SERVICE_NAME_EMAIL_SENDER'
+        value: ${{ jobs.infra.outputs.APP_SERVICE_NAME_FUNCTIONS }}
 
 permissions:
   contents: 'read'
