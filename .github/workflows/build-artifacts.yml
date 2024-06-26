@@ -24,19 +24,21 @@ jobs:
       - name: Check for changes in specific directory
         id: check_changes
         run: |
-          echo "Checking for changes in the 'some-directory/'"
-          if git diff --name-only ${{ github.event.before }} ${{ github.event.after }} | grep 'twitposter/'; then
-            echo "::set-output name=changes_detected::true"
-          else
-            echo "::set-output name=changes_detected::false"
+          echo "Checking for changes in 'some-directory/'"
+          # Set default base ref if not available (for new branches)
+          BASE_REF=${{ github.event.before }} || echo "main"
+          CHANGES_FOUND=false
+          # Check for changes in the directory between commits
+          if git diff --name-only $BASE_REF ${{ github.event.after }} | grep 'some-directory/'; then
+            CHANGES_FOUND=true
           fi
-          
+          echo "CHANGES_FOUND=$CHANGES_FOUND" >> $GITHUB_ENV
+  
       - name: Conditional step based on directory changes
-        if: steps.check_changes.outputs.changes_detected == 'true'
+        if: env.CHANGES_FOUND == 'true'
         run: |
           echo "Changes were detected in 'some-directory/', running the step."
-          # Add the commands you want to run when there are changes in the specific directory
-        
+          # Add your specific commands here
       - uses: actions/checkout@v4
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
