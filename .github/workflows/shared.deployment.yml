@@ -63,7 +63,6 @@ jobs:
       APP_SERVICE_NAME: ${{ needs.infra.outputs.APP_SERVICE_NAME }}
     secrets: inherit
     
-  
   deploy_email_sender:
     if: ${{ inputs.deploy_email_sender == 'true' }}
     name: 'EmailSender [${{ inputs.environment }}]'
@@ -73,4 +72,13 @@ jobs:
       environment: ${{ inputs.environment }}
       image: 'ghcr.io/wallyrion/twitposter-emailsender:${{github.sha}}'
       APP_SERVICE_NAME: ${{ needs.infra.outputs.APP_SERVICE_NAME_EMAIL_SENDER }}
+    secrets: inherit
+
+  deploy_dev_functions:
+    name: 'Functions app [${{ inputs.environment }}]'
+    needs: [ infra ]
+    uses: ./.github/workflows/shared-functions-deploy.yml
+    with:
+      environment: ${{ inputs.environment }}
+      APP_SERVICE_NAME: ${{ needs.infra.outputs.APP_SERVICE_NAME_FUNCTIONS }}
     secrets: inherit
