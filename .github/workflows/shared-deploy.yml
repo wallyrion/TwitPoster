@@ -119,7 +119,7 @@ jobs:
         working-directory: ./terraform
         
       - name: 'Fetch Publish Profile Command for email sender'
-        id: fetch_publish_profile
+        id: fetch_publish_profile_email_sender
         run: |
           # Debugging output to see the command being run
           echo "Running terraform output command"
