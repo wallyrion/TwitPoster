@@ -21,19 +21,27 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		Directory.Build.props = Directory.Build.props
 		Directory.Packages.props = Directory.Packages.props
 		nuget.config = nuget.config
-		..\.github\workflows\TwitPoster.build.yml = ..\.github\workflows\TwitPoster.build.yml
-		..\.github\workflows\shared-twitposter-deploy.yml = ..\.github\workflows\shared-twitposter-deploy.yml
-		..\.github\workflows\shared-twitposter-emailsender-deploy.yml = ..\.github\workflows\shared-twitposter-emailsender-deploy.yml
-		..\.github\workflows\shared-functions-deploy.yml = ..\.github\workflows\shared-functions-deploy.yml
-		..\.github\workflows\shared.deployment.yml = ..\.github\workflows\shared.deployment.yml
-		..\.github\workflows\full-deploy.yml = ..\.github\workflows\full-deploy.yml
-		..\.github\workflows\infrastructure.deploy.yml = ..\.github\workflows\infrastructure.deploy.yml
-		..\.github\workflows\infrastructure.build.yml = ..\.github\workflows\infrastructure.build.yml
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{2A707CE7-1249-4CBB-AEF1-E420C976C354}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TwitPoster.IntegrationTests", "tests\TwitPoster.IntegrationTests\TwitPoster.IntegrationTests.csproj", "{B439BB04-2F4D-4BE0-BAE5-467AEF654F5D}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SharedPipelines", "SharedPipelines", "{6039A304-01AE-488A-951F-6411A2F4595B}"
+	ProjectSection(SolutionItems) = preProject
+		..\.github\workflows\shared\infrastructure.deploy.yml = ..\.github\workflows\shared\infrastructure.deploy.yml
+		..\.github\workflows\shared\full-deployment.yml = ..\.github\workflows\shared\full-deployment.yml
+		..\.github\workflows\shared\functions.deploy.yml = ..\.github\workflows\shared\functions.deploy.yml
+		..\.github\workflows\shared\twitposter.deploy.yml = ..\.github\workflows\shared\twitposter.deploy.yml
+		..\.github\workflows\shared\twitposter-emailsender.deploy.yml = ..\.github\workflows\shared\twitposter-emailsender.deploy.yml
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Pipelines", "Pipelines", "{52BD57AA-F7B8-4D16-A163-941C935AA5DE}"
+	ProjectSection(SolutionItems) = preProject
+		..\.github\workflows\full-deploy.yml = ..\.github\workflows\full-deploy.yml
+		..\.github\workflows\infrastructure.build.yml = ..\.github\workflows\infrastructure.build.yml
+		..\.github\workflows\TwitPoster.build.yml = ..\.github\workflows\TwitPoster.build.yml
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -76,6 +84,8 @@ Global
 		{55E39A8B-14F7-49CB-88BE-D88B59E294A0} = {EE37553A-DE5B-441C-8490-0DFD3767E108}
 		{C09CCE9E-1EE1-44D8-B2A6-020DDE3FE21D} = {EE37553A-DE5B-441C-8490-0DFD3767E108}
 		{B439BB04-2F4D-4BE0-BAE5-467AEF654F5D} = {EE37553A-DE5B-441C-8490-0DFD3767E108}
+		{6039A304-01AE-488A-951F-6411A2F4595B} = {71875216-1BDA-4582-B6D2-F2084394B3F4}
+		{52BD57AA-F7B8-4D16-A163-941C935AA5DE} = {71875216-1BDA-4582-B6D2-F2084394B3F4}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {18E84327-32B6-4374-8801-87E16248BA37}
