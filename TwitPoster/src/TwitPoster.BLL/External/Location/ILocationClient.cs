@@ -1,8 +1,15 @@
-﻿namespace TwitPoster.BLL.External.Location;
+﻿using Refit;
+
+namespace TwitPoster.BLL.External.Location;
 
 public interface ILocationClient
 {
+    [Get("/api/v0.1/countries/flag/unicode")]
     Task<CountriesResponse> GetCountries(CancellationToken cancellationToken = default);
-    Task<StatesResponse> GetStates(string countryName, CancellationToken cancellationToken = default);
-    Task<CitiesResponse> GetCities(string countryName, string stateName, CancellationToken cancellationToken = default);
+    
+    [Post("/api/v0.1/countries/states")]
+    Task<StatesResponse> GetStates([Body] CountriesStatesRequest request, CancellationToken cancellationToken = default);
+    
+    [Post("/api/v0.1/countries/state/cities")]
+    Task<CitiesResponse> GetCities([Body] CountriesCitiesRequest request, CancellationToken cancellationToken = default);
 }
