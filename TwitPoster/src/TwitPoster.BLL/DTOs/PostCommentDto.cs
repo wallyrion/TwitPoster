@@ -2,9 +2,9 @@
 
 public class PostCommentDto
 {
-    public required int Id { get; set; }
-    public required string Text { get; set; }
-    public DateTime? UpdatedAt { get; set; }
-    public required DateTime CreatedAt { get; set; }
-    public required AuthorDto Author { get; set; }
+    public required int Id { get; init; }
+    public required string Text { get; init; }
+    public DateTime? UpdatedAt { get; init; }
+    public required DateTime CreatedAt { get; init; }
+    public required AuthorDto Author { get; init; }
 }

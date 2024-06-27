@@ -6,7 +6,7 @@ concurrency:
 
 on:
   push:
-    branches: ["master", "feature/actions-refactor-1"]
+    branches: ["master", "feature/refactoring-workflow-names"]
   workflow_dispatch:
 
 permissions:
@@ -178,7 +178,7 @@ jobs:
   deploy_dev_full:
     name: 'Full dev deployment'
     needs: [detect_changes, build_infra, wait_for_build]
-    uses: ./.github/workflows/shared.deployment.yml
+    uses: ./.github/workflows/shared.full-deployment.yml
     with:
       workspace: development
       environment: dev
@@ -190,7 +190,7 @@ jobs:
   deploy_qa_full:
     name: 'Full qa deployment'
     needs: [detect_changes, deploy_dev_full ]
-    uses: ./.github/workflows/shared.deployment.yml
+    uses: ./.github/workflows/shared.full-deployment.yml
     with:
       workspace: s2
       environment: stage
@@ -202,7 +202,7 @@ jobs:
   deploy_prod_full:
     name: 'Full prod deployment'
     needs: [detect_changes, deploy_qa_full ]
-    uses: ./.github/workflows/shared.deployment.yml
+    uses: ./.github/workflows/shared.full-deployment.yml
     with:
       workspace: production
       environment: production
