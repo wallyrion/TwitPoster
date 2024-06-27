@@ -64,7 +64,9 @@ try
 
     builder.Services.AddApplicationInsightsTelemetry();
     builder.Services.AddFeatureManagement();
-    builder.Services.AddHttpClient<ILocationClient, LocationClient>(client => client.BaseAddress = new Uri(countriesApiOptions.Uri));
+    builder.Services.AddHttpClient<ILocationClient, LocationClient>(client => client.BaseAddress = new Uri(countriesApiOptions.Uri))
+        .AddStandardResilienceHandler();
+        
     builder.Services
         .AddSwaggerWithAuthorization()
         .AddEndpointsApiExplorer()
