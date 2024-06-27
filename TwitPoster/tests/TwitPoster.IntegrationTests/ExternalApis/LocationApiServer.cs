@@ -1,4 +1,5 @@
 ﻿using TwitPoster.IntegrationTests.ExternalApis.FakeResponses;
+using WireMock;
 using WireMock.RequestBuilders;
 using WireMock.ResponseBuilders;
 using WireMock.Server;
@@ -19,6 +20,16 @@ public class LocationApiServer : IDisposable
             .RespondWith(Response.Create()
                 .WithBody(CountriesResponseJson.All)
                 .WithHeader("content-type", "application/json; charset=utf-8"));
+    }
+    
+    public void SetupCountries(Func<IRequestMessage, ResponseMessage> callback)
+    {
+        Server.Given(Request.Create()
+                .WithPath($"/api/v0.1/countries/flag/unicode")
+                .UsingGet()
+            )
+            .RespondWith(Response.Create()
+                .WithCallback(callback));
     }
     
     public void Dispose()
