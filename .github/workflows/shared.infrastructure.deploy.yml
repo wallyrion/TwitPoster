@@ -1,0 +1,111 @@
+name: Deploy terraform infrastructure
+
+on:
+  workflow_call:
+    inputs:
+      environment:
+        description: 'The environment to deploy to'
+        required: true
+        type: string
+      workspace:
+        description: 'The Terraform workspace'
+        required: true
+        type: string
+    outputs:
+      APP_SERVICE_NAME:
+        description: 'APP_SERVICE_NAME'
+        value: ${{ jobs.infra.outputs.APP_SERVICE_NAME }}
+      APP_SERVICE_NAME_EMAIL_SENDER:
+        description: 'APP_SERVICE_NAME_EMAIL_SENDER'
+        value: ${{ jobs.infra.outputs.APP_SERVICE_NAME_EMAIL_SENDER }}
+        
+      APP_SERVICE_NAME_FUNCTIONS:
+        description: 'APP_SERVICE_NAME_EMAIL_SENDER'
+        value: ${{ jobs.infra.outputs.APP_SERVICE_NAME_FUNCTIONS }}
+
+permissions:
+  contents: 'read'
+  packages: 'write'
+
+jobs:
+  infra:
+    outputs:
+      APP_SERVICE_NAME: ${{ steps.fetch_app_service_name.outputs.APP_SERVICE_NAME }}
+      APP_SERVICE_NAME_EMAIL_SENDER: ${{ steps.fetch_app_service_name.outputs.APP_SERVICE_NAME_EMAIL_SENDER }}
+      APP_SERVICE_NAME_FUNCTIONS: ${{ steps.fetch_app_service_name.outputs.APP_SERVICE_NAME_FUNCTIONS }}
+    environment: ${{ inputs.environment }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: 'Checkout Code'
+        uses: actions/checkout@v4
+
+      - name: Download Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: terraform-artifacts
+
+      - name: 'Setup Terraform'
+        uses: hashicorp/setup-terraform@v3
+
+      - name: 'Login to Azure'
+        uses: azure/login@v2
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: 'Initialize Terraform'
+        run: |
+          terraform init \
+            -backend-config="resource_group_name=tfstate-rg" \
+            -backend-config="storage_account_name=tfstate12345" \
+            -backend-config="container_name=tfstate" \
+            -backend-config="key=terraform.tfstate" \
+            -backend-config="client_id=${{ secrets.ARM_CLIENT_ID }}" \
+            -backend-config="client_secret=${{ secrets.ARM_CLIENT_SECRET }}" \
+            -backend-config="subscription_id=${{ secrets.ARM_SUBSCRIPTION_ID }}" \
+            -backend-config="tenant_id=${{ secrets.ARM_TENANT_ID }}" \
+        working-directory:  ./terraform
+
+      - name: Select Terraform Workspace
+        run: |
+          terraform workspace select -or-create ${{ inputs.workspace }}
+        working-directory: ./terraform
+        
+      - name: Plan Terraform
+        id: plan
+        run: terraform plan -var="environment=${{ inputs.workspace }}" -out=tfplan
+        working-directory: ./terraform
+
+      - name: 'Apply Terraform'
+        run: terraform apply -auto-approve tfplan
+        working-directory: ./terraform
+        
+      - name: 'Fetch App Service Name'
+        id: fetch_app_service_name
+        run: |
+          echo "APP_SERVICE_NAME=$(terraform output -raw app_service_name)" >> $GITHUB_OUTPUT
+          echo "APP_SERVICE_NAME_EMAIL_SENDER=$(terraform output -raw emailsender_app_service_name)" >> $GITHUB_OUTPUT
+          echo "APP_SERVICE_NAME_FUNCTIONS=$(terraform output -raw functions_app_service_name)" >> $GITHUB_OUTPUT
+        working-directory: ./terraform
+
+      - name: 'Install GitHub CLI'
+        run: sudo apt-get install -y gh  
+      
+      - name: 'Fetch Publish Profile Command for email sender'
+        id: fetch_publish_profile_email_sender
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN_SECRETS_MANIPULATOR }}
+        run: |
+          PUBLISH_PROFILE_COMMAND=$(terraform output -raw publish_profile_command)
+          PUBLISH_PROFILE_COMMAND_EMAIL_SENDER=$(terraform output -raw emailsender_publish_profile_command)
+          PUBLISH_PROFILE_COMMAND_FUNCTIONS=$(terraform output -raw function_app_publish_profile_command)
+    
+          # Execute the fetched command and capture the output directly into a variable
+          PUBLISH_PROFILE_CONTENT=$(eval "$PUBLISH_PROFILE_COMMAND")
+          PUBLISH_PROFILE_CONTENT_EMAIL_SENDER=$(eval "$PUBLISH_PROFILE_COMMAND_EMAIL_SENDER")
+          PUBLISH_PROFILE_CONTENT_FUNCTIONS=$(eval "$PUBLISH_PROFILE_COMMAND_FUNCTIONS")
+
+          gh secret set TEST_APP_PUBLISH_PROFILE --body "$PUBLISH_PROFILE_CONTENT" --env ${{ inputs.environment }}
+          gh secret set TEST_APP_PUBLISH_PROFILE_EMAIL_SENDER --body "$PUBLISH_PROFILE_CONTENT_EMAIL_SENDER" --env ${{ inputs.environment }}
+          gh secret set TEST_APP_PUBLISH_PROFILE_FUNCTIONS --body "$PUBLISH_PROFILE_CONTENT_FUNCTIONS" --env ${{ inputs.environment }}
+          
+        working-directory: ./terraform

@@ -35,7 +35,7 @@ permissions:
 jobs:
   infra:
     name: 'Terraform [${{ inputs.environment }}]'
-    uses: ./.github/workflows/shared/infrastructure.deploy.yml
+    uses: ./.github/workflows/shared.infrastructure.deploy.yml
     with:
       workspace: ${{ inputs.workspace }}
       environment: ${{ inputs.environment }}
@@ -45,7 +45,7 @@ jobs:
     if: ${{ inputs.deploy_twitposter == 'true' }}
     name: 'Twitposter [${{ inputs.environment }}]'
     needs: [ infra ]
-    uses: ./.github/workflows/shared/twitposter.deploy.yml
+    uses: ./.github/workflows/shared.twitposter.deploy.yml
     with:
       environment: ${{ inputs.environment }}
       twitposter_image: 'ghcr.io/wallyrion/twitposter:${{github.sha}}'
@@ -56,7 +56,7 @@ jobs:
     if: ${{ inputs.deploy_email_sender == 'true' }}
     name: 'EmailSender [${{ inputs.environment }}]'
     needs: [ infra ]
-    uses: ./.github/workflows/shared/twitposter-emailsender.deploy.yml
+    uses: ./.github/workflows/shared.twitposter-emailsender.deploy.yml
     with:
       environment: ${{ inputs.environment }}
       image: 'ghcr.io/wallyrion/twitposter-emailsender:${{github.sha}}'
@@ -67,7 +67,7 @@ jobs:
     if: ${{ inputs.deploy_functions == 'true' }}
     name: 'Functions app [${{ inputs.environment }}]'
     needs: [ infra ]
-    uses: ./.github/workflows/shared/functions.deploy.yml
+    uses: ./.github/workflows/shared.functions.deploy.yml
     with:
       environment: ${{ inputs.environment }}
       APP_SERVICE_NAME: ${{ needs.infra.outputs.APP_SERVICE_NAME_FUNCTIONS }}
