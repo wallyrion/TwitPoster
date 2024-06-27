@@ -24,7 +24,7 @@ public class LocationService(ILocationClient locationClient, ICacheService cache
     {
         return await GetFromCacheOrCreate<string>($"country-{countryName}-states", async () =>
         {
-            var result = await locationClient.GetStates(countryName, cancellationToken);
+            var result = await locationClient.GetStates(new CountriesStatesRequest(countryName), cancellationToken);
             return result.Data.States.Select(x => x.Name).ToList();
         });
     }
@@ -32,7 +32,7 @@ public class LocationService(ILocationClient locationClient, ICacheService cache
     public async Task<IReadOnlyList<string>> GetCities(string countryName, string stateName, CancellationToken cancellationToken = default)
     {
         var cities = await GetFromCacheOrCreate<string>($"country-{countryName}-state-{stateName}-cities", async () => 
-            (await locationClient.GetCities(countryName, stateName, cancellationToken)).Data);
+            (await locationClient.GetCities(new CountriesCitiesRequest(countryName, stateName), cancellationToken)).Data);
 
         return cities;
     }
