@@ -29,11 +29,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TwitPoster.IntegrationTests
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SharedPipelines", "SharedPipelines", "{6039A304-01AE-488A-951F-6411A2F4595B}"
 	ProjectSection(SolutionItems) = preProject
-		..\.github\workflows\shared\infrastructure.deploy.yml = ..\.github\workflows\shared\infrastructure.deploy.yml
-		..\.github\workflows\shared\full-deployment.yml = ..\.github\workflows\shared\full-deployment.yml
-		..\.github\workflows\shared\functions.deploy.yml = ..\.github\workflows\shared\functions.deploy.yml
-		..\.github\workflows\shared\twitposter.deploy.yml = ..\.github\workflows\shared\twitposter.deploy.yml
-		..\.github\workflows\shared\twitposter-emailsender.deploy.yml = ..\.github\workflows\shared\twitposter-emailsender.deploy.yml
+		..\.github\workflows\shared.full-deployment.yml = ..\.github\workflows\shared.full-deployment.yml
+		..\.github\workflows\shared.functions.deploy.yml = ..\.github\workflows\shared.functions.deploy.yml
+		..\.github\workflows\shared.infrastructure.deploy.yml = ..\.github\workflows\shared.infrastructure.deploy.yml
+		..\.github\workflows\shared.twitposter.deploy.yml = ..\.github\workflows\shared.twitposter.deploy.yml
+		..\.github\workflows\shared.twitposter-emailsender.deploy.yml = ..\.github\workflows\shared.twitposter-emailsender.deploy.yml
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Pipelines", "Pipelines", "{52BD57AA-F7B8-4D16-A163-941C935AA5DE}"
