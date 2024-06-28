@@ -1,0 +1,1 @@
+﻿public record GoogleRequest(string Credential);

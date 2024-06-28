@@ -28,7 +28,8 @@ public class AuthServiceTests
         _context = new TwitPosterContext(options);
         _sut = new AuthService(_jwtTokenGeneratorMock.Object, _context, Mock.Of<IPublishEndpoint>(), Options.Create(new ApplicationOptions
         {
-            TwitPosterUrl = "http://localhost:5000"
+            TwitPosterUrl = "http://localhost:5000",
+            GoogleClientId = Guid.NewGuid().ToString()
         }));
     }
     
