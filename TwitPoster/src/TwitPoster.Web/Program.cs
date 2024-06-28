@@ -113,7 +113,7 @@ try
         {
             o.AllowAnyMethod()
                 .AllowAnyHeader()
-                .WithOrigins("http://localhost:4200", "https://wallyrion.github.io")
+                .WithOrigins("http://localhost:4200", "https://wallyrion.github.io", "https://twitposter.xyz")
                 .AllowCredentials();
         }))
 
