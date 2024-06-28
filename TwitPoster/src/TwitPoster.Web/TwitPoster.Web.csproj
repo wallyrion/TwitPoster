@@ -12,6 +12,8 @@
         <PackageReference Include="Azure.Storage.Blobs" />
         <PackageReference Include="Bogus" />
         <PackageReference Include="FluentValidation.AspNetCore" />
+        <PackageReference Include="Google.Apis.Auth" />
+        <PackageReference Include="Google.Apis.Discovery.v1" />
         <PackageReference Include="Mapster" />
         <PackageReference Include="MassTransit" />
         <PackageReference Include="MassTransit.AspNetCore" />

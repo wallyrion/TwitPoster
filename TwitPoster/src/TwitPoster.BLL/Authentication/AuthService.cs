@@ -101,4 +101,48 @@ public class AuthService : IAuthService
         user.UserAccount.EmailConfirmationToken = default;
         await _context.SaveChangesAsync();
     }
+
+    public async Task<string> LoginWithGoogle(string email, string firstName, string lastName, bool isEmailConfirmed, string payloadPicture)
+    {
+        var user = await _context.Users.Include(u => u.UserAccount).FirstOrDefaultAsync(u => u.Email == email);
+
+        if (user != null)
+        {
+            if (isEmailConfirmed)
+            {
+                user.UserAccount.IsEmailConfirmed = true;
+            }
+            
+            if (user.PhotoUrl == null)
+            {
+                user.PhotoUrl = payloadPicture;
+                user.ThumbnailPhotoUrl = payloadPicture;
+            }
+        }
+        else
+        {
+            user = new User
+            {
+                CreatedAt = DateTime.UtcNow,
+                Email = email,
+                BirthDate = DateTime.Today,
+                FirstName = firstName,
+                LastName = lastName,
+                PhotoUrl = payloadPicture,
+                ThumbnailPhotoUrl = payloadPicture,
+                UserAccount = new UserAccount
+                {
+                    Password = Guid.NewGuid().ToString(),
+                    Role = UserRole.User,
+                    EmailConfirmationToken = default
+                }
+            };
+            
+            _context.Users.Add(user);
+        }
+        
+        await _context.SaveChangesAsync();
+        var accessToken = _tokenGenerator.GenerateToken(user);
+        return accessToken;
+    }
 }

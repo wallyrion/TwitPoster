@@ -18,4 +18,5 @@ public interface IAuthService
     Task<Result<int>> Register(string firstName, string lastName, DateTime birthDate, string email, string password);
 
     Task ConfirmEmail(Guid token);
+    Task<string> LoginWithGoogle(string email, string firstName, string lastName, bool isEmailConfirmed, string payloadPicture);
 }
