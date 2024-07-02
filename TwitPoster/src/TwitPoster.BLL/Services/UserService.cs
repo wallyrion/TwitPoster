@@ -92,6 +92,7 @@ public class UserService : IUsersService
         TypeAdapterHelper.Override<UserSubscription, UserSubscriptionDto>(out var config)
             .Map(dest => dest.User, src => src.Subscriber);
 
+        
         return await _context
             .UserSubscriptions.Include(u => u.Subscriber)
             .Where(s => s.SubscriptionId == _currentUser.Id)
