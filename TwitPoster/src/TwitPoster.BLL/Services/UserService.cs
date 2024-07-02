@@ -102,7 +102,6 @@ public class UserService : IUsersService
     public async Task<AccountDetailDto> GetCurrentAccountDetail()
     {
         var currentUser = await _context.Users.Include(u => u.UserAccount).FirstAsync(u => u.Id == _currentUser.Id);
-
         return currentUser.ToAccountDetailDto();
     }
 }
