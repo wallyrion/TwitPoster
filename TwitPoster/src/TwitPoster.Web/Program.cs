@@ -29,8 +29,9 @@ try
     var builder = WebApplication.CreateBuilder(args);
     Console.WriteLine("Created app builder...");
 
-    var imageTag = builder.Configuration["ImageTag"];
-    Console.WriteLine("Image tag: " + imageTag);
+    builder.Configuration.AddEnvironmentVariables();
+    
+    Console.WriteLine("Current image tag: " + builder.Configuration["CurrentImageTag"]);
     
     var secrets = builder.Configuration.BindOption<SecretOptions>(builder.Services, false);
 
@@ -126,7 +127,7 @@ try
 
     var app = builder.Build();
 
-    app.MapGet("/health", (IConfiguration configuration) => new { ImageTag =  configuration["ImageTag"] });
+    app.MapGet("/health", (IConfiguration configuration) => new { ImageTag =  configuration["CurrentImageTag"] });
 
     app.MapGet(".well-known/acme-challenge/{file}", () => "something");
     app.MapControllers()
