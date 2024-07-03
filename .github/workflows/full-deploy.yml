@@ -55,7 +55,7 @@ jobs:
 
       - name: Replace CurrentImageTag in appsettings.json
         run: |
-          GITHUB_SHA_SHORT=${{ env.twitposter_image }}
+          GITHUB_SHA_SHORT=${{ github.sha }}
           sed -i 's/"CurrentImageTag": "latest"/"CurrentImageTag": "'${GITHUB_SHA_SHORT}'"/' ./TwitPoster/src/TwitPoster.Web/appsettings.json
 
       - name: Verify appsettings.json
