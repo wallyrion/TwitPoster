@@ -1,84 +1,220 @@
-name: Deploy environment
+name: Full deployment Infra + Apps
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
 
 on:
-  workflow_call:
-    inputs:
-      environment:
-        description: 'The environment to deploy to'
-        required: true
-        type: string
-      twitposter_image:
-        description: 'The image to deploy to'
-        required: true
-        type: string
-      APP_SERVICE_NAME:
-        description: 'The image to deploy to'
-        required: true
-        type: string
-
+  push:
+    branches: ["master", "feature/refactoring-workflow-names"]
+  workflow_dispatch:
 
 permissions:
   contents: 'read'
   packages: 'write'
+  actions: read
+
+env:
+  twitposter_image: 'ghcr.io/wallyrion/twitposter:${{github.sha}}'
+  twitposter_emailsender_image: 'ghcr.io/wallyrion/twitposter-emailsender:${{github.sha}}'
 
 
 jobs:
-  deploy:
+  detect_changes:
     outputs:
-      TWITPOSTER_URL: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
+      build_twitposter: ${{ steps.changes.outputs.twitposter }}
+      build_email_sender: ${{ steps.changes.outputs.email_sender }}
+      build_functions: ${{ steps.changes.outputs.functions }}
     runs-on: ubuntu-latest
-    environment:
-      name: ${{ inputs.environment }}
-      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}/swagger/index.html
-    
-    steps:
-      - name: Deploy to Azure Web App
-        id: deploy-to-webapp
-        uses: azure/webapps-deploy@v3
-        with:
-          publish-profile: ${{ secrets.TEST_APP_PUBLISH_PROFILE }}
-          images: ${{ inputs.twitposter_image }}
 
-      - name: Trigger Azure WebHook
-        if: env.WEBHOOK_URL != ''
-        run: |
-          curl -X POST $WEBHOOK_URL
-        env:
-          WEBHOOK_URL: ${{ secrets.AZURE_WEBHOOK_URL_TWITPOSTER }}
-        shell: bashraform@v3
-  
-  confirm_deployment:
-    needs: deploy
-    runs-on: ubuntu-latest
-    environment:
-      name: ${{ inputs.environment }}
-    
     steps:
-      - name: Check Deployment Health
-        id: check-health
+      - uses: actions/checkout@v4
+      - uses: dorny/paths-filter@v3
+        id: changes
+        with:
+          filters: |
+            twitposter:
+              - './TwitPoster/**'
+            email_sender:
+              - './TwitPoster.EmailSender/**'
+            functions:
+              - './TwitPoster.Functions/**'
+  
+  build_twitposter:
+    needs: detect_changes
+    if: ${{ needs.detect_changes.outputs.build_twitposter == 'true' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.x'
+      - name: Restore dependencies - TwitPoster
+        run: dotnet restore ./TwitPoster
+
+      - name: Replace CurrentImageTag in appsettings.json
         run: |
-          TWITPOSTER_URL="${{ needs.deploy.outputs.TWITPOSTER_URL }}"
-          IMAGE_TAG="${{ github.sha }}"
-          
-          echo "Starting deployment health check..."
-          echo "TWITPOSTER_URL: $TWITPOSTER_URL"
-          echo "Expected IMAGE_TAG: $IMAGE_TAG"
-          
-          for i in {1..30}; do
-            echo "Checking health of the deployed application... Attempt $i"
-            response=$(curl -s -H "Content-Type: application/json" $TWITPOSTER_URL/health)
-            echo "Response: $response"
-          
-            if echo "$response" | jq -e ".imageTag == \"$IMAGE_TAG\"" > /dev/null; then
-              echo "Deployment verification succeeded: imageTag matches."
-              exit 0
-            fi
-          
-            echo "Deployment verification failed: imageTag does not match. Retrying in 10 seconds..."
-            sleep 10
-          done
-          
-          echo "Deployment verification failed: imageTag did not match after 30 attempts."
-          exit 1
+          GITHUB_SHA_SHORT=${{ github.sha }}
+          sed -i 's/"CurrentImageTag": "latest"/"CurrentImageTag": "'${GITHUB_SHA_SHORT}'"/' ./TwitPoster/src/TwitPoster.Web/appsettings.json
+
+      - name: Verify appsettings.json
+        run: cat ./TwitPoster/src/TwitPoster.Web/appsettings.json
+               
+      - name: Build - TwitPoster
+        run: dotnet build --no-restore ./TwitPoster -c Release
+  
+      - name: Test - TwitPoster
+        env:
+          ASPNETCORE_ENVIRONMENT: Production
+        run: dotnet test --no-build --verbosity normal ./TwitPoster -c Release
+  
+      - name: Log in to GitHub container registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+  
+      - name: publish image
+        run: dotnet publish ./TwitPoster/src/TwitPoster.Web/TwitPoster.Web.csproj /t:PublishContainer -r linux-x64
+  
+      - name: change image tag
+        run: docker tag twitposter ${{ env.twitposter_image }}
+  
+      - name: Docker Push
+        run: docker push ${{ env.twitposter_image }}
+        
+  build_email_sender:
+    if: ${{ needs.detect_changes.outputs.build_email_sender == 'true'}}
+    needs: detect_changes
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.x
+
+      - name: Restore dependencies - TwitPoster.EmailSender
+        run: dotnet restore ./TwitPoster.EmailSender
+
+      - name: Build - TwitPoster.EmailSender
+        run: dotnet build --no-restore ./TwitPoster.EmailSender -c Release
+
+      - name: Test - TwitPoster.EmailSender
+        env:
+          ASPNETCORE_ENVIRONMENT: Production
+        run: dotnet test --no-build --verbosity normal ./TwitPoster.EmailSender -c Release
+
+      - name: Log in to GitHub container registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: publish image
+        run: dotnet publish ./TwitPoster.EmailSender/src/TwitPoster.EmailSender/TwitPoster.EmailSender.csproj /t:PublishContainer -r linux-x64
+
+      - name: change image tag
+        run: docker tag twitposter-emailsender ${{ env.twitposter_emailsender_image }}
+
+      - name: Docker Push
+        run: docker push ${{ env.twitposter_emailsender_image }}
+        
+  build_functions:
+    if: ${{ needs.detect_changes.outputs.build_functions == 'true' }}
+    needs: detect_changes
+    runs-on: ubuntu-latest
+    env:
+      AZURE_FUNCTIONAPP_PACKAGE_PATH: './TwitPoster.Functions/TwitPoster.Functions'
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.x
+
+      - name: 'Resolve Project Dependencies Using Dotnet'
         shell: bash
+        run: |
+          pushd ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
+          dotnet build --configuration Release --output ./output
+          popd
           
+      - name: Upload terraform artifacts
+        id: upload-artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: functions-artifacts
+          path: '${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}/output'
+        
+  build_infra:
+    name: 'Terraform copy artifacts'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 'Checkout GitHub Actions'
+        uses: actions/checkout@v4
+        
+      - name: Upload terraform artifacts
+        id: upload-artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: terraform-artifacts
+          path: ./terraform    
+          
+  
+  wait_for_build:
+    needs: [detect_changes]
+    runs-on: ubuntu-latest
+    steps:
+      - name: 'Wait for build'
+        uses: yogeshlonkar/wait-for-jobs@v0
+        with:
+          gh-token: ${{ secrets.GITHUB_TOKEN }}
+          ignore-skipped: 'true'
+          interval: '3000'
+          no-max-ttl: 'true'
+          ttl: '60'
+          jobs: |
+            build_twitposter
+            build_email_sender
+            build_functions
+  
+  #deploy_dev_full:
+  #  name: 'Full dev deployment'
+  #  needs: [detect_changes, build_infra, wait_for_build]
+  #  uses: ./.github/workflows/shared.full-deployment.yml
+  #  with:
+  #    workspace: development
+  #    environment: dev
+  #    deploy_twitposter: ${{ needs.detect_changes.outputs.build_twitposter }}
+  #    deploy_email_sender: ${{ needs.detect_changes.outputs.build_email_sender}}
+  #    deploy_functions: ${{ needs.detect_changes.outputs.build_functions}}
+  #  secrets: inherit
+    
+  #deploy_qa_full:
+  #  name: 'Full qa deployment'
+  #  needs: [detect_changes, deploy_dev_full ]
+  #  uses: ./.github/workflows/shared.full-deployment.yml
+  #  with:
+  #    workspace: s2
+  #    environment: stage
+  #    deploy_twitposter: ${{ needs.detect_changes.outputs.build_twitposter}}
+  #    deploy_email_sender: ${{ needs.detect_changes.outputs.build_email_sender}}
+  #    deploy_functions: ${{ needs.detect_changes.outputs.build_functions }}
+  #  secrets: inherit
+    
+  deploy_prod_full:
+    name: 'Full prod deployment'
+    needs: [detect_changes, build_infra, wait_for_build]
+    uses: ./.github/workflows/shared.full-deployment.yml
+    with:
+      workspace: production
+      environment: production
+      deploy_twitposter: ${{ needs.detect_changes.outputs.build_twitposter}}
+      deploy_email_sender: ${{ needs.detect_changes.outputs.build_email_sender}}
+      deploy_functions: ${{ needs.detect_changes.outputs.build_functions }}
+    secrets: inherit
