@@ -69,7 +69,7 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
   
       - name: publish image
-        run: dotnet publish ./TwitPoster/src/TwitPoster.Web/TwitPoster.Web.csproj /t:PublishContainer -r linux-x64
+        run: dotnet publish ./TwitPoster/src/TwitPoster.Web/TwitPoster.Web.csproj /t:PublishContainer -r linux-x64 /p:ContainerEnvironmentVariable=ImageTag=${{ env.twitposter_image }}
   
       - name: change image tag
         run: docker tag twitposter ${{ env.twitposter_image }}
