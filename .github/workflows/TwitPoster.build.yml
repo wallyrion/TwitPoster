@@ -20,6 +20,14 @@ jobs:
         
       - name: Restore dependencies - TwitPoster
         run: dotnet restore ./TwitPoster --locked-mode
+        
+      - name: Replace CurrentImageTag in appsettings.json
+        run: |
+          GITHUB_SHA_SHORT=${{ github.sha }}
+          sed -i 's/"CurrentImageTag": "latest"/"CurrentImageTag": "'${GITHUB_SHA_SHORT}'"/' ./TwitPoster/src/TwitPoster.Web/appsettings.json
+
+      - name: Verify appsettings.json
+        run: cat ./TwitPoster/src/TwitPoster.Web/appsettings.json
 
       - name: Build - TwitPoster
         run: dotnet build --no-restore ./TwitPoster -c Release
