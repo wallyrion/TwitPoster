@@ -80,7 +80,6 @@ public static class ServiceCollectionExtensions
     {
         var config = TypeAdapterConfig.GlobalSettings;
         
-        // ger all assemblies in the application
         config.Scan(AppDomain.CurrentDomain.GetAssemblies());
         
         services.AddSingleton(config);
