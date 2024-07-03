@@ -52,7 +52,15 @@ jobs:
           dotnet-version: '8.x'
       - name: Restore dependencies - TwitPoster
         run: dotnet restore ./TwitPoster
-  
+
+      - name: Replace CurrentImageTag in appsettings.json
+        run: |
+          GITHUB_SHA_SHORT=${{ github.sha }}
+          sed -i 's/"CurrentImageTag": "latest"/"CurrentImageTag": "'${GITHUB_SHA_SHORT}'"/' ./TwitPoster/src/TwitPoster.Web/appsettings.json
+
+      - name: Verify appsettings.json
+        run: cat ./TwitPoster/src/TwitPoster.Web/appsettings.json
+               
       - name: Build - TwitPoster
         run: dotnet build --no-restore ./TwitPoster -c Release
   
@@ -69,7 +77,7 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
   
       - name: publish image
-        run: dotnet publish ./TwitPoster/src/TwitPoster.Web/TwitPoster.Web.csproj /t:PublishContainer -r linux-x64 /p:ContainerEnvironmentVariable=ImageTag=${{ env.twitposter_image }}
+        run: dotnet publish ./TwitPoster/src/TwitPoster.Web/TwitPoster.Web.csproj /t:PublishContainer -r linux-x64
   
       - name: change image tag
         run: docker tag twitposter ${{ env.twitposter_image }}
