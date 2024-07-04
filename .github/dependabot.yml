@@ -3,11 +3,12 @@ updates:
   - package-ecosystem: "nuget"
     directories:
       - "/TwitPoster"
-      - "/TwitPoster.EmailSender"
-      - "/TwitPoster.Functions"
-      - "/TwitPoster.Shared"
     schedule:
       interval: "daily"
+    groups:
+      testcontainers:
+        patterns:
+          - "Testcontainers*"
 
   - package-ecosystem: "github-actions"
     directory: "/"
