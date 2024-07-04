@@ -2,7 +2,10 @@ version: 2
 updates:
   - package-ecosystem: "nuget"
     directories:
-      - "**/*"
+      - "/TwitPoster"
+      - "/TwitPoster.EmailSender"
+      - "/TwitPoster.Functions"
+      - "/TwitPoster.Shared"
     schedule:
       interval: "daily"
       
