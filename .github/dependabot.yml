@@ -2,14 +2,33 @@ version: 2
 updates:
   - package-ecosystem: "nuget"
     directories:
-      - "**/*"
-
+      - "/TwitPoster"
     schedule:
       interval: "daily"
     groups:
       testcontainers:
         patterns:
           - "Testcontainers*"
+  - package-ecosystem: "nuget"
+    directories:
+      - "/TwitPoster.EmailSender"
+    schedule:
+      interval: "daily"
+    groups:
+      testcontainers:
+        patterns:
+          - "Testcontainers*"
+  - package-ecosystem: "nuget"
+    directories:
+      - "/TwitPoster.Shared"
+    schedule:
+      interval: "daily"
+      
+  - package-ecosystem: "nuget"
+    directories:
+      - "/TwitPoster.Functions"
+    schedule:
+      interval: "daily"
 
   - package-ecosystem: "github-actions"
     directory: "/"
