@@ -3,6 +3,7 @@ updates:
   - package-ecosystem: "nuget"
     directories:
       - "/TwitPoster"
+      - "/TwitPoster.EmailSender"
     schedule:
       interval: "daily"
     groups:
