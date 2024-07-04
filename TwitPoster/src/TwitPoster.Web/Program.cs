@@ -163,6 +163,7 @@ try
 
     app.Logger.LogInformation("Running app in {EnvironmentName} with {ProcessorsCount} processor(s)", app.Environment.EnvironmentName,  Environment.ProcessorCount);
 
+    
     app.Run();
 }
 catch (Exception ex)
