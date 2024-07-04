@@ -1,1 +1,3 @@
-﻿public record GoogleRequest(string Credential);
+﻿namespace TwitPoster.Web.Controllers;
+
+public record GoogleRequest(string Credential);

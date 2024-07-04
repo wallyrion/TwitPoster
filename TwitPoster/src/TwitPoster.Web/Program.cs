@@ -12,6 +12,7 @@ using TwitPoster.BLL.Common.Options;
 using TwitPoster.BLL.Extensions;
 using TwitPoster.BLL.External.Location;
 using TwitPoster.BLL.Interfaces;
+using TwitPoster.BLL.Notifications;
 using TwitPoster.BLL.Services;
 using TwitPoster.DAL;
 using TwitPoster.DAL.Triggers;
@@ -21,6 +22,7 @@ using TwitPoster.Web.Common.DependencyInjection;
 using TwitPoster.Web.Common.Options;
 using TwitPoster.Web.Extensions;
 using TwitPoster.Web.Middlewares;
+using TwitPoster.Web.Notifications;
 using TwitPoster.Web.WebHostServices;
 
 try
@@ -89,6 +91,7 @@ try
         .AddScoped<ICurrentUser, CurrentUser>()
         .AddScoped<IAuthService, AuthService>()
         .AddScoped<ILocationService, LocationService>()
+        .AddScoped<INotificationReporter, HubNotificationsReporter>()
         .AddTwitPosterCaching(builder.Configuration)
         .AddSingleton<IJwtTokenGenerator, JwtTokenGenerator>()
         .AddTwitPosterRateLimiting(builder.Configuration)
@@ -121,14 +124,12 @@ try
                 .AllowCredentials();
         }))
 
-        .AddHostedService<MigrationHostedService>();
-    //.AddHostedService<TestBackgroundService>()
-
+        .AddHostedService<MigrationHostedService>()
+        .AddSignalR();
 
     var app = builder.Build();
 
     app.MapGet("/health", (IConfiguration configuration) => new { ImageTag =  configuration["CurrentImageTag"] });
-
     app.MapGet(".well-known/acme-challenge/{file}", () => "something");
     app.MapControllers()
         .RequireAuthorization();
@@ -139,7 +140,7 @@ try
     {
         app.UseRateLimiter();    
     }
-    
+
     app
         .UseSwagger().UseSwaggerUI()
 
@@ -157,6 +158,8 @@ try
             b.UseDeveloperExceptionPage())
         .UseMiddleware<BusinessValidationMiddleware>()
         .UseMiddleware<SetupUserClaimsMiddleware>();
+    
+    app.MapHub<NotificationHub>(NotificationHub.EndpointPath);
 
     app.Logger.LogInformation("Running app in {EnvironmentName} with {ProcessorsCount} processor(s)", app.Environment.EnvironmentName,  Environment.ProcessorCount);
 

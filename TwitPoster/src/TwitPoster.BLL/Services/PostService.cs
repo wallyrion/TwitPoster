@@ -4,6 +4,7 @@ using TwitPoster.BLL.DTOs;
 using TwitPoster.BLL.Exceptions;
 using TwitPoster.BLL.Extensions;
 using TwitPoster.BLL.Interfaces;
+using TwitPoster.BLL.Notifications;
 using TwitPoster.DAL;
 using TwitPoster.DAL.Models;
 
@@ -13,11 +14,13 @@ public class PostService : IPostService
 {
     private readonly TwitPosterContext _context;
     private readonly ICurrentUser _currentUser;
+    private readonly INotificationReporter _notificationReporter;
 
-    public PostService(TwitPosterContext context, ICurrentUser currentUser)
+    public PostService(TwitPosterContext context, ICurrentUser currentUser, INotificationReporter notificationReporter)
     {
         _context = context;
         _currentUser = currentUser;
+        _notificationReporter = notificationReporter;
     }
 
     public async Task<List<PostDto>> GetPosts(int pageSize, int pageNumber, CancellationToken cancellationToken = default)
@@ -114,10 +117,15 @@ public class PostService : IPostService
         _context.PostLikes.Add(newLike);
         await _context.SaveChangesAsync();
 
+        var currentUserName = await _context.Users.Where(u => u.Id == _currentUser.Id).Select(u => $"{u.FirstName} {u.LastName}").FirstAsync();
+        await _notificationReporter.NotifyPostWasLikedAsync(post.AuthorId, new NotificationPayload
+        {
+            ByUserName = currentUserName
+        });
+
         return _context.PostLikes.Count(like => like.PostId == postId);
     }
 
-    
     public async Task<int> UnlikePost(int postId)
     {
         var post = await _context.Posts.FindAsync(postId);
