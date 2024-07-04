@@ -5,7 +5,7 @@ on:
     branches: ["master"]
     paths:
       - "terraform/**"
-      - ".github/workflows/shared/infrastructure.deploy.yml"
+      - ".github/workflows/shared.infrastructure.deploy.yml"
       - ".github/workflows/infrastructure.build.yml"
 
 permissions:
