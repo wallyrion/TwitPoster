@@ -2,8 +2,8 @@ version: 2
 updates:
   - package-ecosystem: "nuget"
     directories:
-      - "/TwitPoster"
-      - "/TwitPoster.EmailSender"
+      - "/TwitPoster*"
+
     schedule:
       interval: "daily"
     groups:
