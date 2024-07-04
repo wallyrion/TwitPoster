@@ -5,19 +5,13 @@ updates:
       - "**/*"
     schedule:
       interval: "daily"
-      
-    groups:
-      testcontainers:
-        patterns:
-          - "Testcontainers*"
-
 
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
       interval: "daily"
       
-  - package-ecosystem: "terraform"
-    directory: "/terraform"
+  - package-ecosystem: 'terraform'
+    directory: '/'
     schedule:
-      interval: "daily"
+      interval: 'daily'

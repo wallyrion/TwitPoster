@@ -2,6 +2,6 @@
 
 public interface ICurrentUser
 {
-    int Id { get; set; } 
-    string Email { get; set; }
+    int Id { get; } 
+    string Email { get; }
 }
