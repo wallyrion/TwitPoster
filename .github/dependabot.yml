@@ -5,6 +5,12 @@ updates:
       - "**/*"
     schedule:
       interval: "daily"
+      
+    groups:
+      testcontainers:
+        patterns:
+          - "Testcontainers*"
+
 
   - package-ecosystem: "github-actions"
     directory: "/"
