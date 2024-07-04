@@ -160,7 +160,6 @@ try
         .UseMiddleware<SetupUserClaimsMiddleware>();
     
     app.MapHub<NotificationHub>(NotificationHub.EndpointPath);
-
     
     app.Logger.LogInformation("Running app in {EnvironmentName} with {ProcessorsCount} processor(s)", app.Environment.EnvironmentName,  Environment.ProcessorCount);
    
