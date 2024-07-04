@@ -13,7 +13,7 @@
     <PackageVersion Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="8.0.0" />
     <PackageVersion Include="Microsoft.FeatureManagement" Version="3.3.1" />
     <PackageVersion Include="Refit" Version="7.1.2" />
-    <PackageVersion Include="Refit.HttpClientFactory" Version="7.1.1" />
+    <PackageVersion Include="Refit.HttpClientFactory" Version="7.1.2" />
     <PackageVersion Include="Twitposter.Shared" Version="2.2.38" />
     <PackageVersion Include="EntityFrameworkCore.Triggered" Version="3.2.2" />
     <PackageVersion Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.6" />
