@@ -16,7 +16,7 @@
     <PackageVersion Include="Swashbuckle.AspNetCore" Version="6.6.2" />
     <PackageVersion Include="Testcontainers" Version="3.8.0" />
     <PackageVersion Include="Testcontainers.RabbitMq" Version="3.8.0" />
-    <PackageVersion Include="Twitposter.Shared" Version="2.2.1" />
+    <PackageVersion Include="Twitposter.Shared" Version="2.2.38" />
     <PackageVersion Include="coverlet.collector" Version="6.0.2">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
