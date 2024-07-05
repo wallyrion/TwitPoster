@@ -47,7 +47,7 @@ jobs:
           WEBHOOK_URL: ${{ secrets.AZURE_WEBHOOK_URL_TWITPOSTER }}
         shell: bashraform@v3
   
-  confirm_deployment:
+  confirm_deployment_twitposter:
     needs: deploy
     runs-on: ubuntu-latest
     environment:
@@ -81,4 +81,3 @@ jobs:
           echo "Deployment verification failed: imageTag did not match after 30 attempts."
           exit 1
         shell: bash
-          

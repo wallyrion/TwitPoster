@@ -27,10 +27,11 @@ on:
         required: true
         type: string
 
+
 permissions:
   contents: 'read'
   packages: 'write'
-
+  actions: read
 
 jobs:
   infra:
@@ -43,7 +44,6 @@ jobs:
   
   deploy_twitposter:
     if: ${{ inputs.deploy_twitposter == 'true' }}
-    name: 'Twitposter [${{ inputs.environment }}]'
     needs: [ infra ]
     uses: ./.github/workflows/shared.twitposter.deploy.yml
     with:
@@ -52,9 +52,9 @@ jobs:
       APP_SERVICE_NAME: ${{ needs.infra.outputs.APP_SERVICE_NAME }}
     secrets: inherit
     
+   
   deploy_email_sender:
     if: ${{ inputs.deploy_email_sender == 'true' }}
-    name: 'EmailSender [${{ inputs.environment }}]'
     needs: [ infra ]
     uses: ./.github/workflows/shared.twitposter-emailsender.deploy.yml
     with:
@@ -65,10 +65,64 @@ jobs:
 
   deploy_dev_functions:
     if: ${{ inputs.deploy_functions == 'true' }}
-    name: 'Functions app [${{ inputs.environment }}]'
     needs: [ infra ]
     uses: ./.github/workflows/shared.functions.deploy.yml
     with:
       environment: ${{ inputs.environment }}
       APP_SERVICE_NAME: ${{ needs.infra.outputs.APP_SERVICE_NAME_FUNCTIONS }}
     secrets: inherit
+    
+  finish_deploy_twitposter:
+    needs: [ deploy_twitposter ]
+    runs-on: ubuntu-latest
+    steps:
+      - name: 'Finish Twitposter deployment'
+        run: echo "Twitposter deployed successfully"
+  finish_deploy_email_sender:
+    needs: [ deploy_email_sender ]
+    runs-on: ubuntu-latest
+    steps:
+      - name: 'Finish Email sender deployment'
+        run: echo "Email sender deployed successfully"
+  finish_deploy_functions:
+    needs: [ deploy_dev_functions ]
+    runs-on: ubuntu-latest
+    steps:
+      - name: 'Finish Functions deployment'
+        run: echo "Functions deployed successfully"
+    
+    
+  wait_for_deployment:
+    needs: [ infra ]
+    runs-on: ubuntu-latest
+    steps:
+    - name: 'Wait for deployment'
+      uses: yogeshlonkar/wait-for-jobs@v0
+      with:
+        gh-token: ${{ secrets.GITHUB_TOKEN }}
+        ignore-skipped: 'true'
+        interval: '3000'
+        no-max-ttl: 'true'
+        ttl: '60'
+        jobs: |
+          Full ${{inputs.environment}} deployment / finish_deploy_twitposter
+          Full ${{inputs.environment}} deployment / finish_deploy_email_sender
+          Full ${{inputs.environment}} deployment / finish_deploy_functions
+        
+  run_e2e_tests:
+    needs: wait_for_deployment
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.x'
+      - name: Restore dependencies - TwitPoster
+        run: dotnet restore ./TwitPoster
+
+      - name: Test - TwitPoster
+        env:
+          ASPNETCORE_ENVIRONMENT: Production
+          TWITPOSTER_API_BASE_URL: 'https://twitposter-production-appservice.azurewebsites.net'
+        run: dotnet test --verbosity normal ./TwitPoster.AutoTests -c Release
