@@ -72,3 +72,38 @@ jobs:
       environment: ${{ inputs.environment }}
       APP_SERVICE_NAME: ${{ needs.infra.outputs.APP_SERVICE_NAME_FUNCTIONS }}
     secrets: inherit
+    
+  wait_for_deployment:
+    needs: [ infra]
+    runs-on: ubuntu-latest
+    steps:
+    - name: 'Wait for deployment'
+      uses: yogeshlonkar/wait-for-jobs@v0
+      with:
+      gh-token: ${{ secrets.GITHUB_TOKEN }}
+      ignore-skipped: 'true'
+      interval: '3000'
+      no-max-ttl: 'true'
+      ttl: '60'
+      jobs: |
+          deploy_twitposter
+          deploy_email_sender
+          deploy_dev_functions
+        
+  run_e2e_tests:
+    needs: wait_for_deployment
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.x'
+      - name: Restore dependencies - TwitPoster
+        run: dotnet restore ./TwitPoster
+
+      - name: Test - TwitPoster
+        env:
+          ASPNETCORE_ENVIRONMENT: Production
+          TWITPOSTER_API_BASE_URL: 'https://twitposter-production-appservice.azurewebsites.net'
+        run: dotnet test --verbosity normal ./TwitPoster.AutoTests -c Release
