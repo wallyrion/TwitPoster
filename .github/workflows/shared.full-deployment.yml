@@ -44,7 +44,6 @@ jobs:
   
   deploy_twitposter_1:
     if: ${{ inputs.deploy_twitposter == 'true' }}
-    name: 'deploy twitposter'
     needs: [ infra ]
     uses: ./.github/workflows/shared.twitposter.deploy.yml
     with:
@@ -55,7 +54,6 @@ jobs:
     
   deploy_email_sender:
     if: ${{ inputs.deploy_email_sender == 'true' }}
-    name: 'deploy_email_sender'
     needs: [ infra ]
     uses: ./.github/workflows/shared.twitposter-emailsender.deploy.yml
     with:
@@ -66,7 +64,6 @@ jobs:
 
   deploy_dev_functions:
     if: ${{ inputs.deploy_functions == 'true' }}
-    name: 'deploy_dev_functions'
     needs: [ infra ]
     uses: ./.github/workflows/shared.functions.deploy.yml
     with:
