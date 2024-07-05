@@ -31,6 +31,21 @@ public class AuthController(IAuthService authService) : ControllerBase
         return Redirect(redirectUrl);
     }
     
+    
+    [HttpPost("login-google")]
+    public async Task<ActionResult> LoginWithGoogleNew([FromBody] GoogleRequest request, IOptions<ApplicationOptions> applicationOptions)
+    {
+        var payload = await GoogleSignInHelper.ValidateGoogleToken(request.Credential, applicationOptions.Value.GoogleClientId);
+        if (payload == null)
+        {
+            return Unauthorized("Invalid Google token");
+        }
+        
+        var accessToken = await authService.LoginWithGoogle(payload.Email, payload.GivenName, payload.FamilyName, payload.EmailVerified, payload.Picture);
+
+        return Ok(new LoginResponse(accessToken));
+    }
+    
     [HttpPost("registration")]
     public async Task<ActionResult> Register(RegistrationRequest request)
     {

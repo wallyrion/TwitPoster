@@ -108,7 +108,7 @@ public class AuthService : IAuthService
 
         if (user != null)
         {
-            if (isEmailConfirmed)
+            if (!isEmailConfirmed)
             {
                 user.UserAccount.IsEmailConfirmed = true;
             }
