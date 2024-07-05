@@ -48,6 +48,7 @@ public class UsersController : ControllerBase
     {
         await _usersService.Ban(userId);
     }
+    
 
     [HttpPut("unsubscribe/{userId:int}")]
     public void Unsubscribe(int userId)
