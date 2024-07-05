@@ -39,7 +39,7 @@ public class UsersController : ControllerBase
     {
         var command = request.Adapt<UpdateUserProfileCommand>();
         await _usersService.UpdateUserProfile(command);
-        return Ok();
+        return NoContent();
     }
     
     [HttpPut("ban/{userId:int}")]
