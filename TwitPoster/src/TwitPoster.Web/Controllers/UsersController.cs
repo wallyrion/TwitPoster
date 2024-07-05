@@ -33,7 +33,15 @@ public class UsersController : ControllerBase
     {
         return await _usersService.GetCurrentAccountDetail();
     }
-
+    
+    [HttpPut("profile")]
+    public async Task<IActionResult> UpdateUserProfile(UpdateUserProfileRequest request)
+    {
+        var command = request.Adapt<UpdateUserProfileCommand>();
+        await _usersService.UpdateUserProfile(command);
+        return Ok();
+    }
+    
     [HttpPut("ban/{userId:int}")]
     [Authorize(Roles = UserRoles.Admin)]
     public async Task Ban(int userId)

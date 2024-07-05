@@ -21,6 +21,21 @@ public class UserService : IUsersService
         _currentUser = currentUser;
     }
 
+    public async Task UpdateUserProfile(UpdateUserProfileCommand command)
+    {
+        var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == _currentUser.Id);
+        if (user == null)
+        {
+            throw new TwitPosterValidationException("User not found");
+        }
+
+        user.FirstName = command.FirstName;
+        user.LastName = command.LastName;
+        user.BirthDate = command.BirthDate.Date;
+
+        await _context.SaveChangesAsync();
+    }
+
     public async Task Ban(int userId)
     {
         var user = await _context.Users.Include(u => u.UserAccount).FirstOrDefaultAsync(u => u.Id == userId);

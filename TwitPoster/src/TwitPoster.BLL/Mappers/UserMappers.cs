@@ -14,6 +14,7 @@ public static class UserMappers
             FirstName = user.FirstName,
             LastName = user.LastName,
             CreatedAt = user.CreatedAt,
+            BirthDate = user.BirthDate,
             Role = user.UserAccount.Role,
             PhotoUrl = user.PhotoUrl,
             ThumbnailPhotoUrl = user.ThumbnailPhotoUrl,
