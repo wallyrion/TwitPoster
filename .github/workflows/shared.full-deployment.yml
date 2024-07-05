@@ -52,6 +52,7 @@ jobs:
       APP_SERVICE_NAME: ${{ needs.infra.outputs.APP_SERVICE_NAME }}
     secrets: inherit
     
+   
   deploy_email_sender:
     if: ${{ inputs.deploy_email_sender == 'true' }}
     needs: [ infra ]
@@ -71,6 +72,26 @@ jobs:
       APP_SERVICE_NAME: ${{ needs.infra.outputs.APP_SERVICE_NAME_FUNCTIONS }}
     secrets: inherit
     
+  finish_deploy_twitposter:
+    needs: [ deploy_twitposter ]
+    runs-on: ubuntu-latest
+    steps:
+      - name: 'Finish Twitposter deployment'
+        run: echo "Twitposter deployed successfully"
+  finish_deploy_email_sender:
+    needs: [ deploy_email_sender ]
+    runs-on: ubuntu-latest
+    steps:
+      - name: 'Finish Email sender deployment'
+        run: echo "Email sender deployed successfully"
+  finish_deploy_functions:
+    needs: [ deploy_dev_functions ]
+    runs-on: ubuntu-latest
+    steps:
+      - name: 'Finish Functions deployment'
+        run: echo "Functions deployed successfully"
+    
+    
   wait_for_deployment:
     needs: [ infra ]
     runs-on: ubuntu-latest
@@ -84,9 +105,9 @@ jobs:
         no-max-ttl: 'true'
         ttl: '60'
         jobs: |
-          Full ${{inputs.environment}} deployment / deploy_twitposter
-          Full ${{inputs.environment}} deployment / deploy_dev_functions
-          Full ${{inputs.environment}} deployment / deploy_email_sender
+          Full ${{inputs.environment}} deployment / finish_deploy_twitposter
+          Full ${{inputs.environment}} deployment / finish_deploy_email_sender
+          Full ${{inputs.environment}} deployment / finish_deploy_functions
         
   run_e2e_tests:
     needs: wait_for_deployment
