@@ -6,7 +6,7 @@ concurrency:
 
 on:
   push:
-    branches: ["master", "feature/refactoring-workflow-names"]
+    branches: ["master", "feature/added-end-2-end-tests"]
   workflow_dispatch:
 
 permissions:

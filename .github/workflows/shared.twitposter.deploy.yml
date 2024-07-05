@@ -82,3 +82,22 @@ jobs:
           exit 1
         shell: bash
           
+          
+  run_e2e_tests:
+    needs: confirm_deployment
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.x'
+      - name: Restore dependencies - TwitPoster
+        run: dotnet restore ./TwitPoster
+
+      - name: Test - TwitPoster
+        env:
+          ASPNETCORE_ENVIRONMENT: Production
+          TWITPOSTER_API_BASE_URL: 'https://twitposter-production-appservice.azurewebsites.net'
+        run: dotnet test --verbosity normal ./TwitPoster.AutoTests -c Release
