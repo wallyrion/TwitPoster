@@ -80,15 +80,15 @@ jobs:
     - name: 'Wait for deployment'
       uses: yogeshlonkar/wait-for-jobs@v0
       with:
-      gh-token: ${{ secrets.GITHUB_TOKEN }}
-      ignore-skipped: 'true'
-      interval: '3000'
-      no-max-ttl: 'true'
-      ttl: '60'
-      jobs: |
-          deploy_twitposter
-          deploy_email_sender
-          deploy_dev_functions
+        gh-token: ${{ secrets.GITHUB_TOKEN }}
+        ignore-skipped: 'true'
+        interval: '3000'
+        no-max-ttl: 'true'
+        ttl: '60'
+        jobs: |
+            deploy_twitposter
+            deploy_email_sender
+            deploy_dev_functions
         
   run_e2e_tests:
     needs: wait_for_deployment
