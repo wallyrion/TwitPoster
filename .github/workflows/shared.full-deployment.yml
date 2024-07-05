@@ -43,7 +43,7 @@ jobs:
   
   deploy_twitposter:
     if: ${{ inputs.deploy_twitposter == 'true' }}
-    name: 'Twitposter [${{ inputs.environment }}]'
+    name: 'deploy_twitposter'
     needs: [ infra ]
     uses: ./.github/workflows/shared.twitposter.deploy.yml
     with:
@@ -54,7 +54,7 @@ jobs:
     
   deploy_email_sender:
     if: ${{ inputs.deploy_email_sender == 'true' }}
-    name: 'EmailSender [${{ inputs.environment }}]'
+    name: 'deploy_email_sender'
     needs: [ infra ]
     uses: ./.github/workflows/shared.twitposter-emailsender.deploy.yml
     with:
@@ -65,7 +65,7 @@ jobs:
 
   deploy_dev_functions:
     if: ${{ inputs.deploy_functions == 'true' }}
-    name: 'Functions app [${{ inputs.environment }}]'
+    name: 'deploy_dev_functions'
     needs: [ infra ]
     uses: ./.github/workflows/shared.functions.deploy.yml
     with:
