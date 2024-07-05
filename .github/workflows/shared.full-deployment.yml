@@ -44,7 +44,6 @@ jobs:
   
   deploy_twitposter_1:
     if: ${{ inputs.deploy_twitposter == 'true' }}
-    name: 'deploy_twitposter_1'
     needs: [ infra ]
     uses: ./.github/workflows/shared.twitposter.deploy.yml
     with:
@@ -85,7 +84,7 @@ jobs:
         no-max-ttl: 'true'
         ttl: '60'
         jobs: |
-          deploy_twitposter_1
+          confirm_deployment_twitposter
           deploy_email_sender
           deploy_dev_functions
         
