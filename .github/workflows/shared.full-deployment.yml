@@ -42,7 +42,7 @@ jobs:
       environment: ${{ inputs.environment }}
     secrets: inherit
   
-  deploy_twitposter_1:
+  deploy_twitposter:
     if: ${{ inputs.deploy_twitposter == 'true' }}
     needs: [ infra ]
     uses: ./.github/workflows/shared.twitposter.deploy.yml
@@ -84,9 +84,9 @@ jobs:
         no-max-ttl: 'true'
         ttl: '60'
         jobs: |
-          Full ${{inputs.environment}} deployment / deploy_twitposter_1
-          deploy_email_sender
-          deploy_dev_functions
+          Full ${{inputs.environment}} deployment / deploy_twitposter
+          Full ${{inputs.environment}} deployment / deploy_dev_functions
+          Full ${{inputs.environment}} deployment / deploy_email_sender
         
   run_e2e_tests:
     needs: wait_for_deployment
