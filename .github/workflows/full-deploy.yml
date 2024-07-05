@@ -208,7 +208,7 @@ jobs:
   #  secrets: inherit
     
   deploy_prod_full:
-    name: 'Full prod deployment'
+    name: 'Full production deployment'
     needs: [detect_changes, build_infra, wait_for_build]
     uses: ./.github/workflows/shared.full-deployment.yml
     with:
