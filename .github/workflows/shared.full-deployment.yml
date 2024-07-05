@@ -74,7 +74,7 @@ jobs:
     secrets: inherit
     
   wait_for_deployment:
-    needs: [ infra]
+    needs: [ infra ]
     runs-on: ubuntu-latest
     steps:
     - name: 'Wait for deployment'
@@ -86,9 +86,9 @@ jobs:
         no-max-ttl: 'true'
         ttl: '60'
         jobs: |
-            deploy_twitposter
-            deploy_email_sender
-            deploy_dev_functions
+          deploy_twitposter
+          deploy_email_sender
+          deploy_dev_functions
         
   run_e2e_tests:
     needs: wait_for_deployment
