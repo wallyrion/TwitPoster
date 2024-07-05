@@ -19,6 +19,7 @@ public static class ServiceCollectionExtensions
     {
         services.AddFluentValidationAutoValidation();
         services.AddScoped<IValidator<RegistrationRequest>, CreateUserRequestValidator>();
+        services.AddScoped<IValidator<UpdateUserProfileRequest>, UpdateUserProfileRequestValidator>();
         return services;
     }
 

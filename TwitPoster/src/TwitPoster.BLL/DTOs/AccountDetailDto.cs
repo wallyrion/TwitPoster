@@ -10,6 +10,7 @@ public class AccountDetailDto
     public required string Email { get; set; }
     public required UserRole Role { get; set; }
     public required DateTime CreatedAt { get; set; }
+    public required DateTime BirthDate { get; set; }
     public string? PhotoUrl { get; set; }
     public string? ThumbnailPhotoUrl { get; set; }
 }

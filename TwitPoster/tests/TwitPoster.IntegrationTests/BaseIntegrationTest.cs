@@ -25,6 +25,8 @@ public abstract class BaseIntegrationTest(IntegrationTestWebFactory factory) : I
         var user = await DbContext.Users.Include(x => x.UserAccount).FirstAsync(user => user.Id == DefaultUserId);
 
         await AddAuthorization(ApiClient, user.Id);
+        
+        DbContext.ChangeTracker.Clear();
     }
 
     protected async Task<IReadOnlyList<(HttpClient apiClient, DAL.Models.User user)>> CreateConcurrentClients(int usersCount = 10)
