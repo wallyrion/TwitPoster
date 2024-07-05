@@ -45,7 +45,6 @@ jobs:
   deploy_twitposter_1:
     if: ${{ inputs.deploy_twitposter == 'true' }}
     name: 'deploy twitposter'
-    id: deploy_twitposter1
     needs: [ infra ]
     uses: ./.github/workflows/shared.twitposter.deploy.yml
     with:
