@@ -209,7 +209,7 @@ jobs:
     
   deploy_prod_full:
     name: 'Full production deployment'
-    needs: [deploy_qa_full]
+    needs: [detect_changes, deploy_qa_full]
     uses: ./.github/workflows/shared.full-deployment.yml
     with:
       workspace: production
