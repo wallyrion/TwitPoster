@@ -84,7 +84,7 @@ jobs:
         no-max-ttl: 'true'
         ttl: '60'
         jobs: |
-          deploy_twitposter_1 / deploy
+          Full prod deployment / deploy_twitposter_1
           deploy_email_sender
           deploy_dev_functions
         
