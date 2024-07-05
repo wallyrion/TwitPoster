@@ -196,7 +196,7 @@ jobs:
   #  secrets: inherit
     
   deploy_qa_full:
-    name: 'Full qa deployment'
+    name: 'Full stage deployment'
     needs: [detect_changes, build_infra, wait_for_build]
     uses: ./.github/workflows/shared.full-deployment.yml
     with:
