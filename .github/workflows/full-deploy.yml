@@ -197,7 +197,7 @@ jobs:
     
   deploy_qa_full:
     name: 'Full qa deployment'
-    needs: [detect_changes, deploy_dev_full ]
+    needs: [detect_changes, build_infra, wait_for_build]
     uses: ./.github/workflows/shared.full-deployment.yml
     with:
       workspace: s2
@@ -209,7 +209,7 @@ jobs:
     
   deploy_prod_full:
     name: 'Full production deployment'
-    needs: [detect_changes, build_infra, wait_for_build]
+    needs: [deploy_qa_full]
     uses: ./.github/workflows/shared.full-deployment.yml
     with:
       workspace: production
