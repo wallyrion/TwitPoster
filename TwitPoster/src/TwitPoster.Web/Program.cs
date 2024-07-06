@@ -146,7 +146,6 @@ try
 
         .UseCors(WebConstants.Cors.DefaultPolicy)
         .UseMiddleware<RequestDurationMiddleware>()
-        .Use(CustomMiddlewares.ExtendRequestDurationMiddleware)
         .UseSerilogRequestLogging()
         .UseAuthentication()
         .UseAuthorization()
