@@ -110,6 +110,7 @@ public class AuthService : IAuthService
         {
             if (!isEmailConfirmed)
             {
+                
                 user.UserAccount.IsEmailConfirmed = true;
             }
             

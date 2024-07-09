@@ -195,26 +195,26 @@ jobs:
   #    deploy_functions: ${{ needs.detect_changes.outputs.build_functions}}
   #  secrets: inherit
     
-  deploy_qa_full:
-    name: 'Full stage deployment'
-    needs: [detect_changes, build_infra, wait_for_build]
-    uses: ./.github/workflows/shared.full-deployment.yml
-    with:
-      workspace: s2
-      environment: stage
-      deploy_twitposter: ${{ needs.detect_changes.outputs.build_twitposter}}
-      deploy_email_sender: ${{ needs.detect_changes.outputs.build_email_sender}}
-      deploy_functions: ${{ needs.detect_changes.outputs.build_functions }}
-    secrets: inherit
+  #deploy_stage_full:
+  #  name: 'Full stage deployment'
+  #  needs: [detect_changes, build_infra, wait_for_build]
+  #  uses: ./.github/workflows/shared.full-deployment.yml
+  #  with:
+  #    workspace: stage
+  #    environment: stage
+  #    deploy_twitposter: ${{ needs.detect_changes.outputs.build_twitposter}}
+  #    deploy_email_sender: ${{ needs.detect_changes.outputs.build_email_sender}}
+  #    deploy_functions: ${{ needs.detect_changes.outputs.build_functions }}
+  #  secrets: inherit
     
-  deploy_prod_full:
-    name: 'Full production deployment'
-    needs: [detect_changes, deploy_qa_full]
-    uses: ./.github/workflows/shared.full-deployment.yml
-    with:
-      workspace: production
-      environment: production
-      deploy_twitposter: ${{ needs.detect_changes.outputs.build_twitposter}}
-      deploy_email_sender: ${{ needs.detect_changes.outputs.build_email_sender}}
-      deploy_functions: ${{ needs.detect_changes.outputs.build_functions }}
-    secrets: inherit
+  #deploy_prod_full:
+  #  name: 'Full production deployment'
+  #  needs: [detect_changes, deploy_qa_full]
+  #  uses: ./.github/workflows/shared.full-deployment.yml
+  #  with:
+  #    workspace: production
+  #    environment: production
+  #    deploy_twitposter: ${{ needs.detect_changes.outputs.build_twitposter}}
+  #    deploy_email_sender: ${{ needs.detect_changes.outputs.build_email_sender}}
+  #    deploy_functions: ${{ needs.detect_changes.outputs.build_functions }}
+  #  secrets: inherit
