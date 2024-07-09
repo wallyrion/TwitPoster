@@ -9,7 +9,12 @@ updates:
       testcontainers:
         patterns:
           - "Testcontainers*"
+      massTransit:
+        patterns:
           - "MassTransit*"
+      xunit:
+        patterns:
+          - "xunit*"
   - package-ecosystem: "nuget"
     directories:
       - "/TwitPoster.EmailSender"
@@ -19,7 +24,12 @@ updates:
       testcontainers:
         patterns:
           - "Testcontainers*"
+      massTransit:
+        patterns:
           - "MassTransit*"
+      xunit:
+        patterns:
+          - "xunit*"
   - package-ecosystem: "nuget"
     directories:
       - "/TwitPoster.Shared"

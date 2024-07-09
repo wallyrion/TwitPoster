@@ -31,7 +31,6 @@ public class AuthController(IAuthService authService) : ControllerBase
         return Redirect(redirectUrl);
     }
     
-    
     [HttpPost("login-google")]
     public async Task<ActionResult> LoginWithGoogleNew([FromBody] GoogleRequest request, IOptions<ApplicationOptions> applicationOptions)
     {
