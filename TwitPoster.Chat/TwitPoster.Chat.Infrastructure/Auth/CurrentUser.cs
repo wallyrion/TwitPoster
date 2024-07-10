@@ -1,7 +1,7 @@
 ﻿
-using TwitPoster.BLL.Extensions;
+using TwitPoster.Chat.Application;
 
-namespace TwitPoster.Chat;
+namespace TwitPoster.Chat.Infrastructure.Auth;
 
 internal class CurrentUser : ICurrentUser
 {

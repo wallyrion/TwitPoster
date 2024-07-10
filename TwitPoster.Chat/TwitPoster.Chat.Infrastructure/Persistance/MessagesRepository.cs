@@ -1,13 +1,16 @@
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
-using TwitPoster.Chat;
+using TwitPoster.Chat.Application;
+using TwitPoster.Chat.Domain;
 
-public class MessagesService
+namespace TwitPoster.Chat.Infrastructure.Persistance;
+
+internal class MessagesRepository : IMessagesRepository
 {
     private readonly IMongoCollection<Message> _messagesCollection;
 
-    public MessagesService(
-        IOptions<BookStoreDatabaseSettings> bookStoreDatabaseSettings)
+    public MessagesRepository(
+        IOptions<DatabaseSettings> bookStoreDatabaseSettings)
     {
         var mongoClient = new MongoClient(
             bookStoreDatabaseSettings.Value.ConnectionString);

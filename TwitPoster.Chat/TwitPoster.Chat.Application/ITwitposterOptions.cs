@@ -1,7 +1,7 @@
 using FluentValidation;
 using FluentValidation.Results;
 
-namespace TwitPoster.Chat;
+namespace TwitPoster.Chat.Application;
 
 public interface ITwitposterOptions<T> where T : class
 {

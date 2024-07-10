@@ -1,8 +1,10 @@
 ﻿using FluentValidation;
-using TwitPoster.BLL.Exceptions;
-using TwitPoster.Chat;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using TwitPoster.Chat.Application;
+using TwitPoster.Chat.Domain;
 
-namespace TwitPoster.BLL.Extensions;
+namespace TwitPoster.Chat.Infrastructure;
 
 public static class OptionsExtensions
 {

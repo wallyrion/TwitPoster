@@ -1,16 +1,19 @@
 ﻿using System.Text;
 using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using TwitPoster.BLL.Extensions;
 
 namespace TwitPoster.Chat;
 
 public static class DependencyInjection
 {
-    public static IServiceCollection AddSwaggerWithAuthorization(this IServiceCollection services)
+    public static IServiceCollection AddSwagger(this IServiceCollection services)
     {
+        services.AddEndpointsApiExplorer();
+        
         services.AddSwaggerGen(c =>
         {
             c.SwaggerDoc("v1", new OpenApiInfo
@@ -42,30 +45,6 @@ public static class DependencyInjection
                 }
             });
         });
-        
-        return services;
-    }
-    
-    
-    public static IServiceCollection AddJwtBearerAuthentication(this IServiceCollection services, IConfiguration configuration)
-    {
-        var authOptions = configuration.BindOption<AuthOptions>(services);
-        
-        services.AddAuthentication(defaultScheme: JwtBearerDefaults.AuthenticationScheme)
-            .AddJwtBearer(options =>
-            {
-                options.TokenValidationParameters = new TokenValidationParameters
-                {
-                    ValidateIssuer = true,
-                    ValidateAudience = true,
-                    ValidateLifetime = true,
-                    ValidateIssuerSigningKey = true,
-                    ValidIssuer = authOptions.Issuer,
-                    ValidAudience = authOptions.Audience,
-                    IssuerSigningKey = new SymmetricSecurityKey(
-                        Encoding.UTF8.GetBytes(authOptions.Secret))
-                };
-            });
         
         return services;
     }

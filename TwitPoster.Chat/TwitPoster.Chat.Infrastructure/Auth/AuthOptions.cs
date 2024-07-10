@@ -1,6 +1,7 @@
 using FluentValidation;
+using TwitPoster.Chat.Application;
 
-namespace TwitPoster.Chat;
+namespace TwitPoster.Chat.Infrastructure.Auth;
 
 public sealed class AuthOptions : ITwitposterOptions<AuthOptions>
 {

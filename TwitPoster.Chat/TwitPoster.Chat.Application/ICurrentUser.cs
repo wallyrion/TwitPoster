@@ -1,4 +1,4 @@
-namespace TwitPoster.BLL.Extensions;
+namespace TwitPoster.Chat.Application;
 
 public interface ICurrentUser
 {

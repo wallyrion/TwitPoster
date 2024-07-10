@@ -1,7 +1,7 @@
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
-namespace TwitPoster.Chat;
+namespace TwitPoster.Chat.Domain;
 
 public class Message
 {
