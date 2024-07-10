@@ -15,6 +15,9 @@ updates:
       xunit:
         patterns:
           - "xunit*"
+      ef:
+        patterns:
+          - "Microsoft.EntityFrameworkCore*"
   - package-ecosystem: "nuget"
     directories:
       - "/TwitPoster.EmailSender"
