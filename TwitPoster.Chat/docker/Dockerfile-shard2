@@ -1,0 +1,2 @@
+FROM mongo:6.0
+COPY scripts/init-shard2.js /docker-entrypoint-initdb.d/
