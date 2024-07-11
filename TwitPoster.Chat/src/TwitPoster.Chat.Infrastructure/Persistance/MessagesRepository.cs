@@ -36,4 +36,13 @@ internal class MessagesRepository : IMessagesRepository
 
     public async Task RemoveAsync(string id) =>
         await _messagesCollection.DeleteOneAsync(x => x.Id == id);
+
+    public async Task<List<Message>> GetByChatIdAsync(string chatId)
+    {
+        var r = await _messagesCollection.FindAsync(x => x.ChatRoomId == chatId);
+
+        var t = await r.ToListAsync();
+
+        return t;
+    }
 }

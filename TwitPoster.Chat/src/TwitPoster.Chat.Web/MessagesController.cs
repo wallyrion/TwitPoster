@@ -27,10 +27,11 @@ public class MessagesController(IMessagesRepository messagesRepository, ICurrent
         return message;
     }
 
+
     [HttpPost]
-    public async Task<IActionResult> Post(string message)
+    public async Task<IActionResult> Post(string message, string chatId)
     {
-        var newMessage = new Message(message, currentUser.Id);
+        var newMessage = new Message(message, currentUser.Id, chatId);
         await messagesRepository.CreateAsync(newMessage);
 
         return CreatedAtAction(nameof(Get), new { id = newMessage.Id }, newMessage);

@@ -9,8 +9,8 @@ public static class DependencyInjection
     public static IServiceCollection AddPersistence(this IServiceCollection services, IConfiguration configuration)
     {
         configuration.BindOption<DatabaseSettings>(services);
-        services.Configure<DatabaseSettings>(configuration.GetSection("BookStoreDatabase"));
-        services.AddScoped<IMessagesRepository, MessagesRepository>();
+        services.AddSingleton<IMessagesRepository, MessagesRepository>();
+        services.AddSingleton<IChatsRepository, ChatsRepository>();
 
         return services;
     }
