@@ -5,6 +5,7 @@
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
         <UserSecretsId>6dfa08f2-5073-4bee-835a-e4d370d3786d</UserSecretsId>
+        <RootNamespace>TwitPoster.Chat</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>

@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TwitPoster.Chat", "TwitPoster.Chat\TwitPoster.Chat.csproj", "{0E80E6EF-C5F2-46CD-B39F-A5339EC9EBC8}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TwitPoster.Chat.Web", "TwitPoster.Chat.Web\TwitPoster.Chat.Web.csproj", "{0E80E6EF-C5F2-46CD-B39F-A5339EC9EBC8}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TwitPoster.Chat.Infrastructure", "TwitPoster.Chat.Infrastructure\TwitPoster.Chat.Infrastructure.csproj", "{5B961A8B-CD36-4CFA-B293-7BAF2E4D5A91}"
 EndProject
