@@ -1,43 +1,40 @@
 version: '3.9'
 services:
   configsvr:
-    build:
-      context: .
-      dockerfile: Dockerfile-configsvr
+    image: mongo:6.0
     container_name: configsvr
     command: --replSet configReplSet --configsvr --port 27019
     volumes:
       - configsvr:/data/configdb
+      - ./scripts:/scripts
     ports:
       - 27019:27019
 
   shard1:
-    build:
-      context: .
-      dockerfile: Dockerfile-shard1
+    image: mongo:6.0
     container_name: shard1
     command: --replSet shard1ReplSet --shardsvr --port 27018
     volumes:
       - shard1:/data/db
+      - ./scripts:/scripts
     ports:
       - 27018:27018
-    
+
   shard2:
-    build:
-      context: .
-      dockerfile: Dockerfile-shard2
+    image: mongo:6.0
     container_name: shard2
     command: --replSet shard2ReplSet --shardsvr --port 27028
     volumes:
       - shard2:/data/db
+      - ./scripts:/scripts
     ports:
       - 27028:27028
-  
+
   mongos:
-    build:
-      context: .
-      dockerfile: Dockerfile-mongos
+    image: mongo:6.0
     container_name: mongos
+    volumes:
+      - ./scripts:/scripts
     command: >
       bash -c "sleep 10 &&
                mongos --configdb configReplSet/configsvr:27019 --bind_ip_all --port 27017"
