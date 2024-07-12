@@ -17,6 +17,8 @@ public static class DependencyInjection
 
         services.AddJwtBearerAuthentication(configuration);
         services.AddPersistence(configuration);
+        services.AddSignalR();
+
         return services;
     }
     

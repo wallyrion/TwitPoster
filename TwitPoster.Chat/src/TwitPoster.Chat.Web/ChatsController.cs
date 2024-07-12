@@ -5,7 +5,7 @@ using TwitPoster.Chat.Domain;
 
 namespace TwitPoster.Chat;
 
-public record CreateRoomChatRequest(List<Guid> Participants, string? Name = null);
+public record CreateRoomChatRequest(List<int> ParticipantsIds, string? Name = null);
 
 [ApiController]
 [Authorize]
@@ -34,7 +34,7 @@ public class ChatsController(IChatsRepository chatsRepository, IMessagesReposito
     {
         var chat = new RoomChat
         {
-            Participants = roomChatRequest.Participants,
+            ParticipantsIds = roomChatRequest.ParticipantsIds,
             CreatedAt = DateTime.UtcNow,
             Name = roomChatRequest.Name
         };

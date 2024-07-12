@@ -17,7 +17,7 @@ public class Message
     public string ChatRoomId { get; set; }   
     
     [BsonElement("authorId")]
-    public string AuthorId { get; set; }
+    public int AuthorId { get; set; }
     
     [BsonElement("created")]
 
@@ -27,7 +27,7 @@ public class Message
     public Message(string text, int authorId, string chatId)
     {
         Text = text;
-        AuthorId = authorId.ToString();
+        AuthorId = authorId;
         ChatRoomId = chatId;
         Created = DateTime.UtcNow;
     }
