@@ -1,4 +1,4 @@
-name: Build & Test - TwitPoster
+name: Build & Test - TwitPoster.Chat
 
 on:
   push:
