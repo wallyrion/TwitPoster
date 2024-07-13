@@ -2,6 +2,7 @@ using System.Net.Http.Json;
 using FluentAssertions;
 using TwitPoster.Chat.Domain;
 using TwitPoster.Chat.IntegrationTests.TestFactories;
+using TwitPoster.Chat.Requests;
 
 namespace TwitPoster.Chat.IntegrationTests;
 

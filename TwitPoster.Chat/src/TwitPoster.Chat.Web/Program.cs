@@ -1,4 +1,5 @@
 using TwitPoster.Chat;
+using TwitPoster.Chat.Application;
 using TwitPoster.Chat.Infrastructure;
 using TwitPoster.Chat.Infrastructure.Auth;
 using TwitPoster.Chat.Infrastructure.SignalR;
@@ -7,6 +8,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 
 builder.Services.AddSwagger();
+builder.Services.AddApplicationServices();
 builder.Services.AddInfrastructureServices(builder.Configuration);
 builder.Services.AddControllers();
 

@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.SignalR.Client;
 using TwitPoster.Chat.Domain;
 using TwitPoster.Chat.Infrastructure.SignalR;
 using TwitPoster.Chat.IntegrationTests.TestFactories;
+using TwitPoster.Chat.Requests;
 
 namespace TwitPoster.Chat.IntegrationTests;
 

@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TwitPoster.Chat.Application;
+using TwitPoster.Chat.Application.Common.Interfaces;
 using TwitPoster.Chat.Domain;
 
 namespace TwitPoster.Chat;

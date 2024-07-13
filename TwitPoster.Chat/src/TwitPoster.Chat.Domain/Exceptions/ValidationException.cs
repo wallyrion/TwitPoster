@@ -1,4 +1,4 @@
-﻿namespace TwitPoster.Chat.Domain;
+﻿namespace TwitPoster.Chat.Domain.Exceptions;
 
 public class TwitPosterValidationException : Exception
 {
