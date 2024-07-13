@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Logging;
 using TwitPoster.Chat.Application;
+using TwitPoster.Chat.Application.Common.Interfaces;
 using TwitPoster.Chat.Domain;
 
 namespace TwitPoster.Chat.Infrastructure.SignalR;

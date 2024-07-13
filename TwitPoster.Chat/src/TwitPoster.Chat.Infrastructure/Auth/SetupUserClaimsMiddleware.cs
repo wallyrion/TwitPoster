@@ -1,6 +1,7 @@
 ﻿using System.Security.Claims;
 using Microsoft.AspNetCore.Http;
 using TwitPoster.Chat.Application;
+using TwitPoster.Chat.Application.Common.Interfaces;
 
 namespace TwitPoster.Chat.Infrastructure.Auth;
 

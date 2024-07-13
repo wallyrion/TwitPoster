@@ -1,6 +1,6 @@
 using TwitPoster.Chat.Domain;
 
-namespace TwitPoster.Chat.Application;
+namespace TwitPoster.Chat.Application.Common.Interfaces;
 
 public interface IChatsRepository
 {

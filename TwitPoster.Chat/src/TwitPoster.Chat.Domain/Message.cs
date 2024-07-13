@@ -12,7 +12,6 @@ public class Message
     [BsonElement("text")]
     public string Text { get; set; }
     
-    
     [BsonElement("chatRoomId")]
     public string ChatRoomId { get; set; }   
     

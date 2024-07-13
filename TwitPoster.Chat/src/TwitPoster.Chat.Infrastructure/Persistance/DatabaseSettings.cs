@@ -1,5 +1,6 @@
 using FluentValidation;
 using TwitPoster.Chat.Application;
+using TwitPoster.Chat.Application.Common.Interfaces;
 
 namespace TwitPoster.Chat.Infrastructure.Persistance;
 

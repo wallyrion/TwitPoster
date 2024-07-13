@@ -1,14 +1,20 @@
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TwitPoster.Chat.Application;
+using TwitPoster.Chat.Application.Chats.Commands;
+using TwitPoster.Chat.Application.Common.Interfaces;
+using TwitPoster.Chat.Application.Messages.Queries;
+using TwitPoster.Chat.Application.Messages.Queries.GetMessagesByChatId;
 using TwitPoster.Chat.Domain;
+using TwitPoster.Chat.Requests;
 
 namespace TwitPoster.Chat;
 
 [ApiController]
 [Authorize]
 [Route("api/[controller]")]
-public class ChatsController(IChatsRepository chatsRepository, IMessagesRepository messagesRepository) : ControllerBase
+public class ChatsController(IChatsRepository chatsRepository, IMessagesRepository messagesRepository, ISender sender) : ControllerBase
 {
     [HttpGet]
     public async Task<List<RoomChat>> Get() =>
@@ -30,24 +36,20 @@ public class ChatsController(IChatsRepository chatsRepository, IMessagesReposito
     [HttpPost]
     public async Task<IActionResult> Post(CreateRoomChatRequest roomChatRequest)
     {
-        var chat = new RoomChat
-        {
-            ParticipantsIds = roomChatRequest.ParticipantsIds,
-            CreatedAt = DateTime.UtcNow,
-            Name = roomChatRequest.Name
-        };
-        await chatsRepository.CreateAsync(chat);
-
-        return CreatedAtAction(nameof(Get), new { id = chat.Id }, chat);
+        var createRoomCharCommand = new CreateChatCommand(roomChatRequest.ParticipantsIds, roomChatRequest.Name);
+        var result = await sender.Send(createRoomCharCommand);
+        
+        return CreatedAtAction(nameof(Get), new { id = result.Id }, result);
     }
     
         
     [HttpGet("{chatId}/messages")]
     public async Task<ActionResult<List<Message>>> GetByChatId(string chatId)
     {
-        var message = await messagesRepository.GetByChatIdAsync(chatId);
+        var request = new GetMessagesByChatIdQuery(chatId);
+        var messages = await sender.Send(request);
 
-        return message;
+        return Ok(messages);
     }
 
     /*[HttpPut("{id:guid}")]

@@ -13,7 +13,7 @@ public class RoomChat
     public string? Name { get; set; }
 
     [BsonElement("participants")]
-    public List<int> ParticipantsIds { get; set; } = [];
+    public IReadOnlyList<int> ParticipantsIds { get; set; } = [];
     
     [BsonElement("createdAt")]
 
