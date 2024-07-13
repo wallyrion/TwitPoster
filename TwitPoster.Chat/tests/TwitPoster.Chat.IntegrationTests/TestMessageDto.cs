@@ -2,13 +2,12 @@
 
 public class TestMessageDto
 {
-    public string Id { get; set; } = null!;
+    public required string Id { get; init; }
 
-    public string Text { get; set; }
+    public required string Text { get; init; }
     
-    public string ChatRoomId { get; set; }   
+    public required string ChatRoomId { get; init; }   
     
-    public int AuthorId { get; set; }
-
-    public DateTime Created { get; set; }
+    public required int AuthorId { get; init; }
+    public required DateTime Created { get; init; }
 }

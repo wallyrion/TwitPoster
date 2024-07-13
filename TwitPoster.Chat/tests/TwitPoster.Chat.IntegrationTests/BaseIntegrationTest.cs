@@ -12,24 +12,19 @@ using TwitPoster.Chat.IntegrationTests.TestFactories;
 namespace TwitPoster.Chat.IntegrationTests;
 
 [Collection(nameof(SharedTestCollection))]
-public abstract class BaseIntegrationTest : IAsyncLifetime
+public abstract class BaseIntegrationTest(SharedFixtures fixtures) : IAsyncLifetime
 {
-    private readonly SharedFixtures _fixtures;
-    protected readonly IntegrationTestWebFactory Factory;
+    private readonly IntegrationTestWebFactory _factory = new(fixtures);
     private AsyncServiceScope _scope;
     protected HttpClient ApiClient { get; private set; } = null!;
-    
-    protected BaseIntegrationTest(SharedFixtures fixtures)
-    {
-        _fixtures = fixtures;
-        Factory = new IntegrationTestWebFactory(_fixtures);
-    }
 
-    public async Task InitializeAsync()
+    public Task InitializeAsync()
     {
-        ApiClient = Factory.CreateDefaultClient();
+        ApiClient = _factory.CreateDefaultClient();
 
-        _scope = Factory.Services.CreateAsyncScope();
+        _scope = _factory.Services.CreateAsyncScope();
+
+        return Task.CompletedTask;
     }
 
     public async Task DisposeAsync()
@@ -41,7 +36,7 @@ public abstract class BaseIntegrationTest : IAsyncLifetime
     {
         var signingCredentials = new SigningCredentials(
             new SymmetricSecurityKey(
-                Encoding.UTF8.GetBytes(Factory.Secret)),
+                Encoding.UTF8.GetBytes(_factory.Secret)),
             SecurityAlgorithms.HmacSha256);
 
         var claims = new[]
@@ -63,16 +58,18 @@ public abstract class BaseIntegrationTest : IAsyncLifetime
         return new JwtSecurityTokenHandler().WriteToken(securityToken);
     }
     
-    protected async Task AddAuthorization(HttpClient httpClient, TestUser user)
+    protected Task AddAuthorization(HttpClient httpClient, TestUser user)
     {
         var token = GenerateToken(user);
 
         httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+        return Task.CompletedTask;
     }
     
     protected HubConnection CreateHubConnection(string? token)
     {
-        var server = Factory.Server;
+        var server = _factory.Server;
         var handler = server.CreateHandler();
 
         var serverAddressWithoutHttp = server.BaseAddress.Host;
