@@ -2,8 +2,11 @@
 using System.Net.Http.Headers;
 using System.Security.Claims;
 using System.Text;
+using Microsoft.AspNetCore.SignalR.Client;
+using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
+using TwitPoster.Chat.Infrastructure.SignalR;
 using TwitPoster.Chat.IntegrationTests.TestFactories;
 
 namespace TwitPoster.Chat.IntegrationTests;
@@ -65,5 +68,43 @@ public abstract class BaseIntegrationTest : IAsyncLifetime
         var token = GenerateToken(user);
 
         httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+    }
+    
+    protected HubConnection CreateHubConnection(string? token)
+    {
+        var server = Factory.Server;
+        var handler = server.CreateHandler();
+
+        var serverAddressWithoutHttp = server.BaseAddress.Host;
+        var uri = new Uri($"ws://{serverAddressWithoutHttp}{NotificationHub.EndpointPath}");
+
+        var queryParams = token != null ? new Dictionary<string, string>
+        {
+            { "access_token", token }
+        }: [];
+
+        var finalUrl = QueryHelpers.AddQueryString(uri.Query, queryParams!);
+
+        var hubConnection = new HubConnectionBuilder()
+            .WithUrl(uri + finalUrl, o =>
+            {
+                o.HttpMessageHandlerFactory = _ => handler;
+            })
+            .Build();
+
+        return hubConnection;
+    }
+    
+    protected async Task<TaskCompletionSource<ReceivedChatMessage>> SubscribeToMessage(string token)
+    {
+        var connection = CreateHubConnection(token);
+        var receivedTaskCompletionSource = new TaskCompletionSource<ReceivedChatMessage>();
+        connection.On<ReceivedChatMessage>(nameof(INotificationClient.ReceivedMessage), (payload) =>
+        {
+            receivedTaskCompletionSource.SetResult(payload);
+        });
+
+        await connection.StartAsync();
+        return receivedTaskCompletionSource;
     }
 }
