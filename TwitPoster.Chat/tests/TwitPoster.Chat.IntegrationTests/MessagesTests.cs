@@ -1,4 +1,5 @@
 using System.Net.Http.Json;
+using System.Text.Json;
 using FluentAssertions;
 using Microsoft.AspNetCore.SignalR.Client;
 using TwitPoster.Chat.Domain;
@@ -34,5 +35,15 @@ public class MessagesTests(SharedFixtures fixtures) : BaseIntegrationTest(fixtur
             ChatId = createdChat.Id,
             Text = testMessage.Text
         });
+        
+        var messages = await ApiClient.GetAsync($"/api/Chats/{createdChat.Id}/messages");
+        var actualMessage = ((await messages.Content.ReadFromJsonAsync<List<TestMessageDto>>())!).Last();
+        actualMessage.Should().BeEquivalentTo(new
+        {
+            Text = testMessage.Text,
+            AuthorId = user1.Id
+        });
+
+        actualMessage.Created.Should().BeAfter(DateTime.UtcNow.AddDays(-1)).And.BeBefore(DateTime.UtcNow);
     }
 }

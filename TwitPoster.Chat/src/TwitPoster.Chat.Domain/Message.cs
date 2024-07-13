@@ -22,7 +22,6 @@ public class Message
     [BsonElement("created")]
 
     public DateTime Created { get; set; }
-    
 
     public Message(string text, int authorId, string chatId)
     {

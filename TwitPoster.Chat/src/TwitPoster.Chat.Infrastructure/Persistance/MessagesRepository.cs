@@ -39,10 +39,11 @@ internal class MessagesRepository : IMessagesRepository
 
     public async Task<List<Message>> GetByChatIdAsync(string chatId)
     {
-        var r = await _messagesCollection.FindAsync(x => x.ChatRoomId == chatId);
-
-        var t = await r.ToListAsync();
-
-        return t;
+        // sort by descenging order
+        
+        var sort = Builders<Message>.Sort.Descending(x => x.Created);
+        var filter = Builders<Message>.Filter.Eq(x => x.ChatRoomId, chatId);
+        var result = await _messagesCollection.Find(filter).Sort(sort).ToListAsync();
+        return result;
     }
 }
