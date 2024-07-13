@@ -39,6 +39,24 @@ updates:
     schedule:
       interval: "daily"
       
+      
+      
+  - package-ecosystem: "nuget"
+    directories:
+      - "/TwitPoster.Chat"
+    schedule:
+      interval: "daily"
+    groups:
+      testcontainers:
+        patterns:
+          - "Testcontainers*"
+      massTransit:
+        patterns:
+          - "MassTransit*"
+      xunit:
+        patterns:
+          - "xunit*"
+
   - package-ecosystem: "nuget"
     directories:
       - "/TwitPoster.Functions"

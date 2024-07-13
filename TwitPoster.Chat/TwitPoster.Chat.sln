@@ -1,0 +1,59 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TwitPoster.Chat.Web", "src\TwitPoster.Chat.Web\TwitPoster.Chat.Web.csproj", "{0E80E6EF-C5F2-46CD-B39F-A5339EC9EBC8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TwitPoster.Chat.Infrastructure", "src\TwitPoster.Chat.Infrastructure\TwitPoster.Chat.Infrastructure.csproj", "{5B961A8B-CD36-4CFA-B293-7BAF2E4D5A91}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TwitPoster.Chat.Domain", "src\TwitPoster.Chat.Domain\TwitPoster.Chat.Domain.csproj", "{2F0BAA89-FDF5-4373-8495-D0C6054C23E9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TwitPoster.Chat.Application", "src\TwitPoster.Chat.Application\TwitPoster.Chat.Application.csproj", "{2888B206-C949-4F0D-A323-3E0B9963D414}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SolutionItems", "SolutionItems", "{4525E152-A673-4B2F-8784-FF42556F63CA}"
+	ProjectSection(SolutionItems) = preProject
+		Directory.Build.props = Directory.Build.props
+		Directory.Packages.props = Directory.Packages.props
+		nuget.config = nuget.config
+		..\.github\workflows\TwitPoster.Chat.build.yml = ..\.github\workflows\TwitPoster.Chat.build.yml
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{47966F15-01EF-4639-B6DD-9AC8DF742933}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{50A49E0A-FF54-401E-B614-296E2DE5EFFD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TwitPoster.Chat.IntegrationTests", "tests\TwitPoster.Chat.IntegrationTests\TwitPoster.Chat.IntegrationTests.csproj", "{8A5F2160-36C2-42CE-A4A0-AE2F3CEA103D}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{0E80E6EF-C5F2-46CD-B39F-A5339EC9EBC8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0E80E6EF-C5F2-46CD-B39F-A5339EC9EBC8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0E80E6EF-C5F2-46CD-B39F-A5339EC9EBC8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0E80E6EF-C5F2-46CD-B39F-A5339EC9EBC8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5B961A8B-CD36-4CFA-B293-7BAF2E4D5A91}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5B961A8B-CD36-4CFA-B293-7BAF2E4D5A91}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5B961A8B-CD36-4CFA-B293-7BAF2E4D5A91}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5B961A8B-CD36-4CFA-B293-7BAF2E4D5A91}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2F0BAA89-FDF5-4373-8495-D0C6054C23E9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2F0BAA89-FDF5-4373-8495-D0C6054C23E9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2F0BAA89-FDF5-4373-8495-D0C6054C23E9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2F0BAA89-FDF5-4373-8495-D0C6054C23E9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2888B206-C949-4F0D-A323-3E0B9963D414}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2888B206-C949-4F0D-A323-3E0B9963D414}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2888B206-C949-4F0D-A323-3E0B9963D414}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2888B206-C949-4F0D-A323-3E0B9963D414}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8A5F2160-36C2-42CE-A4A0-AE2F3CEA103D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8A5F2160-36C2-42CE-A4A0-AE2F3CEA103D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8A5F2160-36C2-42CE-A4A0-AE2F3CEA103D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8A5F2160-36C2-42CE-A4A0-AE2F3CEA103D}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{8A5F2160-36C2-42CE-A4A0-AE2F3CEA103D} = {50A49E0A-FF54-401E-B614-296E2DE5EFFD}
+		{0E80E6EF-C5F2-46CD-B39F-A5339EC9EBC8} = {47966F15-01EF-4639-B6DD-9AC8DF742933}
+		{2888B206-C949-4F0D-A323-3E0B9963D414} = {47966F15-01EF-4639-B6DD-9AC8DF742933}
+		{2F0BAA89-FDF5-4373-8495-D0C6054C23E9} = {47966F15-01EF-4639-B6DD-9AC8DF742933}
+		{5B961A8B-CD36-4CFA-B293-7BAF2E4D5A91} = {47966F15-01EF-4639-B6DD-9AC8DF742933}
+	EndGlobalSection
+EndGlobal

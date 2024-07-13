@@ -1,0 +1,11 @@
+# Ignore the data folder
+data/
+
+# Ignore node_modules
+node_modules/
+
+# Ignore log files
+*.log
+
+# Ignore environment files
+.env
