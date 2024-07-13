@@ -1,0 +1,32 @@
+name: Build & Test - TwitPoster
+
+on:
+  push:
+    branches: ["twitposter-chat-initialize"]
+ 
+  pull_request:
+    branches: ["master"]
+    paths:
+      - "TwitPoster.Chat/**"
+      - ".github/workflows/TwitPoster.Chat.build.yml"
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.x'
+        
+      - name: Restore dependencies - TwitPoster.Chat
+        run: dotnet restore ./TwitPoster.Chat --locked-mode
+        
+      - name: Build - TwitPoster.Chat
+        run: dotnet build --no-restore ./TwitPoster.Chat -c Release
+
+      - name: Test - TwitPoster
+        env:
+          ASPNETCORE_ENVIRONMENT: Production
+        run: dotnet test --no-build --verbosity normal ./TwitPoster.Chat -c Release
