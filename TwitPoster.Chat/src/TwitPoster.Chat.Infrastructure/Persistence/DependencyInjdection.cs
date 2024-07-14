@@ -1,9 +1,8 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using TwitPoster.Chat.Application.Common.Interfaces;
-using TwitPoster.Chat.Infrastructure.Persistence;
 
-namespace TwitPoster.Chat.Infrastructure.Persistance;
+namespace TwitPoster.Chat.Infrastructure.Persistence;
 
 public static class DependencyInjection
 {

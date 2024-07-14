@@ -3,7 +3,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using TwitPoster.Chat.Application.Common.Interfaces;
 using TwitPoster.Chat.Infrastructure.Auth;
-using TwitPoster.Chat.Infrastructure.Persistance;
+using TwitPoster.Chat.Infrastructure.Persistence;
 using TwitPoster.Chat.Infrastructure.SignalR;
 
 namespace TwitPoster.Chat.Infrastructure;

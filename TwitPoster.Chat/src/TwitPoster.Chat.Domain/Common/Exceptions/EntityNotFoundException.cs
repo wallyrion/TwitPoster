@@ -1,4 +1,4 @@
-﻿namespace TwitPoster.Chat.Domain.Exceptions;
+﻿namespace TwitPoster.Chat.Domain.Common.Exceptions;
 
 public class EntityNotFoundException : Exception
 {

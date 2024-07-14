@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using TwitPoster.Chat.Application.Common.Interfaces;
 using TwitPoster.Chat.Application.Messages.Commands;
 using TwitPoster.Chat.Domain;
+using TwitPoster.Chat.Domain.MessageAggregateRoot;
 
 namespace TwitPoster.Chat;
 

@@ -1,4 +1,4 @@
-namespace TwitPoster.Chat.Domain;
+namespace TwitPoster.Chat.Domain.MessageAggregateRoot;
 
 public class Message
 {

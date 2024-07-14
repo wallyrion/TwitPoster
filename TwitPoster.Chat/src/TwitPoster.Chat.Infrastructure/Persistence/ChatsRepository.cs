@@ -4,7 +4,7 @@ using MongoDB.Driver.Linq;
 using TwitPoster.Chat.Application.Common.Interfaces;
 using TwitPoster.Chat.Domain;
 using TwitPoster.Chat.Domain.ChatAggregateRoot;
-using TwitPoster.Chat.Infrastructure.Persistance;
+using TwitPoster.Chat.Infrastructure.Persistence.Models;
 
 namespace TwitPoster.Chat.Infrastructure.Persistence;
 

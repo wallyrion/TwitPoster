@@ -7,6 +7,7 @@ using TwitPoster.Chat.Application.Common.Interfaces;
 using TwitPoster.Chat.Application.Messages.Queries.GetMessagesByChatId;
 using TwitPoster.Chat.Domain;
 using TwitPoster.Chat.Domain.ChatAggregateRoot;
+using TwitPoster.Chat.Domain.MessageAggregateRoot;
 using TwitPoster.Chat.Requests;
 
 namespace TwitPoster.Chat;

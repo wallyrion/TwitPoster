@@ -2,9 +2,10 @@ using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 using MongoDB.Driver.Linq;
 using TwitPoster.Chat.Application.Common.Interfaces;
-using TwitPoster.Chat.Domain;
+using TwitPoster.Chat.Domain.MessageAggregateRoot;
+using TwitPoster.Chat.Infrastructure.Persistence.Models;
 
-namespace TwitPoster.Chat.Infrastructure.Persistance;
+namespace TwitPoster.Chat.Infrastructure.Persistence;
 
 internal class MessagesRepository : IMessagesRepository
 {

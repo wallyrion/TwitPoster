@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using TwitPoster.Chat.Domain;
+using TwitPoster.Chat.Domain.MessageAggregateRoot;
 
 namespace TwitPoster.Chat.Application.Messages.Queries.GetMessagesByChatId;
 
