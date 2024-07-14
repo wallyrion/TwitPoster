@@ -1,5 +1,6 @@
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
+using MongoDB.Driver.Linq;
 using TwitPoster.Chat.Application;
 using TwitPoster.Chat.Application.Common.Interfaces;
 using TwitPoster.Chat.Domain;
@@ -8,7 +9,7 @@ namespace TwitPoster.Chat.Infrastructure.Persistance;
 
 internal class MessagesRepository : IMessagesRepository
 {
-    private readonly IMongoCollection<Message> _messagesCollection;
+    private readonly IMongoCollection<MessageDbDto> _messagesCollection;
 
     public MessagesRepository(
         IOptions<DatabaseSettings> bookStoreDatabaseSettings)
@@ -19,32 +20,78 @@ internal class MessagesRepository : IMessagesRepository
         var mongoDatabase = mongoClient.GetDatabase(
             bookStoreDatabaseSettings.Value.DatabaseName);
 
-        _messagesCollection = mongoDatabase.GetCollection<Message>(
+        _messagesCollection = mongoDatabase.GetCollection<MessageDbDto>(
             bookStoreDatabaseSettings.Value.MessagesCollectionName);
     }
 
-    public async Task<List<Message>> GetAsync() =>
-        await _messagesCollection.Find(_ => true).ToListAsync();
-
-    public async Task<Message?> GetAsync(string id) =>
-        await _messagesCollection.Find(x => x.Id == id).FirstOrDefaultAsync();
-
-    public async Task CreateAsync(Message newMessage) =>
-        await _messagesCollection.InsertOneAsync(newMessage);
-
-    public async Task UpdateAsync(string id, Message updatedMessage) =>
-        await _messagesCollection.ReplaceOneAsync(x => x.Id == id, updatedMessage);
-
-    public async Task RemoveAsync(string id) =>
-        await _messagesCollection.DeleteOneAsync(x => x.Id == id);
-
-    public async Task<List<Message>> GetByChatIdAsync(string chatId)
+    public async Task<List<Message>> GetAsync()
     {
-        // sort by descenging order
-        
-        var sort = Builders<Message>.Sort.Descending(x => x.Created);
-        var filter = Builders<Message>.Filter.Eq(x => x.ChatRoomId, chatId);
-        var result = await _messagesCollection.Find(filter).Sort(sort).ToListAsync();
-        return result;
+        var result = _messagesCollection.AsQueryable();
+
+        var query = result.Select(r => new Message
+        {
+            Created = r.Created,
+            AuthorId = r.AuthorId,
+            Text = r.Text,
+            Id = r.Id,
+            ChatRoomId = r.ChatRoomId
+        }).ToListAsync();
+
+        return await query;
+
+        /*return await _messagesCollection.Find(_ => true).Project(r => new Message
+        {
+            Created = r.Created,
+            AuthorId = r.AuthorId,
+            Text = r.Text,
+            Id = r.Id,
+            ChatRoomId = r.ChatRoomId
+        }).ToListAsync();*/
+    }
+    
+    public async Task<Message?> GetAsync(string id) =>
+        await _messagesCollection.Find(x => x.Id == id).Project(r => new Message
+        {
+            Created = r.Created,
+            AuthorId = r.AuthorId,
+            Text = r.Text,
+            Id = r.Id,
+            ChatRoomId = r.ChatRoomId
+        }).FirstOrDefaultAsync();
+
+    public async Task CreateAsync(Message newMessage)
+    {
+        var messageDbDto = new MessageDbDto
+        {
+            Created = newMessage.Created,
+            AuthorId = newMessage.AuthorId,
+            Text = newMessage.Text,
+            ChatRoomId = newMessage.ChatRoomId
+        };
+
+        await _messagesCollection.InsertOneAsync(messageDbDto);
+
+        newMessage.Id = messageDbDto.Id;
+    }
+
+    /*public async Task UpdateAsync(string id, Message updatedMessage) =>
+        await _messagesCollection.ReplaceOneAsync(x => x.Id == id, updatedMessage);*/
+
+    /*public async Task RemoveAsync(string id) =>
+        await _messagesCollection.DeleteOneAsync(x => x.Id == id);*/
+
+    public async Task<List<Message>> GetByChatIdAsync(string chatId, CancellationToken cancellationToken = default)
+    {
+        return await _messagesCollection.AsQueryable()
+            .OrderByDescending(x => x.Created)
+            .Where(x => x.ChatRoomId == chatId)
+            .Select(r => new Message
+            {
+                Created = r.Created,
+                AuthorId = r.AuthorId,
+                Text = r.Text,
+                Id = r.Id,
+                ChatRoomId = r.ChatRoomId
+            }).ToListAsync(cancellationToken);
     }
 }

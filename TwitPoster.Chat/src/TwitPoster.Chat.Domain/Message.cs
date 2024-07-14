@@ -1,27 +1,22 @@
-using MongoDB.Bson;
-using MongoDB.Bson.Serialization.Attributes;
-
 namespace TwitPoster.Chat.Domain;
 
 public class Message
 {
-    [BsonId]
-    [BsonRepresentation(BsonType.ObjectId)]
-    public string Id { get; set; } = null!;
+    public string Id { get; set; }
 
-    [BsonElement("text")]
-    public string Text { get; set; }
+    public  string Text { get; init; }
     
-    [BsonElement("chatRoomId")]
-    public string ChatRoomId { get; set; }   
+    public  string ChatRoomId { get; init; }   
     
-    [BsonElement("authorId")]
-    public int AuthorId { get; set; }
+    public  int AuthorId { get; init; }
     
-    [BsonElement("created")]
+    public  DateTime Created { get; init; }
 
-    public DateTime Created { get; set; }
-
+    public Message()
+    {
+        
+    }
+    
     public Message(string text, int authorId, string chatId)
     {
         Text = text;
