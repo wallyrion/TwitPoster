@@ -8,7 +8,7 @@ using TwitPoster.Chat.Requests;
 
 namespace TwitPoster.Chat.IntegrationTests;
 
-public class MessagesTests(SharedFixtures fixtures) : BaseIntegrationTest(fixtures)
+public class MessagesTests(SharedFixtures fixtures) : BaseIntegrationTest(fixtures, isNewTopicNeeded: true)
 {
     [Fact]
     public async Task Connect_to_hub_and_send_message_should_send_message_to_participants_and_save_to_db()
@@ -28,7 +28,7 @@ public class MessagesTests(SharedFixtures fixtures) : BaseIntegrationTest(fixtur
 
         var testMessage = new SentChatMessage(createdChat!.Id, Guid.NewGuid().ToString());
         await connection1.SendAsync(nameof(ConversationHub.Hello), testMessage);
-        var result = await subscriber2.WaitForResult();
+        var result = await subscriber2.WaitForResult(TimeSpan.FromSeconds(10));
         
         result.Should().BeEquivalentTo(new
         {

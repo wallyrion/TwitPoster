@@ -14,7 +14,7 @@ public class ConversationHub(ILogger<ConversationHub> logger, ITopicProducer<str
 
     public async Task Hello(SentChatMessage sentMessage)
     {
-        await topicProducer.Produce(sentMessage.ChatId, new MessageAddedToChatEvent(sentMessage.ChatId, sentMessage.Text));
+        await topicProducer.Produce(sentMessage.ChatId, new MessageAddedToChatEvent(sentMessage.ChatId, sentMessage.Text, int.Parse(Context.UserIdentifier!)));
     }
     
     public override Task OnConnectedAsync()

@@ -8,6 +8,7 @@ public class IntegrationTestWebFactory : WebApplicationFactory<IApiMarker>
 {
     public readonly string Secret = "supersecretkey" + Guid.NewGuid();
     private readonly SharedFixtures _fixtures;
+    public string? KafkaTopicName { get; set; }
     
     public IntegrationTestWebFactory(SharedFixtures fixtures)
     {
@@ -21,7 +22,9 @@ public class IntegrationTestWebFactory : WebApplicationFactory<IApiMarker>
             var collection = new[]
             {
                 KeyValuePair.Create("TwitPosterChatDb:ConnectionString", _fixtures.MongoContainer.GetConnectionString()),
-                KeyValuePair.Create("Auth:Secret", Secret)
+                KeyValuePair.Create("Auth:Secret", Secret),
+                KeyValuePair.Create("Kafka:Host", _fixtures.KafkaContainer.BootstrapAddress),
+                KeyValuePair.Create("Kafka:Topic", KafkaTopicName ?? "default-topic")
             };
             x.AddInMemoryCollection(collection!);
         });

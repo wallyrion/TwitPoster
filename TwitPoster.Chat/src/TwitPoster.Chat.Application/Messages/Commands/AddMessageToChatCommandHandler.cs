@@ -11,7 +11,7 @@ internal class AddMessageToChatCommandHandler(ICurrentUser currentUser, IMessage
 {
     public async Task<(Message, IReadOnlyList<int>)> Handle(AddMessageToChatCommand request, CancellationToken cancellationToken)
     {
-        var authorId = currentUser.Id;
+        var authorId = request.ByUserId;
         
         var chat = await chatsRepository.GetAsync(request.ChatId);
         

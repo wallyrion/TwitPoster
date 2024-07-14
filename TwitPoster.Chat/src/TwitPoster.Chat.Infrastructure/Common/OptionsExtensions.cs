@@ -4,7 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using TwitPoster.Chat.Application.Common.Interfaces;
 using TwitPoster.Chat.Domain.Common.Exceptions;
 
-namespace TwitPoster.Chat.Infrastructure;
+namespace TwitPoster.Chat.Infrastructure.Common;
 
 public static class OptionsExtensions
 {
