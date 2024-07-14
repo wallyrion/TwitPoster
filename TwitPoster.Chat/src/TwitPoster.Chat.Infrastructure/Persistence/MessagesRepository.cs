@@ -1,7 +1,6 @@
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 using MongoDB.Driver.Linq;
-using TwitPoster.Chat.Application;
 using TwitPoster.Chat.Application.Common.Interfaces;
 using TwitPoster.Chat.Domain;
 

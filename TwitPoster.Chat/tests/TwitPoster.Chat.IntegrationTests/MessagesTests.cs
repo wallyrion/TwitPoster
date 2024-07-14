@@ -1,8 +1,7 @@
 using System.Net.Http.Json;
-using System.Text.Json;
 using FluentAssertions;
 using Microsoft.AspNetCore.SignalR.Client;
-using TwitPoster.Chat.Domain;
+using TwitPoster.Chat.Domain.ChatAggregateRoot;
 using TwitPoster.Chat.Infrastructure.SignalR;
 using TwitPoster.Chat.IntegrationTests.TestFactories;
 using TwitPoster.Chat.Requests;

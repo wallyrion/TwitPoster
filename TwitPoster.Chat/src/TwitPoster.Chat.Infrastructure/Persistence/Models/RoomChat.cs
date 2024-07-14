@@ -3,7 +3,7 @@ using MongoDB.Bson.Serialization.Attributes;
 
 namespace TwitPoster.Chat.Domain;
 
-public class RoomChat
+public class ChatDbDto
 {
     [BsonId]
     [BsonRepresentation(BsonType.ObjectId)]

@@ -1,9 +1,7 @@
 ﻿using FluentValidation;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using TwitPoster.Chat.Application;
 using TwitPoster.Chat.Application.Common.Interfaces;
-using TwitPoster.Chat.Domain;
 using TwitPoster.Chat.Domain.Exceptions;
 
 namespace TwitPoster.Chat.Infrastructure;

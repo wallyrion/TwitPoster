@@ -1,7 +1,6 @@
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using TwitPoster.Chat.Application;
 using TwitPoster.Chat.Application.Common.Interfaces;
 using TwitPoster.Chat.Application.Messages.Commands;
 using TwitPoster.Chat.Domain;

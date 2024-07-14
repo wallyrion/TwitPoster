@@ -1,5 +1,5 @@
 ﻿using MediatR;
-using TwitPoster.Chat.Domain;
+using TwitPoster.Chat.Domain.ChatAggregateRoot;
 
 namespace TwitPoster.Chat.Application.Chats.Commands;
 

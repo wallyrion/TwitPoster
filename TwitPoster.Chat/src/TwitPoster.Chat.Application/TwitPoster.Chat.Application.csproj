@@ -15,8 +15,4 @@
       <ProjectReference Include="..\TwitPoster.Chat.Domain\TwitPoster.Chat.Domain.csproj" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="Chats\Queries\" />
-    </ItemGroup>
-
 </Project>
