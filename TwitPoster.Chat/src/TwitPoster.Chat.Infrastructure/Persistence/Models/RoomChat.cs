@@ -1,9 +1,9 @@
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
-namespace TwitPoster.Chat.Domain;
+namespace TwitPoster.Chat.Infrastructure.Persistence.Models;
 
-public class RoomChat
+public class ChatDbDto
 {
     [BsonId]
     [BsonRepresentation(BsonType.ObjectId)]

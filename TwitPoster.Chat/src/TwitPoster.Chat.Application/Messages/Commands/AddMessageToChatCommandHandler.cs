@@ -1,7 +1,8 @@
 using MediatR;
 using TwitPoster.Chat.Application.Common.Interfaces;
 using TwitPoster.Chat.Domain;
-using TwitPoster.Chat.Domain.Exceptions;
+using TwitPoster.Chat.Domain.Common.Exceptions;
+using TwitPoster.Chat.Domain.MessageAggregateRoot;
 
 namespace TwitPoster.Chat.Application.Messages.Commands;
 
@@ -18,8 +19,15 @@ internal class AddMessageToChatCommandHandler(ICurrentUser currentUser, IMessage
         {
             throw new EntityNotFoundException($"Chat {request.ChatId} not found");
         }
-        
-        var newMessage = new Message(request.Text, authorId, request.ChatId);
+
+        var newMessage = new Message
+        {
+            Created = DateTime.UtcNow,
+            Id = null!,
+            Text = request.Text,
+            AuthorId = authorId,
+            ChatRoomId = chat.Id
+        };
         await messagesRepository.CreateAsync(newMessage);
         
         return (newMessage, chat.ParticipantsIds);

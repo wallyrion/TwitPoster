@@ -1,12 +1,13 @@
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using TwitPoster.Chat.Application;
 using TwitPoster.Chat.Application.Chats.Commands;
+using TwitPoster.Chat.Application.Chats.Queries.GetChats;
 using TwitPoster.Chat.Application.Common.Interfaces;
-using TwitPoster.Chat.Application.Messages.Queries;
 using TwitPoster.Chat.Application.Messages.Queries.GetMessagesByChatId;
 using TwitPoster.Chat.Domain;
+using TwitPoster.Chat.Domain.ChatAggregateRoot;
+using TwitPoster.Chat.Domain.MessageAggregateRoot;
 using TwitPoster.Chat.Requests;
 
 namespace TwitPoster.Chat;
@@ -14,11 +15,16 @@ namespace TwitPoster.Chat;
 [ApiController]
 [Authorize]
 [Route("api/[controller]")]
-public class ChatsController(IChatsRepository chatsRepository, IMessagesRepository messagesRepository, ISender sender) : ControllerBase
+public class ChatsController(IChatsRepository chatsRepository, ISender sender) : ControllerBase
 {
     [HttpGet]
-    public async Task<List<RoomChat>> Get() =>
-        await chatsRepository.GetAsync();
+    public async Task<List<RoomChat>> Get()
+    {
+        var request = new GetChatsQuery();
+        var chats = await sender.Send(request);
+
+        return chats;
+    }
 
     [HttpGet("{id}")]
     public async Task<ActionResult<RoomChat>> Get(string id)

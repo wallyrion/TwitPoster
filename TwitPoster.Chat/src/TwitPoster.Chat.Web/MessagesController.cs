@@ -1,15 +1,17 @@
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using TwitPoster.Chat.Application;
 using TwitPoster.Chat.Application.Common.Interfaces;
+using TwitPoster.Chat.Application.Messages.Commands;
 using TwitPoster.Chat.Domain;
+using TwitPoster.Chat.Domain.MessageAggregateRoot;
 
 namespace TwitPoster.Chat;
 
 [ApiController]
 [Authorize]
 [Route("api/[controller]")]
-public class MessagesController(IMessagesRepository messagesRepository, ICurrentUser currentUser) : ControllerBase
+public class MessagesController(IMessagesRepository messagesRepository, ICurrentUser currentUser, ISender sender) : ControllerBase
 {
     [HttpGet]
     public async Task<List<Message>> Get() =>
@@ -30,12 +32,12 @@ public class MessagesController(IMessagesRepository messagesRepository, ICurrent
 
 
     [HttpPost]
-    public async Task<IActionResult> Post(string message, string chatId)
+    public async Task<IActionResult> Post(string text, string chatId)
     {
-        var newMessage = new Message(message, currentUser.Id, chatId);
-        await messagesRepository.CreateAsync(newMessage);
+        var newMessage = new AddMessageToChatCommand(chatId, text);
+        var (message, _) = await sender.Send(newMessage);
 
-        return CreatedAtAction(nameof(Get), new { id = newMessage.Id }, newMessage);
+        return CreatedAtAction(nameof(Get), new { id = message.Id }, newMessage);
     }
 
     /*[HttpPut("{id:guid}")]
@@ -65,7 +67,7 @@ public async Task<IActionResult> Update(string id, Message updatedMessage)
             return NotFound();
         }
 
-        await messagesRepository.RemoveAsync(id);
+        //await messagesRepository.RemoveAsync(id);
 
         return NoContent();
     }

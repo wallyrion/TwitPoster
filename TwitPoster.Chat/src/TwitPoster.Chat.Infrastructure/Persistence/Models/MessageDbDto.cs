@@ -1,9 +1,9 @@
-using MongoDB.Bson;
+﻿using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
-namespace TwitPoster.Chat.Domain;
+namespace TwitPoster.Chat.Infrastructure.Persistence.Models;
 
-public class Message
+public class MessageDbDto
 {
     [BsonId]
     [BsonRepresentation(BsonType.ObjectId)]
@@ -19,14 +19,5 @@ public class Message
     public int AuthorId { get; set; }
     
     [BsonElement("created")]
-
     public DateTime Created { get; set; }
-
-    public Message(string text, int authorId, string chatId)
-    {
-        Text = text;
-        AuthorId = authorId;
-        ChatRoomId = chatId;
-        Created = DateTime.UtcNow;
-    }
 }

@@ -1,8 +1,7 @@
 using FluentValidation;
-using TwitPoster.Chat.Application;
 using TwitPoster.Chat.Application.Common.Interfaces;
 
-namespace TwitPoster.Chat.Infrastructure.Persistance;
+namespace TwitPoster.Chat.Infrastructure.Persistence;
 
 public class DatabaseSettings : ITwitposterOptions<DatabaseSettings>
 {
