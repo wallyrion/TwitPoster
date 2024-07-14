@@ -1,31 +1,20 @@
-using MediatR;
+using MassTransit;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Logging;
-using TwitPoster.Chat.Application.Common.Interfaces;
-using TwitPoster.Chat.Application.Messages.Commands;
+using TwitPoster.Chat.Application.Messages.Events;
 
 namespace TwitPoster.Chat.Infrastructure.SignalR;
 
 [Authorize]
-public class NotificationHub(IChatsRepository chatsRepository, ILogger<NotificationHub> logger, IMessagesRepository messagesRepository, ISender sender)
-    : Hub<INotificationClient>
+public class ConversationHub(ILogger<ConversationHub> logger, ITopicProducer<string, MessageAddedToChatEvent> topicProducer)
+    : Hub<IConversationClient>
 {
     public const string EndpointPath = "/messages";
 
     public async Task Hello(SentChatMessage sentMessage)
     {
-        var roomChat = await chatsRepository.GetAsync(sentMessage.ChatId);
-        
-        if (roomChat is null)
-        {
-            return;
-        }
-
-        var (message, participantsIds) = await sender.Send(new AddMessageToChatCommand(sentMessage.ChatId, sentMessage.Text));
-        
-        var receivedMessage = new ReceivedChatMessage(sentMessage.ChatId, message.Text, message.AuthorId, message.Created);
-        await Clients.Users(participantsIds.Select(x => x.ToString())).ReceivedMessage(receivedMessage);
+        await topicProducer.Produce(sentMessage.ChatId, new MessageAddedToChatEvent(sentMessage.ChatId, sentMessage.Text));
     }
     
     public override Task OnConnectedAsync()

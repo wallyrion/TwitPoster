@@ -27,7 +27,7 @@ public class MessagesTests(SharedFixtures fixtures) : BaseIntegrationTest(fixtur
         var subscriber2 = await SubscribeToMessage(token2);
 
         var testMessage = new SentChatMessage(createdChat!.Id, Guid.NewGuid().ToString());
-        await connection1.SendAsync(nameof(NotificationHub.Hello), testMessage);
+        await connection1.SendAsync(nameof(ConversationHub.Hello), testMessage);
         var result = await subscriber2.WaitForResult();
         
         result.Should().BeEquivalentTo(new

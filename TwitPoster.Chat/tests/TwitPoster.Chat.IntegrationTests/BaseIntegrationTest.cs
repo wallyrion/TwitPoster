@@ -73,7 +73,7 @@ public abstract class BaseIntegrationTest(SharedFixtures fixtures) : IAsyncLifet
         var handler = server.CreateHandler();
 
         var serverAddressWithoutHttp = server.BaseAddress.Host;
-        var uri = new Uri($"ws://{serverAddressWithoutHttp}{NotificationHub.EndpointPath}");
+        var uri = new Uri($"ws://{serverAddressWithoutHttp}{ConversationHub.EndpointPath}");
 
         var queryParams = token != null ? new Dictionary<string, string>
         {
@@ -96,7 +96,7 @@ public abstract class BaseIntegrationTest(SharedFixtures fixtures) : IAsyncLifet
     {
         var connection = CreateHubConnection(token);
         var receivedTaskCompletionSource = new TaskCompletionSource<ReceivedChatMessage>();
-        connection.On<ReceivedChatMessage>(nameof(INotificationClient.ReceivedMessage), (payload) =>
+        connection.On<ReceivedChatMessage>(nameof(IConversationClient.ReceivedMessage), (payload) =>
         {
             receivedTaskCompletionSource.SetResult(payload);
         });

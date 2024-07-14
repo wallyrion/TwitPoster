@@ -48,7 +48,7 @@ internal static class DependencyInjection
                 var path = ctx.HttpContext.Request.Path;
 
                 // Look for token in query string for SignalR hubs
-                if (path.StartsWithSegments(NotificationHub.EndpointPath))
+                if (path.StartsWithSegments(ConversationHub.EndpointPath))
                 {
                     var token = ctx.Request.Query["access_token"];
 

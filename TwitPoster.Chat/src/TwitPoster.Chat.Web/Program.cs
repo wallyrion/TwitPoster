@@ -1,11 +1,13 @@
+using MassTransit;
+using Microsoft.AspNetCore.Mvc;
 using TwitPoster.Chat;
 using TwitPoster.Chat.Application;
+using TwitPoster.Chat.Application.Messages.Events;
 using TwitPoster.Chat.Infrastructure;
 using TwitPoster.Chat.Infrastructure.Auth;
 using TwitPoster.Chat.Infrastructure.SignalR;
 
 var builder = WebApplication.CreateBuilder(args);
-
 
 builder.Services.AddSwagger();
 builder.Services.AddApplicationServices();
@@ -26,13 +28,15 @@ app.UseAuthentication();
 app.UseAuthorization();
 app.UseMiddleware<SetupUserClaimsMiddleware>();
 
-app.MapGet("/weatherforecast", () =>
+app.MapGet("/weatherforecast", async ([FromQuery] string chatId, [FromServices] ITopicProducer<string, MessageAddedToChatEvent> topicProducer) =>
     {
-       
+        return Results.Ok();
     })
     .WithName("GetWeatherForecast")
     .WithOpenApi();
 
+
+
 app.MapControllers();
-app.MapHub<NotificationHub>(NotificationHub.EndpointPath);
+app.MapHub<ConversationHub>(ConversationHub.EndpointPath);
 app.Run();
