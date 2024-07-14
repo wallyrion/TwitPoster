@@ -12,19 +12,24 @@ using TwitPoster.Chat.IntegrationTests.TestFactories;
 namespace TwitPoster.Chat.IntegrationTests;
 
 [Collection(nameof(SharedTestCollection))]
-public abstract class BaseIntegrationTest(SharedFixtures fixtures) : IAsyncLifetime
+public abstract class BaseIntegrationTest(SharedFixtures fixtures, bool isNewTopicNeeded = false) : IAsyncLifetime
 {
+    private readonly string _kafkaTopicName = $"Topic-{Guid.NewGuid()}";
     private readonly IntegrationTestWebFactory _factory = new(fixtures);
     private AsyncServiceScope _scope;
     protected HttpClient ApiClient { get; private set; } = null!;
 
-    public Task InitializeAsync()
+    public async Task InitializeAsync()
     {
+        if (isNewTopicNeeded)
+        {
+            await fixtures.KafkaContainer.CreateTopic(_kafkaTopicName);
+            _factory.KafkaTopicName = _kafkaTopicName;
+        }
+        
         ApiClient = _factory.CreateDefaultClient();
 
         _scope = _factory.Services.CreateAsyncScope();
-
-        return Task.CompletedTask;
     }
 
     public async Task DisposeAsync()
@@ -73,7 +78,7 @@ public abstract class BaseIntegrationTest(SharedFixtures fixtures) : IAsyncLifet
         var handler = server.CreateHandler();
 
         var serverAddressWithoutHttp = server.BaseAddress.Host;
-        var uri = new Uri($"ws://{serverAddressWithoutHttp}{NotificationHub.EndpointPath}");
+        var uri = new Uri($"ws://{serverAddressWithoutHttp}{ConversationHub.EndpointPath}");
 
         var queryParams = token != null ? new Dictionary<string, string>
         {
@@ -96,7 +101,7 @@ public abstract class BaseIntegrationTest(SharedFixtures fixtures) : IAsyncLifet
     {
         var connection = CreateHubConnection(token);
         var receivedTaskCompletionSource = new TaskCompletionSource<ReceivedChatMessage>();
-        connection.On<ReceivedChatMessage>(nameof(INotificationClient.ReceivedMessage), (payload) =>
+        connection.On<ReceivedChatMessage>(nameof(IConversationClient.ReceivedMessage), (payload) =>
         {
             receivedTaskCompletionSource.SetResult(payload);
         });

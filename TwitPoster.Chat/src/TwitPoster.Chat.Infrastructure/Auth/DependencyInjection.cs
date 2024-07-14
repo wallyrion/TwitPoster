@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
+using TwitPoster.Chat.Infrastructure.Common;
 using TwitPoster.Chat.Infrastructure.SignalR;
 
 namespace TwitPoster.Chat.Infrastructure.Auth;
@@ -48,7 +49,7 @@ internal static class DependencyInjection
                 var path = ctx.HttpContext.Request.Path;
 
                 // Look for token in query string for SignalR hubs
-                if (path.StartsWithSegments(NotificationHub.EndpointPath))
+                if (path.StartsWithSegments(ConversationHub.EndpointPath))
                 {
                     var token = ctx.Request.Query["access_token"];
 

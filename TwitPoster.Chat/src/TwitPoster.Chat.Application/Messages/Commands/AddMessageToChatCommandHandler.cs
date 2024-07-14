@@ -6,12 +6,12 @@ using TwitPoster.Chat.Domain.MessageAggregateRoot;
 
 namespace TwitPoster.Chat.Application.Messages.Commands;
 
-internal class AddMessageToChatCommandHandler(ICurrentUser currentUser, IMessagesRepository messagesRepository, IChatsRepository chatsRepository) 
+internal class AddMessageToChatCommandHandler(ICurrentUser currentUser, IMessagesRepository messagesRepository, IChatsRepository chatsRepository, IRealtimeNotifier notifier) 
     : IRequestHandler<AddMessageToChatCommand, (Message, IReadOnlyList<int>)>
 {
     public async Task<(Message, IReadOnlyList<int>)> Handle(AddMessageToChatCommand request, CancellationToken cancellationToken)
     {
-        var authorId = currentUser.Id;
+        var authorId = request.ByUserId;
         
         var chat = await chatsRepository.GetAsync(request.ChatId);
         
@@ -28,7 +28,9 @@ internal class AddMessageToChatCommandHandler(ICurrentUser currentUser, IMessage
             AuthorId = authorId,
             ChatRoomId = chat.Id
         };
+        
         await messagesRepository.CreateAsync(newMessage);
+        await notifier.NotifyNewMessageAdded(newMessage, chat.ParticipantsIds, cancellationToken);
         
         return (newMessage, chat.ParticipantsIds);
     }

@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using TwitPoster.Chat.Application.Common.Interfaces;
+using TwitPoster.Chat.Infrastructure.Common;
 
 namespace TwitPoster.Chat.Infrastructure.Persistence;
 

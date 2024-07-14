@@ -22,6 +22,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{50A49E0A
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TwitPoster.Chat.IntegrationTests", "tests\TwitPoster.Chat.IntegrationTests\TwitPoster.Chat.IntegrationTests.csproj", "{8A5F2160-36C2-42CE-A4A0-AE2F3CEA103D}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Kafka", "Kafka", "{06655EF0-49EC-41DE-B5A8-A4F0CF855403}"
+	ProjectSection(SolutionItems) = preProject
+		kafka\docker-compose.yml = kafka\docker-compose.yml
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -55,5 +60,6 @@ Global
 		{2888B206-C949-4F0D-A323-3E0B9963D414} = {47966F15-01EF-4639-B6DD-9AC8DF742933}
 		{2F0BAA89-FDF5-4373-8495-D0C6054C23E9} = {47966F15-01EF-4639-B6DD-9AC8DF742933}
 		{5B961A8B-CD36-4CFA-B293-7BAF2E4D5A91} = {47966F15-01EF-4639-B6DD-9AC8DF742933}
+		{06655EF0-49EC-41DE-B5A8-A4F0CF855403} = {4525E152-A673-4B2F-8784-FF42556F63CA}
 	EndGlobalSection
 EndGlobal

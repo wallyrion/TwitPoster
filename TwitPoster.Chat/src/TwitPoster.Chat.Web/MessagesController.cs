@@ -34,7 +34,7 @@ public class MessagesController(IMessagesRepository messagesRepository, ICurrent
     [HttpPost]
     public async Task<IActionResult> Post(string text, string chatId)
     {
-        var newMessage = new AddMessageToChatCommand(chatId, text);
+        var newMessage = new AddMessageToChatCommand(chatId, text, currentUser.Id);
         var (message, _) = await sender.Send(newMessage);
 
         return CreatedAtAction(nameof(Get), new { id = message.Id }, newMessage);
