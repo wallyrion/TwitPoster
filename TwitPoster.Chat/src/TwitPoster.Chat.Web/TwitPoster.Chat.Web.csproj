@@ -8,6 +8,7 @@
         <RootNamespace>TwitPoster.Chat</RootNamespace>
     </PropertyGroup>
 
+    
     <ItemGroup>
         <PackageReference Include="FluentValidation"/>
         <PackageReference Include="Microsoft.AspNetCore.OpenApi"/>
