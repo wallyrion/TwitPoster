@@ -72,3 +72,9 @@ updates:
     directory: '/terraform'
     schedule:
       interval: 'daily'
+      
+  - package-ecosystem: 'Docker'
+    directories:
+      - "**/*"
+    schedule:
+      interval: 'daily'
