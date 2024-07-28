@@ -1,4 +1,7 @@
 ﻿using System.Data.Common;
+using DotNet.Testcontainers.Builders;
+using DotNet.Testcontainers.Configurations;
+using DotNet.Testcontainers.Containers;
 using MassTransit;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
@@ -16,7 +19,10 @@ namespace TwitPoster.IntegrationTests.Fixtures;
 
 public class IntegrationTestWebFactory : WebApplicationFactory<IApiTestMarker>, IAsyncLifetime
 {
-    private readonly MsSqlContainer _msSqlContainer = new MsSqlBuilder().WithImage("mcr.microsoft.com/mssql/server:2022-latest").Build();
+    private readonly MsSqlContainer _msSqlContainer = new MsSqlBuilder()
+        .WithImage("mcr.microsoft.com/mssql/server:2022-latest")
+        .WithWaitStrategy(Wait.ForUnixContainer().UntilCommandIsCompleted("/opt/mssql-tools18/bin/sqlcmd", "-C", "-Q", "SELECT 1;") )
+        .Build();
     public readonly RedisContainer RedisContainer = new RedisBuilder().Build();
     private readonly AzuriteFixture _azure = new();
     
@@ -92,3 +98,4 @@ public class IntegrationTestWebFactory : WebApplicationFactory<IApiTestMarker>, 
         await _dbConnection.DisposeAsync();
     }
 }
+
