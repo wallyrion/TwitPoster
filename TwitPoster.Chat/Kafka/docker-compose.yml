@@ -1,10 +1,17 @@
 version: '2'
 
+networks:
+  my_kafka_network:
+    driver: bridge
+
+
 services:
   zookeeper:
     image: wurstmeister/zookeeper:latest
     ports:
       - "2181:2181"
+    networks:
+      - my_kafka_network
 
   kafka:
     image: wurstmeister/kafka:latest
@@ -21,3 +28,15 @@ services:
       KAFKA_CREATE_TOPICS: "my-topic:1:1"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - my_kafka_network
+  
+  
+  my_dotnet_app:
+    image: twitposter-chat
+    ports:
+      - "5000:8080"
+    networks:
+      - my_kafka_network
+    environment:
+        KAFKA__HOST: kafka

@@ -32,8 +32,12 @@ public static class DependencyInjection
             {
                 var kafkaOptions = configuration.BindOption<KafkaOptions>(services, false);
                 
+                Console.WriteLine("Kafka host = " + kafkaOptions.Host);
+                
                 rider.AddConsumer<MessageAddedToChatConsumer>();
                 rider.AddProducer<string, MessageAddedToChatEvent>(kafkaOptions.Topic);
+                
+                
                 
                 rider.UsingKafka((context, k) =>
                 {
