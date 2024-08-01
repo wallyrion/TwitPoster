@@ -28,6 +28,7 @@ public class AuthService(
             throw new TwitPosterValidationException("Your password or email is incorrect");
         }
 
+        
         if (!user.UserAccount.IsEmailConfirmed)
         {
             throw new TwitPosterValidationException("Your email is not confirmed. Please follow email instructions");
