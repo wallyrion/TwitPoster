@@ -110,7 +110,7 @@ jobs:
           Full ${{inputs.environment}} deployment / finish_deploy_functions
         
   run_e2e_tests:
-    needs: wait_for_deployment
+    needs: [infra, wait_for_deployment]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -124,5 +124,5 @@ jobs:
       - name: Test - TwitPoster
         env:
           ASPNETCORE_ENVIRONMENT: Production
-          TWITPOSTER_API_BASE_URL: 'https://twitposter-production-appservice.azurewebsites.net'
+          TWITPOSTER_API_BASE_URL: 'https://${{ needs.infra.outputs.APP_SERVICE_NAME }}.azurewebsites.net'
         run: dotnet test --verbosity normal ./TwitPoster.AutoTests -c Release
