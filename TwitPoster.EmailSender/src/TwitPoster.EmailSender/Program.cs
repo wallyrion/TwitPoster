@@ -4,6 +4,7 @@ using TwitPoster.EmailSender.Extensions;
 using TwitPoster.EmailSender.Options;
 using TwitPoster.EmailSender.Services;
 
+
 try
 {
     var builder = WebApplication.CreateBuilder(args);

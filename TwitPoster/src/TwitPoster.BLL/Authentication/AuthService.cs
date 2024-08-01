@@ -11,24 +11,17 @@ using TwitPoster.Shared.Contracts;
 
 namespace TwitPoster.BLL.Authentication;
 
-public class AuthService : IAuthService
+public class AuthService(
+    IJwtTokenGenerator tokenGenerator,
+    TwitPosterContext context,
+    IPublishEndpoint publishEndpoint,
+    IOptions<ApplicationOptions> appOptions
+    )
+    : IAuthService
 {
-    private readonly TwitPosterContext _context;
-    private readonly IJwtTokenGenerator _tokenGenerator;
-    private readonly IPublishEndpoint _publishEndpoint;
-    private readonly IOptions<ApplicationOptions> _appOptions;
-
-    public AuthService(IJwtTokenGenerator tokenGenerator, TwitPosterContext context, IPublishEndpoint publishEndpoint, IOptions<ApplicationOptions> appOptions)
-    {
-        _tokenGenerator = tokenGenerator;
-        _context = context;
-        _publishEndpoint = publishEndpoint;
-        _appOptions = appOptions;
-    }
-
     public async Task<string> Login(string email, string password)
     {
-        var user = await _context.Users.Include(u => u.UserAccount).FirstOrDefaultAsync(u => u.Email == email);
+        var user = await context.Users.Include(u => u.UserAccount).FirstOrDefaultAsync(u => u.Email == email);
 
         if (user == null || user.UserAccount.Password != password)
         {
@@ -40,14 +33,14 @@ public class AuthService : IAuthService
             throw new TwitPosterValidationException("Your email is not confirmed. Please follow email instructions");
         }
 
-        var accessToken = _tokenGenerator.GenerateToken(user);
+        var accessToken = tokenGenerator.GenerateToken(user);
 
         return accessToken;
     }
 
     public async Task<Result<int>> Register(string firstName, string lastName, DateTime birthDate, string email, string password)
     {
-        var existingUser = await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
+        var existingUser = await context.Users.FirstOrDefaultAsync(u => u.Email == email);
 
         if (existingUser != null)
         {
@@ -69,11 +62,11 @@ public class AuthService : IAuthService
             }
         };
 
-        _context.Users.Add(user);
+        context.Users.Add(user);
 
-        await _context.SaveChangesAsync();
+        await context.SaveChangesAsync();
 
-        var confirmationUrl = $"{_appOptions.Value.TwitPosterUrl}/Auth/EmailConfirmation?Token={user.UserAccount.EmailConfirmationToken}";
+        var confirmationUrl = $"{appOptions.Value.TwitPosterUrl}/Auth/EmailConfirmation?Token={user.UserAccount.EmailConfirmationToken}";
         
         var emailBody = $"""
             <h1> You are on the way! </h1>
@@ -83,14 +76,14 @@ public class AuthService : IAuthService
 
         var mailCommand = new EmailCommand(email, "Welcome to TwitPoster! Confirm your email", emailBody, TextFormat.Html);
 
-        await _publishEndpoint.Publish(mailCommand);
+        await publishEndpoint.Publish(mailCommand);
 
         return user.Id;
     }
 
     public async Task ConfirmEmail(Guid token)
     {
-        var user = await _context.Users.Include(u => u.UserAccount).FirstOrDefaultAsync(u => u.UserAccount.EmailConfirmationToken == token);
+        var user = await context.Users.Include(u => u.UserAccount).FirstOrDefaultAsync(u => u.UserAccount.EmailConfirmationToken == token);
 
         if (user == null)
         {
@@ -99,12 +92,12 @@ public class AuthService : IAuthService
 
         user.UserAccount.IsEmailConfirmed = true;
         user.UserAccount.EmailConfirmationToken = default;
-        await _context.SaveChangesAsync();
+        await context.SaveChangesAsync();
     }
 
     public async Task<string> LoginWithGoogle(string email, string firstName, string lastName, bool isEmailConfirmed, string payloadPicture)
     {
-        var user = await _context.Users.Include(u => u.UserAccount).FirstOrDefaultAsync(u => u.Email == email);
+        var user = await context.Users.Include(u => u.UserAccount).FirstOrDefaultAsync(u => u.Email == email);
 
         if (user != null)
         {
@@ -139,11 +132,11 @@ public class AuthService : IAuthService
                 }
             };
             
-            _context.Users.Add(user);
+            context.Users.Add(user);
         }
         
-        await _context.SaveChangesAsync();
-        var accessToken = _tokenGenerator.GenerateToken(user);
+        await context.SaveChangesAsync();
+        var accessToken = tokenGenerator.GenerateToken(user);
         return accessToken;
     }
 }
