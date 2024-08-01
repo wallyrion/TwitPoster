@@ -1,0 +1,38 @@
+name: temp deploy
+
+on:
+  push:
+    branches:
+      - 'temp/test-function-deploy'
+
+env:
+  DOTNET_VERSION: '8.x'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      AZURE_FUNCTIONAPP_PACKAGE_PATH: './TwitPoster.Temp.Functions/TwitPoster.Functions'
+      AZURE_FUNCTIONAPP_NAME: 'twitposter-f-temp'
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.x
+
+      - name: 'Resolve Project Dependencies Using Dotnet'
+        shell: bash
+        run: |
+          pushd ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
+          dotnet build --configuration Release --output ./output
+          popd
+
+      - name: 'Run Azure Functions Action'
+        uses: Azure/functions-action@v1
+        id: fa
+        with:
+          app-name: ${{ env.AZURE_FUNCTIONAPP_NAME }}
+          package: '${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}/output'
+          publish-profile: ${{ secrets.AZURE_temp_FUNCTIONAPP_PUBLISH_PROFILE }}
