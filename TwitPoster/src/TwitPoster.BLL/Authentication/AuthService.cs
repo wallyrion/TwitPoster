@@ -19,6 +19,7 @@ public class AuthService(
     )
     : IAuthService
 {
+    
     public async Task<string> Login(string email, string password)
     {
         var user = await context.Users.Include(u => u.UserAccount).FirstOrDefaultAsync(u => u.Email == email);
