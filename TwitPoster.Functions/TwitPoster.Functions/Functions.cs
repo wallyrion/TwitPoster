@@ -11,8 +11,7 @@ public class Functions(ILoggerFactory loggerFactory, BlobServiceClient blobServi
 
     [Function("CompressImageFunction")]
     public async Task Run(
-        [BlobTrigger("twitposter/user/{userId}/images/profile/main/{name}", Connection = "AzureWebJobsStorage")]
-        Stream blob,
+        [BlobTrigger("twitposter/user/{userId}/images/profile/main/{name}", Connection = "AzureWebJobsStorage")] Stream blob,
         int userId,
         string name)
     {
