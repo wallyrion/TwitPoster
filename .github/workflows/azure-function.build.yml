@@ -12,6 +12,7 @@ env:
   AZURE_FUNCTIONAPP_PACKAGE_PATH: './TwitPoster.Functions/TwitPoster.Functions'
   DOTNET_VERSION: '8.x'
 
+
 jobs:
   build:
     runs-on: ubuntu-latest
