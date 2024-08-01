@@ -21,7 +21,6 @@ public class Functions(ILoggerFactory loggerFactory, BlobServiceClient blobServi
             await ResizeImage0(blob, newStream);
 
             var extension = Path.GetExtension(name);
-
             var container = blobServiceClient.GetBlobContainerClient("twitposter");
 
             var thumbnailBlobClient = container.GetBlobClient($"user/{userId}/images/profile/thumbnail/image{extension}");

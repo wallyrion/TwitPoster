@@ -16,7 +16,6 @@ try
     builder.Host.UseSerilog((context, provider, logger) =>
     {
         logger.ReadFrom.Configuration(context.Configuration);
-
         logger.WriteTo.ApplicationInsights(
             provider.GetRequiredService<TelemetryConfiguration>(),
             TelemetryConverter.Traces);

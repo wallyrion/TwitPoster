@@ -195,6 +195,17 @@ jobs:
       deploy_functions: ${{ needs.detect_changes.outputs.build_functions}}
     secrets: inherit
     
+  deploy_qa_full:
+    name: 'Full qa deployment'
+    needs: [ detect_changes, deploy_dev_full ]
+    uses: ./.github/workflows/shared.full-deployment.yml
+    with:
+      workspace: qa
+      environment: qa
+      deploy_twitposter: ${{ needs.detect_changes.outputs.build_twitposter }}
+      deploy_email_sender: ${{ needs.detect_changes.outputs.build_email_sender}}
+      deploy_functions: ${{ needs.detect_changes.outputs.build_functions}}
+    secrets: inherit
   #deploy_stage_full:
   #  name: 'Full stage deployment'
   #  needs: [detect_changes, build_infra, wait_for_build]
