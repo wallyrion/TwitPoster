@@ -10,7 +10,10 @@ public class Functions(ILoggerFactory loggerFactory, BlobServiceClient blobServi
     private readonly ILogger _logger = loggerFactory.CreateLogger<Functions>();
 
     [Function("CompressImageFunction")]
-    public async Task Run([BlobTrigger("twitposter/user/{userId}/images/profile/main/{name}", Connection = "AzureWebJobsStorage")] Stream blob, int userId,
+    public async Task Run(
+        [BlobTrigger("twitposter/user/{userId}/images/profile/main/{name}", Connection = "AzureWebJobsStorage")]
+        Stream blob,
+        int userId,
         string name)
     {
         try
@@ -21,7 +24,7 @@ public class Functions(ILoggerFactory loggerFactory, BlobServiceClient blobServi
             var extension = Path.GetExtension(name);
 
             var container = blobServiceClient.GetBlobContainerClient("twitposter");
-            
+
             var thumbnailBlobClient = container.GetBlobClient($"user/{userId}/images/profile/thumbnail/image{extension}");
 
             newStream.Position = 0;
