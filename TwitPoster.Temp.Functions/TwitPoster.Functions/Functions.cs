@@ -1,5 +1,7 @@
 using Azure.Storage.Blobs;
 using ImageMagick;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
 
@@ -9,6 +11,13 @@ public class Functions(ILoggerFactory loggerFactory, BlobServiceClient blobServi
 {
     private readonly ILogger _logger = loggerFactory.CreateLogger<Functions>();
 
+    [Function("Function1")]
+    public IActionResult Run([HttpTrigger(AuthorizationLevel.Function, "get", "post")] HttpRequest req)
+    {
+        _logger.LogInformation("C# HTTP trigger function processed a request.");
+        return new OkObjectResult("Welcome to Azure Functions!");
+    }
+    
     [Function("CompressImageFunction")]
     public async Task Run(
         [BlobTrigger("twitposter/user/{userId}/images/profile/main/{name}", Connection = "AzureWebJobsStorage")] Stream blob,
