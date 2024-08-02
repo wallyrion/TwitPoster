@@ -20,7 +20,6 @@ services:
   seq:
     image: datalust/seq:latest
     container_name: twitposter-seq
-    restart: unless-stopped
     environment:
       - ACCEPT_EULA=Y
     ports:
@@ -39,7 +38,6 @@ services:
   seq-gelf:
     image: datalust/seq-input-gelf:latest
     container_name: twitposter-seq-gelf
-    restart: unless-stopped
     environment:
       - ACCEPT_EULAY=Y
       - SEQ_ADDRESS=http://seq:5341
@@ -179,19 +177,6 @@ services:
     ports:
       - '6379:6379'
   
-  mongoInit:
-    image: mongo:latest
-    container_name: mongo-init
-    depends_on:
-      - configsvr
-      - shard1
-      - shard2
-      - mongos
-    volumes:
-      - ./scripts:/scripts
-      - ./mongo-init.sh:/docker-entrypoint-initdb.d/mongo-init.sh
-    entrypoint: [ "/bin/bash", "/docker-entrypoint-initdb.d/mongo-init.sh" ]
-
 volumes:
   twitposter-database:
   seq-logs:
