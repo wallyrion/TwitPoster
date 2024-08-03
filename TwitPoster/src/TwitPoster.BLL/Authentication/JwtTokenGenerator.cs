@@ -9,14 +9,9 @@ using TwitPoster.DAL.Models;
 
 namespace TwitPoster.BLL.Authentication;
 
-public class JwtTokenGenerator : IJwtTokenGenerator
+public class JwtTokenGenerator(IOptions<AuthOptions> authOptions) : IJwtTokenGenerator
 {
-    private readonly AuthOptions _authOptions;
-
-    public JwtTokenGenerator(IOptions<AuthOptions> authOptions)
-    {
-        _authOptions = authOptions.Value;
-    }
+    private readonly AuthOptions _authOptions = authOptions.Value;
 
     public string GenerateToken(User user)
     {
