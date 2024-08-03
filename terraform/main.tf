@@ -235,6 +235,10 @@ resource "azurerm_key_vault_secret" "auth_secret" {
   name         = "Auth--Secret"
   value        = random_password.auth_secret.result
   key_vault_id = azurerm_key_vault.example_kv.id
+  
+  depends_on = [
+    azurerm_key_vault_access_policy.keyvault_self_access_policy
+  ]
 }
 
 
