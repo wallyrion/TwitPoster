@@ -219,8 +219,6 @@ resource "azurerm_key_vault" "example_kv" {
 }
 
 
-
-
 # Add an access policy for the managed identity of the App Service
 resource "azurerm_key_vault_access_policy" "appservice_access_policy" {
   key_vault_id = azurerm_key_vault.example_kv.id
