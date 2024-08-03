@@ -16,7 +16,7 @@ public static class DependencyInjection
 
             var aiOptions = configuration.BindOption<AiOptions>(services, false);
         
-            kernelBuilder.AddOpenAIChatCompletion(aiOptions.Model, aiOptions.OpeApiKey);
+            kernelBuilder.AddOpenAIChatCompletion(aiOptions.Model, aiOptions.OpenApiKey);
             var kernel = kernelBuilder.Build();
         
             var history = new ChatHistory();
