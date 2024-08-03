@@ -13,7 +13,6 @@ public class JwtTokenGenerator(IOptions<AuthOptions> authOptions) : IJwtTokenGen
 {
     private readonly AuthOptions _authOptions = authOptions.Value;
 
-    
     public string GenerateToken(User user)
     {
         var signingCredentials = new SigningCredentials(
