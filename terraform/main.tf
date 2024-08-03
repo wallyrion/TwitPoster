@@ -216,21 +216,18 @@ resource "azurerm_key_vault" "example_kv" {
     ]
   }
   
+  access_policy {
+    tenant_id = data.azurerm_client_config.current.tenant_id
+    object_id = azurerm_linux_web_app.appservice.identity[0].principal_id
+
+    secret_permissions = [
+      "Get",
+      "List",
+    ]
+  }
+  
 }
 
-
-# Add an access policy for the managed identity of the App Service
-resource "azurerm_key_vault_access_policy" "appservice_access_policy" {
-  key_vault_id = azurerm_key_vault.example_kv.id
-  tenant_id    = data.azurerm_client_config.current.tenant_id
-  object_id    = azurerm_linux_web_app.appservice.identity[0].principal_id
-
-  secret_permissions = [
-    "Get",
-    "List",
-  ]
-
-}
 resource "random_password" "auth_secret" {
   length  = 32
   special = true
