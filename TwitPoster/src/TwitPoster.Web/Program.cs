@@ -5,6 +5,7 @@ using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Azure;
 using Microsoft.FeatureManagement;
+using Microsoft.SemanticKernel;
 using Refit;
 using Serilog;
 using TwitPoster.BLL.Authentication;
@@ -17,6 +18,7 @@ using TwitPoster.BLL.Services;
 using TwitPoster.DAL;
 using TwitPoster.DAL.Triggers;
 using TwitPoster.Web;
+using TwitPoster.Web.AI.TagsGeneration;
 using TwitPoster.Web.Common;
 using TwitPoster.Web.Common.DependencyInjection;
 using TwitPoster.Web.Common.Options;
@@ -39,7 +41,16 @@ try
 
     if (secrets.UseSecrets)
     {
-        builder.Configuration.AddAzureKeyVault(new Uri(secrets.KeyVaultUri), new ClientSecretCredential(secrets.TenantId, secrets.ClientId, secrets.ClientSecret));
+        if (secrets.UseDefaultAzureCredential)
+        {
+            builder.Configuration.AddAzureKeyVault(new Uri(secrets.KeyVaultUri), new DefaultAzureCredential());
+        }
+
+        else
+        {
+            Console.WriteLine("Using client secret credential...");
+            //builder.Configuration.AddAzureKeyVault(new Uri(secrets.KeyVaultUri), new ClientSecretCredential(secrets.TenantId, secrets.ClientId, secrets.ClientSecret));
+        }
     }
     
     Log.Logger = new LoggerConfiguration()
@@ -75,7 +86,9 @@ try
         .AddRefitClient<ILocationClient>()
         .ConfigureHttpClient(c => c.BaseAddress = new Uri(countriesApiOptions.Uri))
         .AddStandardResilienceHandler();
-        
+
+    builder.Services.AddKernelForTagsGeneration(builder.Configuration);
+    
     builder.Services
         .AddSwaggerWithAuthorization()
         .AddEndpointsApiExplorer()

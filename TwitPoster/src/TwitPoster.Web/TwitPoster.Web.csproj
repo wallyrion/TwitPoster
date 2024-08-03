@@ -30,6 +30,7 @@
         <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" />
         <PackageReference Include="Microsoft.Extensions.Http.Resilience" />
         <PackageReference Include="Microsoft.FeatureManagement.AspNetCore" />
+        <PackageReference Include="Microsoft.SemanticKernel" />
         <PackageReference Include="Refit" />
         <PackageReference Include="Refit.HttpClientFactory" />
         <PackageReference Include="Serilog.AspNetCore" />

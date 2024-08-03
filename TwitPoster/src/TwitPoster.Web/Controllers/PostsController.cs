@@ -2,7 +2,9 @@ using System.ComponentModel.DataAnnotations;
 using Mapster;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.SemanticKernel;
 using TwitPoster.BLL.Interfaces;
+using TwitPoster.Web.AI.TagsGeneration;
 using TwitPoster.Web.ViewModels;
 using TwitPoster.Web.ViewModels.Post;
 
@@ -31,6 +33,17 @@ public class PostsController : ControllerBase
     {
         var posts = await _postService.GetPosts(pageSize, pageNumber, cancellationToken);
         return posts.Adapt<IEnumerable<PostViewModel>>();
+    }
+   
+   
+    // Get total count of posts
+    [HttpGet("gpt")]
+    [AllowAnonymous]
+    public async Task<List<string>> CheckGpt(string str, ITagsGenerator tagsGenerator)
+    {
+        var result = await tagsGenerator.GenerateTagsFromContentAsync(str);
+
+        return result!;
     }
     
     // Get total count of posts

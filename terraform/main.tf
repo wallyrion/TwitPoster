@@ -1,12 +1,19 @@
 ﻿
-terraform {
-  backend "azurerm" {
-    resource_group_name  = "tfstate-rg"
-    storage_account_name = "tfstate12345"
-    container_name       = "tfstate"
-    key                  = "terraform.tfstate"
-  }
-}
+ #Comment out or remove this section
+ terraform {
+   backend "azurerm" {
+     resource_group_name  = "tfstate-rg"
+     storage_account_name = "tfstate12345"
+     container_name       = "tfstate"
+     key                  = "terraform.tfstate"
+   }
+ }
+
+#terraform {
+#  backend "local" {
+#    path = "terraform.tfstate"
+#  }
+#}
 
 
 provider "azurerm" {
@@ -161,12 +168,13 @@ resource "azurerm_linux_web_app" "appservice" {
 
   app_settings = {
     "APPLICATIONINSIGHTS_CONNECTION_STRING" = azurerm_application_insights.appinsights.connection_string
-    "Auth__Secret"                           = "mysupersecret_secretkey!123_for#TwitPosterApp"
     "ConnectionStrings__DbConnection"        = local.sql_connection_string
     "ConnectionStrings__ServiceBus"          = azurerm_servicebus_namespace.sbnamespace.default_primary_connection_string
     "Storage__AccountName"                   = azurerm_storage_account.storage.name
     "Storage__SharedKey"                     = azurerm_storage_account.storage.primary_access_key
     "Storage__Uri"                           = azurerm_storage_account.storage.primary_blob_endpoint
+    "Secrets__UseSecrets"                    = true
+    "Secrets__KeyVaultUri"                   = azurerm_key_vault.example_kv.vault_uri
   }
 
   identity {
@@ -181,6 +189,62 @@ resource "azurerm_linux_web_app" "appservice" {
     ]
   }
 }
+
+data "azurerm_client_config" "current" {}
+
+
+resource "azurerm_key_vault" "example_kv" {
+  name                        = "exampleKeyVault-${var.environment}"
+  location                    = azurerm_resource_group.rg.location
+  resource_group_name         = azurerm_resource_group.rg.name
+  sku_name                    = "standard"
+  tenant_id                   = data.azurerm_client_config.current.tenant_id
+  soft_delete_retention_days  = 7
+  purge_protection_enabled    = false
+
+
+  access_policy {
+    tenant_id = data.azurerm_client_config.current.tenant_id
+    object_id = data.azurerm_client_config.current.object_id
+
+    key_permissions = [
+      "Get"
+    ]
+
+    secret_permissions = [
+      "Get", "Set", "List", "Delete"
+    ]
+  }
+  
+}
+
+
+
+
+# Add an access policy for the managed identity of the App Service
+resource "azurerm_key_vault_access_policy" "appservice_access_policy" {
+  key_vault_id = azurerm_key_vault.example_kv.id
+  tenant_id    = data.azurerm_client_config.current.tenant_id
+  object_id    = azurerm_linux_web_app.appservice.identity[0].principal_id
+
+  secret_permissions = [
+    "Get",
+    "List",
+  ]
+
+}
+resource "random_password" "auth_secret" {
+  length  = 32
+  special = true
+}
+
+
+resource "azurerm_key_vault_secret" "auth_secret" {
+  name         = "Auth--Secret"
+  value        = random_password.auth_secret.result
+  key_vault_id = azurerm_key_vault.example_kv.id
+}
+
 
 resource "azurerm_linux_web_app" "emailsender" {
   name                = "twitposter-${var.environment}-emailsender"
