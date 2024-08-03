@@ -215,6 +215,10 @@ resource "azurerm_key_vault_access_policy" "appservice_access_policy" {
 
 }
 
+output "appservice_principal_id" {
+  value = azurerm_linux_web_app.appservice.identity[0].principal_id
+}
+
 resource "azurerm_key_vault_access_policy" "keyvault_self_access_policy" {
   key_vault_id = azurerm_key_vault.example_kv.id
   tenant_id    = data.azurerm_client_config.current.tenant_id
