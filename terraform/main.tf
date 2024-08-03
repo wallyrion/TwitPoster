@@ -1,13 +1,12 @@
-﻿
- #Comment out or remove this section
- terraform {
-   backend "azurerm" {
-     resource_group_name  = "tfstate-rg"
-     storage_account_name = "tfstate12345"
-     container_name       = "tfstate"
-     key                  = "terraform.tfstate"
-   }
- }
+﻿#Comment out or remove this section
+terraform {
+  backend "azurerm" {
+    resource_group_name  = "tfstate-rg"
+    storage_account_name = "tfstate12345"
+    container_name       = "tfstate"
+    key                  = "terraform.tfstate"
+  }
+}
 
 #terraform {
 #  backend "local" {
@@ -42,10 +41,10 @@ resource "azurerm_storage_account" "storage" {
 }
 
 resource "azurerm_servicebus_namespace" "sbnamespace" {
-  name                     = "twitposter-sb${var.environment}"
-  resource_group_name      = azurerm_resource_group.rg.name
-  location                 = azurerm_resource_group.rg.location
-  sku                      = "Standard"
+  name                = "twitposter-sb${var.environment}"
+  resource_group_name = azurerm_resource_group.rg.name
+  location            = azurerm_resource_group.rg.location
+  sku                 = "Standard"
 }
 
 resource "azurerm_log_analytics_workspace" "analyticsWorkspace" {
@@ -83,10 +82,10 @@ resource "azurerm_mssql_server" "sqlserver" {
 }
 
 resource "azurerm_mssql_firewall_rule" "appServiceIP" {
-  name                = "AllowAccessFromAzure"
-  server_id           = azurerm_mssql_server.sqlserver.id
-  start_ip_address    = "0.0.0.0"
-  end_ip_address      = "0.0.0.0"
+  name             = "AllowAccessFromAzure"
+  server_id        = azurerm_mssql_server.sqlserver.id
+  start_ip_address = "0.0.0.0"
+  end_ip_address   = "0.0.0.0"
 }
 
 resource "azurerm_mssql_database" "sqldatabase" {
@@ -128,19 +127,19 @@ resource "azurerm_linux_function_app" "functionapp" {
   name                       = "twitposter-${var.environment}-functionapp"
   location                   = azurerm_resource_group.rg.location
   resource_group_name        = azurerm_resource_group.rg.name
-  service_plan_id           = azurerm_service_plan.function_app_plan.id
+  service_plan_id            = azurerm_service_plan.function_app_plan.id
   storage_account_name       = azurerm_storage_account.storage.name
   storage_account_access_key = azurerm_storage_account.storage.primary_access_key
 
   site_config {
     application_stack {
-      dotnet_version = "8.0"
+      dotnet_version              = "8.0"
       use_dotnet_isolated_runtime = true
     }
   }
 
   app_settings = {
-    "AzureWebJobsStorage"               = "DefaultEndpointsProtocol=https;AccountName=${azurerm_storage_account.storage.name};AccountKey=${azurerm_storage_account.storage.primary_access_key};EndpointSuffix=core.windows.net"
+    "AzureWebJobsStorage" = "DefaultEndpointsProtocol=https;AccountName=${azurerm_storage_account.storage.name};AccountKey=${azurerm_storage_account.storage.primary_access_key};EndpointSuffix=core.windows.net"
   }
 
   identity {
@@ -168,13 +167,13 @@ resource "azurerm_linux_web_app" "appservice" {
 
   app_settings = {
     "APPLICATIONINSIGHTS_CONNECTION_STRING" = azurerm_application_insights.appinsights.connection_string
-    "ConnectionStrings__DbConnection"        = local.sql_connection_string
-    "ConnectionStrings__ServiceBus"          = azurerm_servicebus_namespace.sbnamespace.default_primary_connection_string
-    "Storage__AccountName"                   = azurerm_storage_account.storage.name
-    "Storage__SharedKey"                     = azurerm_storage_account.storage.primary_access_key
-    "Storage__Uri"                           = azurerm_storage_account.storage.primary_blob_endpoint
-    "Secrets__UseSecrets"                    = true
-    "Secrets__KeyVaultUri"                   = azurerm_key_vault.example_kv.vault_uri
+    "ConnectionStrings__DbConnection"       = local.sql_connection_string
+    "ConnectionStrings__ServiceBus"         = azurerm_servicebus_namespace.sbnamespace.default_primary_connection_string
+    "Storage__AccountName"                  = azurerm_storage_account.storage.name
+    "Storage__SharedKey"                    = azurerm_storage_account.storage.primary_access_key
+    "Storage__Uri"                          = azurerm_storage_account.storage.primary_blob_endpoint
+    "Secrets__UseSecrets"                   = true
+    "Secrets__KeyVaultUri"                  = azurerm_key_vault.example_kv.vault_uri
   }
 
   identity {
@@ -194,40 +193,50 @@ data "azurerm_client_config" "current" {}
 
 
 resource "azurerm_key_vault" "example_kv" {
-  name                        = "kv-tps-${var.environment}"
-  location                    = azurerm_resource_group.rg.location
-  resource_group_name         = azurerm_resource_group.rg.name
-  sku_name                    = "standard"
-  tenant_id                   = data.azurerm_client_config.current.tenant_id
-  soft_delete_retention_days  = 7
-  purge_protection_enabled    = false
-
-
-  access_policy {
-    tenant_id = data.azurerm_client_config.current.tenant_id
-    object_id = data.azurerm_client_config.current.object_id
-
-    key_permissions = [
-      "Get"
-    ]
-
-    secret_permissions = [
-      "Get", "Set", "List", "Delete"
-    ]
-  }
-  
-  access_policy {
-    tenant_id = data.azurerm_client_config.current.tenant_id
-    object_id = azurerm_linux_web_app.appservice.identity[0].principal_id
-
-    secret_permissions = [
-      "Get",
-      "List",
-    ]
-  }
-  
+  name                       = "kv-tps-${var.environment}"
+  location                   = azurerm_resource_group.rg.location
+  resource_group_name        = azurerm_resource_group.rg.name
+  sku_name                   = "standard"
+  tenant_id                  = data.azurerm_client_config.current.tenant_id
+  soft_delete_retention_days = 7
+  purge_protection_enabled   = false
 }
 
+
+resource "azurerm_key_vault_access_policy" "appservice_access_policy" {
+  key_vault_id = azurerm_key_vault.example_kv.id
+  tenant_id    = data.azurerm_client_config.current.tenant_id
+  object_id    = azurerm_linux_web_app.appservice.identity[0].principal_id
+
+  secret_permissions = [
+    "Get",
+    "List",
+  ]
+
+}
+
+resource "azurerm_key_vault_access_policy" "keyvault_self_access_policy" {
+  key_vault_id = azurerm_key_vault.example_kv.id
+  tenant_id    = data.azurerm_client_config.current.tenant_id
+  object_id    = data.azurerm_client_config.current.object_id
+
+  secret_permissions = [
+    "Get", "Set", "List", "Delete"
+  ]
+}
+
+
+resource "azurerm_key_vault_access_policy" "appservice_access_policy" {
+  key_vault_id = azurerm_key_vault.example_kv.id
+  tenant_id    = data.azurerm_client_config.current.tenant_id
+  object_id    = azurerm_linux_web_app.appservice.identity[0].principal_id
+
+  secret_permissions = [
+    "Get",
+    "List",
+  ]
+
+}
 resource "random_password" "auth_secret" {
   length  = 32
   special = true
@@ -253,8 +262,8 @@ resource "azurerm_linux_web_app" "emailsender" {
 
   app_settings = {
     "APPLICATIONINSIGHTS_CONNECTION_STRING" = azurerm_application_insights.appinsights_emailsender.connection_string
-    "ConnectionStrings__ServiceBus"          = azurerm_servicebus_namespace.sbnamespace.default_primary_connection_string
-    "Mail__AuthPassword"          =       "bbwpcbswnsbupbmw"
+    "ConnectionStrings__ServiceBus"         = azurerm_servicebus_namespace.sbnamespace.default_primary_connection_string
+    "Mail__AuthPassword"                    = "bbwpcbswnsbupbmw"
   }
 
   identity {
