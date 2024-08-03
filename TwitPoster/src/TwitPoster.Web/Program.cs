@@ -41,7 +41,8 @@ try
 
     if (secrets.UseSecrets)
     {
-        builder.Configuration.AddAzureKeyVault(new Uri(secrets.KeyVaultUri), new ClientSecretCredential(secrets.TenantId, secrets.ClientId, secrets.ClientSecret));
+        builder.Configuration.AddAzureKeyVault(new Uri(secrets.KeyVaultUri), new DefaultAzureCredential());
+        //builder.Configuration.AddAzureKeyVault(new Uri(secrets.KeyVaultUri), new ClientSecretCredential(secrets.TenantId, secrets.ClientId, secrets.ClientSecret));
     }
     
     Log.Logger = new LoggerConfiguration()
