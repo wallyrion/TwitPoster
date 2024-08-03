@@ -18,6 +18,7 @@ using TwitPoster.BLL.Services;
 using TwitPoster.DAL;
 using TwitPoster.DAL.Triggers;
 using TwitPoster.Web;
+using TwitPoster.Web.AI.TagsGeneration;
 using TwitPoster.Web.Common;
 using TwitPoster.Web.Common.DependencyInjection;
 using TwitPoster.Web.Common.Options;
@@ -77,12 +78,7 @@ try
         .ConfigureHttpClient(c => c.BaseAddress = new Uri(countriesApiOptions.Uri))
         .AddStandardResilienceHandler();
 
-    var kernelBuilder = builder.Services.AddKernel();
-    
-    kernelBuilder.Plugins.AddFromType<LightsPlugin>("Lights");
-        
-    
-    builder.Services.AddOpenAIChatCompletion("gpt-4o-mini", "");
+    builder.Services.AddKernelForTagsGeneration(builder.Configuration);
     
     builder.Services
         .AddSwaggerWithAuthorization()
