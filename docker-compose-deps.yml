@@ -1,0 +1,185 @@
+version: "3.8"
+
+networks:
+  twiposter-network:
+    name: twiposter-network
+    driver: bridge
+
+services:
+  
+  mssqlDb:
+    container_name: twitposter-mssql
+    image: "mcr.microsoft.com/mssql/server:2022-latest"
+    ports:
+      - "14333:1433"
+    networks:
+      - twiposter-network
+    environment:
+      SA_PASSWORD: "2Secure*Password2"
+      ACCEPT_EULA: "Y"
+  seq:
+    image: datalust/seq:latest
+    container_name: twitposter-seq
+    environment:
+      - ACCEPT_EULA=Y
+    ports:
+      - "82:80"
+      - "5342:5341"
+    volumes:
+      - seq-logs:/seqdata
+    networks:
+      - twiposter-network
+    deploy:
+      resources:
+        limits:
+          cpus: "0.50"
+          memory: 512M
+  
+  seq-gelf:
+    image: datalust/seq-input-gelf:latest
+    container_name: twitposter-seq-gelf
+    environment:
+      - ACCEPT_EULAY=Y
+      - SEQ_ADDRESS=http://seq:5341
+    depends_on:
+      - seq
+    ports:
+      - "12201:12201/udp"
+    networks:
+      - twiposter-network
+    deploy:
+      resources:
+        limits:
+          cpus: "0.50"
+          memory: 512M
+  
+  rabbitmq: ## defining rabbitmq service
+    image: rabbitmq:3-management
+    hostname: my-rabbit
+    environment:
+      - RABBITMQ_DEFAULT_USER=guest
+      - RABBITMQ_DEFAULT_PASS=guest
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    networks:
+      - twiposter-network
+    healthcheck:
+      test: [ "CMD", "rabbitmqctl", "status" ]
+      interval: 2s
+      timeout: 10s
+      retries: 5
+      
+  
+  zookeeper:
+    image: confluentinc/cp-zookeeper:latest
+    ports:
+      - "2181:2181"
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+  
+  # reachable on 9092 from the host and on 29092 from inside docker compose
+  kafka:
+    image: confluentinc/cp-kafka:latest
+    depends_on:
+      - zookeeper
+    ports:
+      - '9092:9092'
+    expose:
+      - '29092'
+    environment:
+      KAFKA_ZOOKEEPER_CONNECT: 'zookeeper:2181'
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: '1'
+      KAFKA_MIN_INSYNC_REPLICAS: '1'
+  
+  init-kafka:
+    image: confluentinc/cp-kafka:latest
+    depends_on:
+      - kafka
+    entrypoint: [ '/bin/sh', '-c' ]
+    command: |
+      "
+      # blocks until kafka is reachable
+      kafka-topics --bootstrap-server kafka:29092 --list
+      
+      echo -e 'Creating kafka topics'
+      kafka-topics --bootstrap-server kafka:29092 --create --if-not-exists --topic messages --replication-factor 1 --partitions 1
+      
+      echo -e 'Successfully created the following topics:'
+      kafka-topics --bootstrap-server kafka:29092 --list
+      "
+  
+  configsvr:
+    image: mongo:6.0
+    container_name: configsvr
+    command: --replSet configReplSet --configsvr --port 27019
+    volumes:
+      - configsvr:/data/configdb
+      - ./scripts:/scripts
+    ports:
+      - "27019:27019"
+    expose:
+      - 27019
+
+  shard1:
+    image: mongo:6.0
+    container_name: shard1
+    command: --replSet shard1ReplSet --shardsvr --port 27018
+    volumes:
+      - shard1:/data/db
+      - ./scripts:/scripts
+    ports:
+      - 27018:27018
+
+  shard2:
+    image: mongo:6.0
+    container_name: shard2
+    command: --replSet shard2ReplSet --shardsvr --port 27028
+    volumes:
+      - shard2:/data/db
+      - ./scripts:/scripts
+    ports:
+      - 27028:27028
+
+  mongos:
+    image: mongo:6.0
+    container_name: mongos
+    volumes:
+      - ./scripts:/scripts
+    command: >
+      bash -c "sleep 10 &&
+               mongos --configdb configReplSet/configsvr:27019 --bind_ip_all --port 27017"
+    depends_on:
+      - configsvr
+      - shard1
+      - shard2
+    ports:
+      - 27017:27017
+  
+  azurite:
+    image: mcr.microsoft.com/azure-storage/azurite
+    ports:
+      - "10000:10000"
+      - "10001:10001"
+      - "10002:10002"
+
+  mailhog:
+    image: mailhog/mailhog
+    ports:
+      - '1025:1025'
+      - '8025:8025'
+  
+  redis:
+    image: redis:latest
+    ports:
+      - '6379:6379'
+  
+volumes:
+  twitposter-database:
+  seq-logs:
+  configsvr:
+  shard1:
+  shard2:

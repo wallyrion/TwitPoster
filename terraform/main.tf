@@ -41,11 +41,20 @@ resource "azurerm_servicebus_namespace" "sbnamespace" {
   sku                      = "Standard"
 }
 
+resource "azurerm_log_analytics_workspace" "analyticsWorkspace" {
+  name                = "analyticsWorkspace-${var.environment}"
+  location            = azurerm_resource_group.rg.location
+  resource_group_name = azurerm_resource_group.rg.name
+  sku                 = "PerGB2018"
+  retention_in_days   = 30
+}
+
 resource "azurerm_application_insights" "appinsights" {
   name                = "twitposter-ai-${var.environment}"
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
   application_type    = "web"
+  workspace_id        = azurerm_log_analytics_workspace.analyticsWorkspace.id
 }
 
 resource "azurerm_application_insights" "appinsights_emailsender" {
@@ -53,6 +62,7 @@ resource "azurerm_application_insights" "appinsights_emailsender" {
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
   application_type    = "web"
+  workspace_id        = azurerm_log_analytics_workspace.analyticsWorkspace.id
 }
 
 resource "azurerm_mssql_server" "sqlserver" {
@@ -98,13 +108,13 @@ resource "azurerm_service_plan" "asp" {
 }
 
 
-
 # Define Application Insights
 resource "azurerm_application_insights" "function_app_insights" {
   name                = "functionapp-appinsights-${var.environment}"
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
   application_type    = "web"
+  workspace_id        = azurerm_log_analytics_workspace.analyticsWorkspace.id
 }
 
 resource "azurerm_linux_function_app" "functionapp" {
