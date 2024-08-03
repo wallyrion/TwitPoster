@@ -212,6 +212,11 @@ resource "azurerm_key_vault_access_policy" "appservice_access_policy" {
     "Get",
     "List",
   ]
+  
+  depends_on = [
+    azurerm_key_vault.example_kv,
+    azurerm_linux_web_app.appservice
+  ]
 
 }
 
