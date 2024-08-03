@@ -5,6 +5,7 @@ using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Azure;
 using Microsoft.FeatureManagement;
+using Microsoft.SemanticKernel;
 using Refit;
 using Serilog;
 using TwitPoster.BLL.Authentication;
@@ -75,7 +76,14 @@ try
         .AddRefitClient<ILocationClient>()
         .ConfigureHttpClient(c => c.BaseAddress = new Uri(countriesApiOptions.Uri))
         .AddStandardResilienceHandler();
+
+    var kernelBuilder = builder.Services.AddKernel();
+    
+    kernelBuilder.Plugins.AddFromType<LightsPlugin>("Lights");
         
+    
+    builder.Services.AddOpenAIChatCompletion("gpt-4o-mini", "");
+    
     builder.Services
         .AddSwaggerWithAuthorization()
         .AddEndpointsApiExplorer()
