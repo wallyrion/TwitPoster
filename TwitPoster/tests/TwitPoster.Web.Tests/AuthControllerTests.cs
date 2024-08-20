@@ -23,7 +23,6 @@ public class AuthControllerTests
     {
         // Arrange
         const int expectedUserId = 100;
-        
         var registrationRequest = new RegistrationRequest("First", "Last", DateTime.UtcNow.AddYears(-1), "kornienko1296@gmail.com", "password");
         
         _authServiceMock.Setup(e => e.Register(registrationRequest.FirstName, registrationRequest.LastName, registrationRequest.BirthDate, registrationRequest.Email, registrationRequest.Password))

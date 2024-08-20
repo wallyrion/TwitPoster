@@ -15,9 +15,9 @@ updates:
       xunit:
         patterns:
           - "xunit*"
-      ef:
+      microsoft:
         patterns:
-          - "Microsoft.EntityFrameworkCore*"
+          - "Microsoft.*"
   - package-ecosystem: "nuget"
     directories:
       - "/TwitPoster.EmailSender"
@@ -33,6 +33,9 @@ updates:
       xunit:
         patterns:
           - "xunit*"
+      microsoft:
+        patterns:
+          - "Microsoft.*"
   - package-ecosystem: "nuget"
     directories:
       - "/TwitPoster.Shared"
@@ -56,6 +59,9 @@ updates:
       xunit:
         patterns:
           - "xunit*"
+    microsoft:
+      patterns:
+        - "Microsoft.*"
 
   - package-ecosystem: "nuget"
     directories:
