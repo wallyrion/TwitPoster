@@ -12,6 +12,7 @@
         <PackageReference Include="Azure.Messaging.ServiceBus" />
         <PackageReference Include="Azure.Storage.Blobs" />
         <PackageReference Include="Bogus" />
+        <PackageReference Include="FluentValidation" />
         <PackageReference Include="FluentValidation.AspNetCore" />
         <PackageReference Include="Google.Apis.Auth" />
         <PackageReference Include="Mapster" />
