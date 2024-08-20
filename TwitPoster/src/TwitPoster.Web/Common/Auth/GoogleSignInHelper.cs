@@ -9,6 +9,8 @@ public static class GoogleSignInHelper
         var settings = new GoogleJsonWebSignature.ValidationSettings
         {
             Audience = [clientId],
+            
+            
         };
 
         try
