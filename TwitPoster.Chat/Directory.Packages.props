@@ -2,7 +2,7 @@
   <ItemGroup>
     <PackageVersion Include="FluentAssertions" Version="6.12.0" />
     <PackageVersion Include="FluentAssertions.Web" Version="1.4.0" />
-    <PackageVersion Include="MassTransit.Kafka" Version="8.2.4" />
+    <PackageVersion Include="MassTransit.Kafka" Version="8.2.5" />
     <PackageVersion Include="MediatR" Version="12.4.0" />
     <PackageVersion Include="Microsoft.AspNetCore.Mvc.Testing" Version="8.0.8" />
     <PackageVersion Include="Microsoft.AspNetCore.SignalR.Client" Version="8.0.8" />
