@@ -14,7 +14,7 @@
     <PackageVersion Include="Microsoft.FeatureManagement" Version="3.5.0" />
     <PackageVersion Include="Microsoft.SemanticKernel" Version="1.19.0" />
     <PackageVersion Include="Refit" Version="7.2.0" />
-    <PackageVersion Include="Refit.HttpClientFactory" Version="7.1.2" />
+    <PackageVersion Include="Refit.HttpClientFactory" Version="7.2.0" />
     <PackageVersion Include="Twitposter.Shared" Version="2.2.38" />
     <PackageVersion Include="EntityFrameworkCore.Triggered" Version="3.2.2" />
     <PackageVersion Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.8" />
