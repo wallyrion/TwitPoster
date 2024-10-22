@@ -87,8 +87,6 @@ try
         builder.Services.AddOpenTelemetry().UseAzureMonitor(options =>
         {
             options.EnableLiveMetrics = false;
-            options.SamplingRatio = 0.1F;
-            options.EnableLiveMetrics = false;
         });
     }
     else
