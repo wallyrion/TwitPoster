@@ -1,4 +1,6 @@
 using Azure.Monitor.OpenTelemetry.AspNetCore;
+using OpenTelemetry;
+using OpenTelemetry.Metrics;
 using OpenTelemetry.Trace;
 using TwitPoster.EmailSender.Extensions;
 using TwitPoster.EmailSender.Options;
@@ -15,17 +17,26 @@ try
         .CreateBootstrapLogger();
         */
     
-    builder.Services.AddOpenTelemetry().UseAzureMonitor(options =>
+    var appinsightsEnabled = !string.IsNullOrWhiteSpace(builder.Configuration.GetConnectionString("APPLICATIONINSIGHTS_CONNECTION_STRING"));
+
+    if (appinsightsEnabled)
     {
-        options.EnableLiveMetrics = false;
-    });
+        builder.Services.AddOpenTelemetry().UseAzureMonitor(options =>
+        {
+            options.EnableLiveMetrics = false;
+        });
+    }
+    else
+    {
+        builder.Services.AddOpenTelemetry().WithTracing(c => c.AddConsoleExporter());
+    }
+    
+    
     builder.Services.ConfigureOpenTelemetryTracerProvider((sp, b) =>
     {
         b.AddSource("MassTransit");
     });
     
-
-
     //builder.Services.AddApplicationInsightsTelemetry();
     builder.Configuration.BindOption<MailOptions>(builder.Services);
 

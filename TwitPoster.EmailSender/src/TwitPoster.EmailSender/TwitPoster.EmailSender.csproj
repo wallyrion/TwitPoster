@@ -15,6 +15,7 @@
         <PackageReference Include="MassTransit.RabbitMQ"/>
         <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" />
         <PackageReference Include="Microsoft.AspNetCore.OpenApi"/>
+        <PackageReference Include="OpenTelemetry.Exporter.Console" />
         <PackageReference Include="Swashbuckle.AspNetCore"/>
         <PackageReference Include="Twitposter.Shared"/>
     </ItemGroup>

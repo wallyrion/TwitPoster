@@ -80,11 +80,23 @@ try
     var connectionStrings = builder.Configuration.BindOption<ConnectionStringsOptions>(builder.Services);
     var countriesApiOptions = builder.Configuration.BindOption<CountriesApiOptions>(builder.Services);
 
-    builder.Services.AddOpenTelemetry().UseAzureMonitor((options =>
+    var appinsightsEnabled = !string.IsNullOrWhiteSpace(builder.Configuration.GetConnectionString("APPLICATIONINSIGHTS_CONNECTION_STRING"));
+
+    if (appinsightsEnabled)
     {
-        options.SamplingRatio = 0.1F;
-        options.EnableLiveMetrics = false;
-    }));
+        builder.Services.AddOpenTelemetry().UseAzureMonitor(options =>
+        {
+            options.EnableLiveMetrics = false;
+            options.SamplingRatio = 0.1F;
+            options.EnableLiveMetrics = false;
+        });
+    }
+    else
+    {
+        builder.Services.AddOpenTelemetry().WithTracing(c => c.AddConsoleExporter());
+    }
+
+    
     builder.Services.ConfigureOpenTelemetryTracerProvider((sp, b) =>
     {
         b.AddEntityFrameworkCoreInstrumentation();
