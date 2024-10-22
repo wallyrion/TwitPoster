@@ -14,6 +14,9 @@ public class EmailCommandConsumer(IEmailService emailService, ILogger<EmailComma
         {
             logger.LogInformation("Consuming email command {@EmailCommand}", context.Message);
             await emailService.SendEmail(context.Message);
+            await Task.Delay(5000);
+            
+            logger.LogInformation("Email sent");
         }
         catch (Exception e)
         {

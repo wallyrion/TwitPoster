@@ -51,6 +51,7 @@ public class PostsController : ControllerBase
     [AllowAnonymous]
     public async Task<int> GetPostsCount()
     {
+        throw new Exception("Some unexpected exception");
         return await _postService.GetPostsCount();
     }
    

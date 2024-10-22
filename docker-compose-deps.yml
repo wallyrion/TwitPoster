@@ -23,8 +23,8 @@ services:
     environment:
       - ACCEPT_EULA=Y
     ports:
-      - "82:80"
-      - "5342:5341"
+      - "83:80"
+      - "5344:5341"
     volumes:
       - seq-logs:/seqdata
     networks:

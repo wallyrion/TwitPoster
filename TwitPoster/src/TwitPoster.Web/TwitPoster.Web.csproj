@@ -10,6 +10,7 @@
         
         <PackageReference Include="Azure.Extensions.AspNetCore.Configuration.Secrets" />
         <PackageReference Include="Azure.Messaging.ServiceBus" />
+        <PackageReference Include="Azure.Monitor.OpenTelemetry.AspNetCore" />
         <PackageReference Include="Azure.Storage.Blobs" />
         <PackageReference Include="Bogus" />
         <PackageReference Include="FluentValidation.AspNetCore" />
@@ -31,12 +32,9 @@
         <PackageReference Include="Microsoft.Extensions.Http.Resilience" />
         <PackageReference Include="Microsoft.FeatureManagement.AspNetCore" />
         <PackageReference Include="Microsoft.SemanticKernel" />
+        <PackageReference Include="OpenTelemetry.Instrumentation.EntityFrameworkCore" />
         <PackageReference Include="Refit" />
         <PackageReference Include="Refit.HttpClientFactory" />
-        <PackageReference Include="Serilog.AspNetCore" />
-        <PackageReference Include="Serilog.Formatting.Compact" />
-        <PackageReference Include="Serilog.Sinks.ApplicationInsights" />
-        <PackageReference Include="Serilog.Sinks.Seq" />
         <PackageReference Include="Swashbuckle.AspNetCore" />
         <PackageReference Include="Swashbuckle.AspNetCore.Filters" />
     </ItemGroup>

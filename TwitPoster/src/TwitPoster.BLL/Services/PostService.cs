@@ -1,5 +1,6 @@
 ﻿using Mapster;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using TwitPoster.BLL.DTOs;
 using TwitPoster.BLL.Exceptions;
 using TwitPoster.BLL.Extensions;
@@ -15,12 +16,14 @@ public class PostService : IPostService
     private readonly TwitPosterContext _context;
     private readonly ICurrentUser _currentUser;
     private readonly INotificationReporter _notificationReporter;
+    private readonly ILogger<PostService> _logger;
 
-    public PostService(TwitPosterContext context, ICurrentUser currentUser, INotificationReporter notificationReporter)
+    public PostService(TwitPosterContext context, ICurrentUser currentUser, INotificationReporter notificationReporter, ILogger<PostService> logger)
     {
         _context = context;
         _currentUser = currentUser;
         _notificationReporter = notificationReporter;
+        _logger = logger;
     }
 
     public async Task<List<PostDto>> GetPosts(int pageSize, int pageNumber, CancellationToken cancellationToken = default)
@@ -58,6 +61,8 @@ public class PostService : IPostService
         _context.Posts.Add(post);
         await _context.SaveChangesAsync();
 
+        _logger.LogInformation("Post was successfully created by user {UserId}", _currentUser.Id);
+        
         var createdPost = await _context.Posts
             .Include(p => p.Author).FirstOrDefaultAsync(p => p.Id == post.Id);
 

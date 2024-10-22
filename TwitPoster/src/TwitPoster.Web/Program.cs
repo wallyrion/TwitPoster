@@ -1,13 +1,12 @@
 using Azure.Identity;
+using Azure.Monitor.OpenTelemetry.AspNetCore;
 using Azure.Storage;
 using MassTransit;
-using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Azure;
 using Microsoft.FeatureManagement;
-using Microsoft.SemanticKernel;
+using OpenTelemetry.Trace;
 using Refit;
-using Serilog;
 using TwitPoster.BLL.Authentication;
 using TwitPoster.BLL.Common.Options;
 using TwitPoster.BLL.Extensions;
@@ -53,18 +52,19 @@ try
         }
     }
     
-    Log.Logger = new LoggerConfiguration()
+    /*Log.Logger = new LoggerConfiguration()
         .ReadFrom.Configuration(builder.Configuration)
-        .CreateBootstrapLogger();
+        .CreateBootstrapLogger();*/
     
-    builder.Host.UseSerilog((context, provider, logger) =>
+    
+    /*builder.Host.UseSerilog((context, provider, logger) =>
     {
         logger.ReadFrom.Configuration(context.Configuration);
 
         logger.WriteTo.ApplicationInsights(
             provider.GetRequiredService<TelemetryConfiguration>(),
             TelemetryConverter.Traces);
-    });
+    });*/
     
     builder.Services.AddAzureClients(clientBuilder =>
     {
@@ -80,7 +80,18 @@ try
     var connectionStrings = builder.Configuration.BindOption<ConnectionStringsOptions>(builder.Services);
     var countriesApiOptions = builder.Configuration.BindOption<CountriesApiOptions>(builder.Services);
 
-    builder.Services.AddApplicationInsightsTelemetry();
+    builder.Services.AddOpenTelemetry().UseAzureMonitor((options =>
+    {
+        options.SamplingRatio = 0.1F;
+        options.EnableLiveMetrics = false;
+    }));
+    builder.Services.ConfigureOpenTelemetryTracerProvider((sp, b) =>
+    {
+        b.AddEntityFrameworkCoreInstrumentation();
+        b.AddSource("MassTransit");
+    });
+
+    //builder.Services.AddApplicationInsightsTelemetry();
     builder.Services.AddFeatureManagement();
     builder.Services
         .AddRefitClient<ILocationClient>()
@@ -159,7 +170,7 @@ try
 
         .UseCors(WebConstants.Cors.DefaultPolicy)
         .UseMiddleware<RequestDurationMiddleware>()
-        .UseSerilogRequestLogging()
+        //.UseSerilogRequestLogging()
         .UseAuthentication()
         .UseAuthorization()
 
@@ -179,10 +190,8 @@ try
 catch (Exception ex)
 {
     Console.WriteLine("Error while starting app..." + ex.Message);
-    Log.Fatal(ex, "Host terminated unexpectedly");
 }
 finally
 {
-    Log.Information("Host shutting down...");
-    Log.CloseAndFlush();
+    Console.WriteLine("App exiting...");
 }

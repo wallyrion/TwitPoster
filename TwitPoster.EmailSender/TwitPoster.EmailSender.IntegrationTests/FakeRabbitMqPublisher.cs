@@ -1,8 +1,6 @@
 using MassTransit;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Serilog;
-using Testcontainers.RabbitMq;
+
 using TwitPoster.EmailSender.IntegrationTests.Fixtures;
 
 namespace TwitPoster.EmailSender.IntegrationTests;
@@ -22,7 +20,7 @@ public class FakeRabbitMqPublisher
             options.Pass = RabbitMqContainerFixture.Password;
         });
 
-        services.AddLogging(builder => builder.AddSerilog().AddConsole());
+       // services.AddLogging(builder => builder.AddSerilog().AddConsole());
         
         services.AddMassTransit(x =>
         {
