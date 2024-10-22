@@ -63,14 +63,6 @@ resource "azurerm_application_insights" "appinsights" {
   workspace_id        = azurerm_log_analytics_workspace.analyticsWorkspace.id
 }
 
-resource "azurerm_application_insights" "appinsights_emailsender" {
-  name                = "twitposter-ai-emailsender-${var.environment}"
-  location            = azurerm_resource_group.rg.location
-  resource_group_name = azurerm_resource_group.rg.name
-  application_type    = "web"
-  workspace_id        = azurerm_log_analytics_workspace.analyticsWorkspace.id
-}
-
 resource "azurerm_mssql_server" "sqlserver" {
   name                         = "twitpostersql${var.environment}"
   resource_group_name          = azurerm_resource_group.rg.name
@@ -111,16 +103,6 @@ resource "azurerm_service_plan" "asp" {
     azurerm_service_plan.function_app_plan,
     azurerm_linux_function_app.functionapp
   ]
-}
-
-
-# Define Application Insights
-resource "azurerm_application_insights" "function_app_insights" {
-  name                = "functionapp-appinsights-${var.environment}"
-  location            = azurerm_resource_group.rg.location
-  resource_group_name = azurerm_resource_group.rg.name
-  application_type    = "web"
-  workspace_id        = azurerm_log_analytics_workspace.analyticsWorkspace.id
 }
 
 resource "azurerm_linux_function_app" "functionapp" {
@@ -262,7 +244,7 @@ resource "azurerm_linux_web_app" "emailsender" {
   }
 
   app_settings = {
-    "APPLICATIONINSIGHTS_CONNECTION_STRING" = azurerm_application_insights.appinsights_emailsender.connection_string
+    "APPLICATIONINSIGHTS_CONNECTION_STRING" = azurerm_application_insights.appinsights.connection_string
     "ConnectionStrings__ServiceBus"         = azurerm_servicebus_namespace.sbnamespace.default_primary_connection_string
     "Mail__AuthPassword"                    = "bbwpcbswnsbupbmw"
   }
