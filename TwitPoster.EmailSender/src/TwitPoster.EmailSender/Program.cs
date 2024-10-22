@@ -17,7 +17,7 @@ try
         .CreateBootstrapLogger();
         */
     
-    var appinsightsEnabled = !string.IsNullOrWhiteSpace(builder.Configuration.GetConnectionString("APPLICATIONINSIGHTS_CONNECTION_STRING"));
+    var appinsightsEnabled = !string.IsNullOrWhiteSpace(builder.Configuration["APPLICATIONINSIGHTS_CONNECTION_STRING"]);
 
     if (appinsightsEnabled)
     {
