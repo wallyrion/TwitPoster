@@ -1,7 +1,7 @@
 
 ## Links
-### https://twitposter.xyz 
-### https://twitposter-production-appservice.azurewebsites.net/swagger/index.html
+### https://twitposter.site 
+### [https://twitposter-production-appservice.azurewebsites.net/swagger/index.html](Backend)
 Twitposter is a social network platform designed to allow users to connect, share posts, and engage with content.
 
 ### Features
