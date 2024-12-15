@@ -81,7 +81,6 @@ try
     var countriesApiOptions = builder.Configuration.BindOption<CountriesApiOptions>(builder.Services);
 
     var appinsightsEnabled = !string.IsNullOrWhiteSpace(builder.Configuration["APPLICATIONINSIGHTS_CONNECTION_STRING"]);
-
     if (appinsightsEnabled)
     {
         builder.Services.AddOpenTelemetry().UseAzureMonitor(options =>
