@@ -93,7 +93,6 @@ try
         builder.Services.AddOpenTelemetry().WithTracing(c => c.AddConsoleExporter());
     }
 
-    
     builder.Services.ConfigureOpenTelemetryTracerProvider((sp, b) =>
     {
         b.AddEntityFrameworkCoreInstrumentation();
