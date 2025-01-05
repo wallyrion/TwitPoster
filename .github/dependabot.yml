@@ -3,49 +3,7 @@ updates:
   - package-ecosystem: "nuget"
     directories:
       - "/TwitPoster"
-    schedule:
-      interval: "daily"
-    groups:
-      testcontainers:
-        patterns:
-          - "Testcontainers*"
-      massTransit:
-        patterns:
-          - "MassTransit*"
-      xunit:
-        patterns:
-          - "xunit*"
-      microsoft:
-        patterns:
-          - "Microsoft.*"
-  - package-ecosystem: "nuget"
-    directories:
       - "/TwitPoster.EmailSender"
-    schedule:
-      interval: "daily"
-    groups:
-      testcontainers:
-        patterns:
-          - "Testcontainers*"
-      massTransit:
-        patterns:
-          - "MassTransit*"
-      xunit:
-        patterns:
-          - "xunit*"
-      microsoft:
-        patterns:
-          - "Microsoft.*"
-  - package-ecosystem: "nuget"
-    directories:
-      - "/TwitPoster.Shared"
-    schedule:
-      interval: "daily"
-      
-      
-      
-  - package-ecosystem: "nuget"
-    directories:
       - "/TwitPoster.Chat"
     schedule:
       interval: "daily"
@@ -59,9 +17,16 @@ updates:
       xunit:
         patterns:
           - "xunit*"
-    microsoft:
-      patterns:
-        - "Microsoft.*"
+      microsoft:
+        patterns:
+          - "Microsoft.*"
+
+  - package-ecosystem: "nuget"
+    directories:
+      - "/TwitPoster.Shared"
+    schedule:
+      interval: "daily"
+      
 
   - package-ecosystem: "nuget"
     directories:
