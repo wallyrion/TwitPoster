@@ -1,17 +1,16 @@
 <Project Sdk="Microsoft.NET.Sdk">
-    <ItemGroup>
-        <ProjectReference Include="..\TwitPoster.DAL\TwitPoster.DAL.csproj"/>
-    </ItemGroup>
-
-    <ItemGroup>
-        <PackageReference Include="FluentValidation"/>
-        <PackageReference Include="LanguageExt.Core"/>
-        <PackageReference Include="Mapster"/>
-        <PackageReference Include="Mapster.DependencyInjection"/>
-        <PackageReference Include="MassTransit.Abstractions"/>
-        <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions"/>
-        <PackageReference Include="Microsoft.FeatureManagement"/>
-        <PackageReference Include="Refit" />
-        <PackageReference Include="Twitposter.Shared"/>
-    </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\TwitPoster.DAL\TwitPoster.DAL.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="FluentValidation" />
+    <PackageReference Include="LanguageExt.Core" />
+    <PackageReference Include="Mapster" />
+    <PackageReference Include="Mapster.DependencyInjection" />
+    <PackageReference Include="MassTransit.Abstractions" />
+    <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" />
+    <PackageReference Include="Microsoft.FeatureManagement" />
+    <PackageReference Include="Refit" />
+    <PackageReference Include="Twitposter.Shared" />
+  </ItemGroup>
 </Project>
