@@ -99,6 +99,7 @@ try
         b.AddSource("MassTransit");
     });
 
+    
     //builder.Services.AddApplicationInsightsTelemetry();
     builder.Services.AddFeatureManagement();
     builder.Services
