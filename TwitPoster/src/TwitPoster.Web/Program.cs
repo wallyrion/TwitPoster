@@ -178,8 +178,6 @@ try
         .UseSwagger().UseSwaggerUI()
 
         .UseCors(WebConstants.Cors.DefaultPolicy)
-        .UseMiddleware<RequestDurationMiddleware>()
-        //.UseSerilogRequestLogging()
         .UseAuthentication()
         .UseAuthorization()
 
