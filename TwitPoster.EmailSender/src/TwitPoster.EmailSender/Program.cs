@@ -10,7 +10,6 @@ using TwitPoster.Shared.Contracts;
 try
 {
     var builder = WebApplication.CreateBuilder(args);
-
     /*
     Log.Logger = new LoggerConfiguration()
         .ReadFrom.Configuration(builder.Configuration)
