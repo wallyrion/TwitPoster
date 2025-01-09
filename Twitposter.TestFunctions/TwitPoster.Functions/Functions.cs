@@ -19,7 +19,7 @@ public class Functions(ILogger<Functions> logger)
         return response;
     }
     
-    [Function("One more hhtp trigger")]
+    [Function("SecondTrigger")]
     public async Task<HttpResponseData> HttpTriggerRun2(
         [HttpTrigger(AuthorizationLevel.Anonymous, "get", "post", Route = "query1")] HttpRequestData req)
     {
