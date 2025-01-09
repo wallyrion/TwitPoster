@@ -18,6 +18,15 @@ public class Functions(ILogger<Functions> logger, BlobServiceClient blobServiceC
         await response.WriteStringAsync("Hello, world!");
         return response;
     }
+    
+    [Function("One more hhtp trigger")]
+    public async Task<HttpResponseData> HttpTriggerRun2(
+        [HttpTrigger(AuthorizationLevel.Anonymous, "get", "post", Route = "query1")] HttpRequestData req)
+    {
+        var response = req.CreateResponse(HttpStatusCode.OK);
+        await response.WriteStringAsync("Hello, world!");
+        return response;
+    }
 
     [Function("TriggerForImagesBlob")]
     public async Task BlobTriggerRun(
