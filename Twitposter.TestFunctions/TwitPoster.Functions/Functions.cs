@@ -21,7 +21,7 @@ public class Functions(ILogger<Functions> logger)
     
     [Function("SecondTrigger")]
     public async Task<HttpResponseData> HttpTriggerRun2(
-        [HttpTrigger(AuthorizationLevel.Anonymous, "get", "post", Route = "query1")] HttpRequestData req)
+        [HttpTrigger(AuthorizationLevel.Anonymous, "get", "post", Route = "query2")] HttpRequestData req)
     {
         var response = req.CreateResponse(HttpStatusCode.OK);
         await response.WriteStringAsync("Hello, world!");
