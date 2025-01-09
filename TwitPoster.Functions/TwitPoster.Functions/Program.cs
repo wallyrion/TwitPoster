@@ -21,7 +21,6 @@ builder.Services
 
 builder.Services.AddAzureClients(clientBuilder => { clientBuilder.AddBlobServiceClient(storageConnectionString); });
 
-
 builder.Build().Run();
 
 
