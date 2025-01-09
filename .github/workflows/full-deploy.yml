@@ -183,13 +183,13 @@ jobs:
             build_email_sender
             build_functions
   
-  deploy_dev1_full:
+  deploy_dev2_full:
     name: 'Full dev1 deployment'
     needs: [detect_changes, build_infra, wait_for_build]
     uses: ./.github/workflows/shared.full-deployment.yml
     with:
-      workspace: dev1
-      environment: dev1
+      workspace: dev2
+      environment: dev2
       deploy_twitposter: ${{ needs.detect_changes.outputs.build_twitposter }}
       deploy_email_sender: ${{ needs.detect_changes.outputs.build_email_sender}}
       deploy_functions: ${{ needs.detect_changes.outputs.build_functions}}
