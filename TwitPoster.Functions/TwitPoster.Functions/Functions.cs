@@ -7,28 +7,27 @@ using Microsoft.Extensions.Logging;
 
 namespace TwitPoster.Functions;
 
-public class Functions(ILoggerFactory loggerFactory, BlobServiceClient blobServiceClient)
+public class Functions(ILogger<Functions> logger, BlobServiceClient blobServiceClient)
 {
-    private readonly ILogger _logger = loggerFactory.CreateLogger<Functions>();
 
-    
-    [Function("TestHttpFunction")]
-    public async Task<HttpResponseData> Run(
-        [HttpTrigger(AuthorizationLevel.Anonymous, "get", "post", Route = null)] HttpRequestData req)
+    [Function("Another")]
+    public async Task<HttpResponseData> HttpTriggerRun(
+        [HttpTrigger(AuthorizationLevel.Anonymous, "get", "post", Route = "query1")] HttpRequestData req)
     {
         var response = req.CreateResponse(HttpStatusCode.OK);
         await response.WriteStringAsync("Hello, world!");
         return response;
     }
-    
-    /*[Function("CompressImageFunction")]
-    public async Task Run(
+
+    [Function("TriggerForImagesBlob")]
+    public async Task BlobTriggerRun(
         [BlobTrigger("twitposter/user/{userId}/images/profile/main/{name}", Connection = "AzureWebJobsStorage")] Stream blob,
         int userId,
         string name)
     {
         try
         {
+            logger.LogInformation("Invoking my blob function");
             using var newStream = new MemoryStream();
             await ResizeImage0(blob, newStream);
 
@@ -39,17 +38,17 @@ public class Functions(ILoggerFactory loggerFactory, BlobServiceClient blobServi
 
             newStream.Position = 0;
             await thumbnailBlobClient.UploadAsync(newStream, overwrite: true);
-            _logger.LogInformation("Thumbnail for {UserId} created and uploaded", userId);
+            logger.LogInformation("Thumbnail for {UserId} created and uploaded", userId);
         }
         catch (Exception e)
         {
-            _logger.LogError(e, "Error while processing CompressImageFunction");
+            logger.LogError(e, "Error while processing CompressImageFunction");
             Console.WriteLine(e);
 
             throw;
         }
-    }*/
-
+    }
+    
     private static async Task ResizeImage0(Stream stream, Stream blob)
     {
         const int size = 200;
