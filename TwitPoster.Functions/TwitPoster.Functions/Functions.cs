@@ -14,7 +14,7 @@ public class Functions(ILoggerFactory loggerFactory, BlobServiceClient blobServi
     
     [Function("TestHttpFunction")]
     public async Task<HttpResponseData> Run(
-        [HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = null)] HttpRequestData req)
+        [HttpTrigger(AuthorizationLevel.Anonymous, "get", "post", Route = null)] HttpRequestData req)
     {
         var response = req.CreateResponse(HttpStatusCode.OK);
         await response.WriteStringAsync("Hello, world!");
