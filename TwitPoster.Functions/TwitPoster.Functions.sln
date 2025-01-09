@@ -8,6 +8,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "items", "items", "{2B5EE6D3-44B4-4EC3-8119-DA54297D4860}"
 	ProjectSection(SolutionItems) = preProject
 		..\.github\workflows\azure-function.build.yml = ..\.github\workflows\azure-function.build.yml
+		..\.github\workflows\shared.functions.deploy.yml = ..\.github\workflows\shared.functions.deploy.yml
 	EndProjectSection
 EndProject
 Global
