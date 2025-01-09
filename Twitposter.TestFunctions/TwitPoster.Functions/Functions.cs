@@ -28,7 +28,7 @@ public class Functions(ILogger<Functions> logger, BlobServiceClient blobServiceC
         return response;
     }
 
-    [Function("TriggerForImagesBlob")]
+    /*[Function("TriggerForImagesBlob")]
     public async Task BlobTriggerRun(
         [BlobTrigger("twitposter/user/{userId}/images/profile/main/{name}", Connection = "AzureWebJobsStorage")] Stream blob,
         int userId,
@@ -55,7 +55,7 @@ public class Functions(ILogger<Functions> logger, BlobServiceClient blobServiceC
             Console.WriteLine(e);
 
             throw;
-        }
+        }*/
     }
     
     private static async Task ResizeImage0(Stream stream, Stream blob)
