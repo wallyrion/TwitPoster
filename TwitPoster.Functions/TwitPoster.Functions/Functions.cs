@@ -1,6 +1,8 @@
+using System.Net;
 using Azure.Storage.Blobs;
 using ImageMagick;
 using Microsoft.Azure.Functions.Worker;
+using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.Extensions.Logging;
 
 namespace TwitPoster.Functions;
@@ -9,7 +11,17 @@ public class Functions(ILoggerFactory loggerFactory, BlobServiceClient blobServi
 {
     private readonly ILogger _logger = loggerFactory.CreateLogger<Functions>();
 
-    [Function("CompressImageFunction")]
+    
+    [Function("TestHttpFunction")]
+    public async Task<HttpResponseData> Run(
+        [HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = null)] HttpRequestData req)
+    {
+        var response = req.CreateResponse(HttpStatusCode.OK);
+        await response.WriteStringAsync("Hello, world!");
+        return response;
+    }
+    
+    /*[Function("CompressImageFunction")]
     public async Task Run(
         [BlobTrigger("twitposter/user/{userId}/images/profile/main/{name}", Connection = "AzureWebJobsStorage")] Stream blob,
         int userId,
@@ -36,7 +48,7 @@ public class Functions(ILoggerFactory loggerFactory, BlobServiceClient blobServi
 
             throw;
         }
-    }
+    }*/
 
     private static async Task ResizeImage0(Stream stream, Stream blob)
     {
