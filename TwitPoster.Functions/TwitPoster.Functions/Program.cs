@@ -5,6 +5,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
+Console.WriteLine("Initializing function builder");
 
 var builder = FunctionsApplication.CreateBuilder(args);
 
