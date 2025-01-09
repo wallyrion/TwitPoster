@@ -8,15 +8,15 @@ var host = new HostBuilder()
     .ConfigureFunctionsWebApplication()
     .ConfigureServices((context, services) =>
     {
-        services.AddApplicationInsightsTelemetryWorkerService();
-        services.ConfigureFunctionsApplicationInsights();
+       // services.AddApplicationInsightsTelemetryWorkerService();
+        /*services.ConfigureFunctionsApplicationInsights();
         
         var storageConnectionString = context.Configuration.GetValue<string>("AzureWebJobsStorage");
         
         services.AddAzureClients(clientBuilder =>
         {
             clientBuilder.AddBlobServiceClient(storageConnectionString);
-        });
+        });*/
     })
     .Build();
 
