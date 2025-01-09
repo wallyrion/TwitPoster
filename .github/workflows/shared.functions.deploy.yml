@@ -19,10 +19,11 @@ permissions:
 
 jobs:
   deploy:
+    env:
+      AZURE_FUNCTIONAPP_PACKAGE_PATH: './TwitPoster.Functions/TwitPoster.Functions'
     runs-on: ubuntu-latest
     environment:
       name: ${{ inputs.environment }}
-      AZURE_FUNCTIONAPP_PACKAGE_PATH: './TwitPoster.Functions/TwitPoster.Functions'
 
     steps:
 
