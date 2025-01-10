@@ -115,8 +115,11 @@ resource "azurerm_linux_function_app" "functionapp" {
 
   site_config {
     application_stack {
-      dotnet_version              = "8.0"
+      dotnet_version              = "9.0"
       use_dotnet_isolated_runtime = true
+      SCM_DO_BUILD_DURING_DEPLOYMENT = true
+      WEBSITE_ENABLE_SYNC_UPDATE_SITE = true
+      WEBSITE_USE_PLACEHOLDER_DOTNETISOLATED = 1
     }
   }
 
