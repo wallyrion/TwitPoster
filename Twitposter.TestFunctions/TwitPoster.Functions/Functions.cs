@@ -10,7 +10,7 @@ namespace TwitPoster.Functions;
 public class Functions(ILogger<Functions> logger)
 {
 /*, BlobServiceClient blobServiceClient*/
-    [Function("Another")]
+    [Function("FirstTrigger")]
     public async Task<HttpResponseData> HttpTriggerRun(
         [HttpTrigger(AuthorizationLevel.Anonymous, "get", "post", Route = "query1")] HttpRequestData req)
     {

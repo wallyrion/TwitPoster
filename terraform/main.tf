@@ -17,6 +17,7 @@ terraform {
 
 provider "azurerm" {
   features {}
+  subscription_id = "73774bc1-ae0f-4e4f-bd61-a35d913721fe"
 }
 
 resource "azurerm_resource_group" "rg" {
@@ -115,13 +116,16 @@ resource "azurerm_linux_function_app" "functionapp" {
 
   site_config {
     application_stack {
-      dotnet_version              = "8.0"
+      dotnet_version              = "9.0"
       use_dotnet_isolated_runtime = true
     }
   }
 
   app_settings = {
     "AzureWebJobsStorage" = "DefaultEndpointsProtocol=https;AccountName=${azurerm_storage_account.storage.name};AccountKey=${azurerm_storage_account.storage.primary_access_key};EndpointSuffix=core.windows.net"
+    SCM_DO_BUILD_DURING_DEPLOYMENT = true
+    WEBSITE_ENABLE_SYNC_UPDATE_SITE = true
+    WEBSITE_USE_PLACEHOLDER_DOTNETISOLATED = 1
   }
 
   identity {
