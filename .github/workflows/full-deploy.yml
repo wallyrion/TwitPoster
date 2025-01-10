@@ -184,7 +184,7 @@ jobs:
             build_functions
   
   deploy_dev2_full:
-    name: 'Full dev1 deployment'
+    name: 'Full dev2 deployment'
     needs: [detect_changes, build_infra, wait_for_build]
     uses: ./.github/workflows/shared.full-deployment.yml
     with:
