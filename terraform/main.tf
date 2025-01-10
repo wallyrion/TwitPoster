@@ -121,7 +121,7 @@ resource "azurerm_linux_function_app" "functionapp" {
   }
 
   app_settings = {
-    "AzureWebJobsStorage" = "DefaultEndpointsProtocol=https;AccountName=${azurerm_storage_account.storage.name};AccountKey=${azurerm_storage_account.storage.primary_access_key};EndpointSuffix=core.windows.net",
+    "AzureWebJobsStorage" = "DefaultEndpointsProtocol=https;AccountName=${azurerm_storage_account.storage.name};AccountKey=${azurerm_storage_account.storage.primary_access_key};EndpointSuffix=core.windows.net"
     SCM_DO_BUILD_DURING_DEPLOYMENT = true
     WEBSITE_ENABLE_SYNC_UPDATE_SITE = true
     WEBSITE_USE_PLACEHOLDER_DOTNETISOLATED = 1
