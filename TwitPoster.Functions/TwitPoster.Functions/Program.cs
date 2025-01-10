@@ -23,7 +23,6 @@ builder.Services.AddAzureClients(clientBuilder => { clientBuilder.AddBlobService
 
 builder.Build().Run();
 
-
 /*var host = new HostBuilder()
     .ConfigureFunctionsWebApplication()
     .ConfigureServices((context, services) =>
