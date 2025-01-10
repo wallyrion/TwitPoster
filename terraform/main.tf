@@ -1,22 +1,23 @@
 ﻿#Comment out or remove this section
-#terraform {
-#  backend "azurerm" {
-#    resource_group_name  = "tfstate-rg"
-#    storage_account_name = "tfstate12345"
-#    container_name       = "tfstate"
-#    key                  = "terraform.tfstate"
-#  }
-#}
-
 terraform {
-  backend "local" {
-    path = "terraform.tfstate"
+  backend "azurerm" {
+    resource_group_name  = "tfstate-rg"
+    storage_account_name = "tfstate12345"
+    container_name       = "tfstate"
+    key                  = "terraform.tfstate"
   }
 }
+
+#terraform {
+#  backend "local" {
+#    path = "terraform.tfstate"
+#  }
+#}
 
 
 provider "azurerm" {
   features {}
+  subscription_id = "73774bc1-ae0f-4e4f-bd61-a35d913721fe"
 }
 
 resource "azurerm_resource_group" "rg" {
