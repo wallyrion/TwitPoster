@@ -6,7 +6,6 @@ on:
     paths:
       - "TwitPoster.Functions/**"
       - ".github/workflows/azure-function.build.yml"
-      - ".github/workflows/azure-function.deploy.yml"
       - ".github/workflows/shared.functions.deploy.yml"
 
 env:
