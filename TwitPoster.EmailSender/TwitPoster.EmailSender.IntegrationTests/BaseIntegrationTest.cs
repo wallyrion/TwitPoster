@@ -4,13 +4,14 @@ using TwitPoster.EmailSender.IntegrationTests.Fixtures;
 namespace TwitPoster.EmailSender.IntegrationTests;
 
 [Collection(nameof(IntegrationTestsCollection))]
-public abstract class BaseIntegrationTest(IntegrationTestWebFactory factory) : IAsyncLifetime
+public abstract class BaseIntegrationTest(SharedFixtures fixtures) : IAsyncLifetime
 {
     protected AsyncServiceScope Scope { get; private set; }
+    protected readonly IntegrationTestWebFactory WebApiFactory  = new(fixtures);
     
     public Task InitializeAsync()
     {
-        Scope = factory.Services.CreateAsyncScope();
+        Scope = WebApiFactory.Services.CreateAsyncScope();
 
         return Task.CompletedTask;
     }
@@ -18,7 +19,7 @@ public abstract class BaseIntegrationTest(IntegrationTestWebFactory factory) : I
     public async Task DisposeAsync()
     {
         await Scope.DisposeAsync();
-        await factory.MailHogContainer.ClearReceivedMessages();
+        await WebApiFactory.MailHogContainer.ClearReceivedMessages();
     }
 }
     
