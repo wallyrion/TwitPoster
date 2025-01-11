@@ -1,7 +1,7 @@
 namespace TwitPoster.EmailSender.IntegrationTests.Fixtures;
 
 [CollectionDefinition(nameof(IntegrationTestsCollection))]
-public class IntegrationTestsCollection : ICollectionFixture<IntegrationTestWebFactory>
+public class IntegrationTestsCollection : ICollectionFixture<SharedFixtures>
 {
     
 }

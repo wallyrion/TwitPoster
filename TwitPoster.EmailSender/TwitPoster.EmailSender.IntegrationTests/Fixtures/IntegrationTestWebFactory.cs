@@ -1,15 +1,14 @@
 ﻿using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
-using Testcontainers.RabbitMq;
 
 namespace TwitPoster.EmailSender.IntegrationTests.Fixtures;
 
-public class IntegrationTestWebFactory : WebApplicationFactory<IApiTestMarker>, IAsyncLifetime
+public class IntegrationTestWebFactory(SharedFixtures fixtures) : WebApplicationFactory<IApiTestMarker>
 {
-    public FakeRabbitMqPublisher RabbitMqPublisher { get; private set; } = null!;
-    public RabbitMqContainerFixture RabbitMqContainer { get; } = new();
-    public MailHogContainerFixture MailHogContainer { get; } = new();
+    public FakeRabbitMqPublisher RabbitMqPublisher => fixtures.RabbitMqPublisher;
+    public RabbitMqContainerFixture RabbitMqContainer => fixtures.RabbitMqContainer;
+    public MailHogContainerFixture MailHogContainer => fixtures.MailHogContainer;
 
     protected override IHost CreateHost(IHostBuilder builder)
     {
@@ -31,21 +30,5 @@ public class IntegrationTestWebFactory : WebApplicationFactory<IApiTestMarker>, 
         });
         
         return base.CreateHost(builder);
-    }
-    
-    
-    public async Task InitializeAsync()
-    {
-        await RabbitMqContainer.StartAsync();
-        await MailHogContainer.InitializeAsync();
-        
-        RabbitMqPublisher = new FakeRabbitMqPublisher(RabbitMqContainer);
-    }
-
-    public new async Task DisposeAsync()
-    {
-        await RabbitMqContainer.DisposeAsync();
-        await MailHogContainer.DisposeAsync();
-        await base.DisposeAsync();
     }
 }
