@@ -5,7 +5,6 @@ using TwitPoster.BLL.Interfaces;
 using TwitPoster.Web.Common.Options;
 
 namespace TwitPoster.Web.AI.TagsGeneration;
-
 public static class DependencyInjection
 {
     public static IServiceCollection AddKernelForTagsGeneration(this IServiceCollection services, IConfiguration configuration)
